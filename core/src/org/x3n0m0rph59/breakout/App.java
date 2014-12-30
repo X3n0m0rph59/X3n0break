@@ -1,5 +1,7 @@
 package org.x3n0m0rph59.breakout;
 
+import org.x3n0m0rph59.breakout.GameScreen.State;
+
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -18,7 +20,7 @@ public class App extends ApplicationAdapter {
 		
 		super.create();
 		
-		batch = new SpriteBatch();		
+		batch = new SpriteBatch();
 				
 		gameScreen = new GameScreen();
 		gameScreen.setState(GameScreen.State.NEW_STAGE);		
@@ -48,15 +50,33 @@ public class App extends ApplicationAdapter {
 	}	
 	
 	@Override
-	public void pause() {						
-		super.pause();	
+	public void pause() {
+		gameScreen.pause();
+		
+		super.pause();
+		
+		// TODO: Fix this
+//		Gdx.app.exit();
 	}
 	
 	@Override
-	public void resume() {		
-		super.resume();
+	public void resume() {
+		gameScreen.resume();
 		
-//		System.exit(0);
+		super.resume();
+
+		// TODO: Fix this
+//		Gdx.app.exit();
+	}
+	
+	@Override
+	public void dispose() {
+		gameScreen.setState(State.TERMINATED);
+		gameScreen.dispose();
+		
+		super.dispose();
+		
+		Gdx.app.exit();
 	}
 
 	public static SpriteBatch getSpriteBatch() {

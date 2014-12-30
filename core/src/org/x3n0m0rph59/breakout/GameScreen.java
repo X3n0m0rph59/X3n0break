@@ -11,10 +11,12 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -301,6 +303,18 @@ public class GameScreen implements Screen {
 	public void step() {
 		frameCounter++;
 		
+		// input handling
+		final float mdX = Gdx.input.getDeltaX();
+		
+		final float iX = Gdx.input.getX();
+		final float iY = Gdx.input.getY();
+		
+		final Vector3 unprojectediXY = camera.unproject(new Vector3(iX, iY, 0));
+		
+		final float mX = unprojectediXY.x;
+//		final float mY = unprojectediXY.y;
+
+		
 		// avoid div by zero with Math.max()
 		if (frameCounter % (10 * Math.max(Gdx.graphics.getFramesPerSecond(), 1)) == 0)
 				cheatTouchCtr = 0;
@@ -308,8 +322,6 @@ public class GameScreen implements Screen {
 		// cooldown timers
 		spaceBombCoolDownTime--;
 				
-		float mdx = (int) Gdx.input.getDeltaX();
-		
 		switch (state) {
 		case LOADING:
 			break;
@@ -468,12 +480,12 @@ public class GameScreen implements Screen {
 			// release them if a mouse button is pushed
 			for (Ball ball : balls) {
 				if (ball.getState() == Ball.State.STUCK_TO_PADDLE) {
-					if ((Gdx.input.getX() + mdx + (paddle.getWidth() / 2) >= 0) && 
-						(Gdx.input.getX() + mdx + (paddle.getWidth() / 2) <= Config.getInstance().getClientWidth())) {						
+					if ((mX + mdX + (paddle.getWidth() / 2) >= 0) && 
+						(mX + mdX + (paddle.getWidth() / 2) <= Config.getInstance().getClientWidth())) {						
 						
 						// TODO BUG: 
 						// ball may be moved relative to the paddle!
-						ball.changePosition(mdx, 0);
+						ball.changePosition(mdX, 0);
 					}
 					
 					if (Gdx.input.justTouched()) {
@@ -486,8 +498,8 @@ public class GameScreen implements Screen {
 			// Move caught power ups with the paddle
 			for (Powerup p : powerups) {
 				if (p.getState() == Powerup.State.STUCK_TO_GRAPPLING_HOOK) {
-					if ((Gdx.input.getX() + mdx + (paddle.getWidth() / 2) >= 0) && 
-						(Gdx.input.getX() + mdx + (paddle.getWidth() / 2) <= Config.getInstance().getClientWidth())) {						
+					if ((mX + mdX + (paddle.getWidth() / 2) >= 0) && 
+						(mX + mdX + (paddle.getWidth() / 2) <= Config.getInstance().getClientWidth())) {						
 						
 						// TODO BUG: 
 						// bomb may be moved relative to the paddle!
@@ -499,8 +511,8 @@ public class GameScreen implements Screen {
 			// Move caught space bombs with the paddle
 			for (SpaceBomb bomb : spaceBombs) {
 				if (bomb.getState() == SpaceBomb.State.STUCK_TO_GRAPPLING_HOOK) {
-					if ((Gdx.input.getX() + mdx + (paddle.getWidth() / 2) >= 0) && 
-						(Gdx.input.getX() + mdx + (paddle.getWidth() / 2) <= Config.getInstance().getClientWidth())) {						
+					if ((mX + mdX + (paddle.getWidth() / 2) >= 0) && 
+						(mX + mdX + (paddle.getWidth() / 2) <= Config.getInstance().getClientWidth())) {						
 						
 						// TODO BUG: 
 						// bomb may be moved relative to the paddle!
@@ -1013,5 +1025,9 @@ public class GameScreen implements Screen {
 			
 			Logger.debug("Cheating to next level");
 		}
+	}
+
+	public Camera getCamera() {
+		return camera;
 	}
 }

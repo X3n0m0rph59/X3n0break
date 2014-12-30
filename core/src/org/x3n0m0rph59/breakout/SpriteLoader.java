@@ -24,8 +24,9 @@ public class SpriteLoader {
 		Sprite sprite;		
 		if ((sprite = getSpriteFromCache(filename)) == null) {			
 			Texture t = new Texture(Gdx.files.internal(filename));			
-			t.setFilter(Texture.TextureFilter.Linear, 
-						Texture.TextureFilter.Linear);			
+			
+//			t.setFilter(Texture.TextureFilter.Linear, 
+//						Texture.TextureFilter.Linear);			
 			
 			sprite = new Sprite(t, tw, th);			
 			sprite.flip(false, true);

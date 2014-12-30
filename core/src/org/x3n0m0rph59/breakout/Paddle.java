@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 
 public class Paddle extends GameObject {	
@@ -65,16 +66,21 @@ public class Paddle extends GameObject {
 		
 		
 		// Do not move the paddle if the 
-		// user tapped on "fire space bomb" 
-		final float x = Gdx.input.getX();
-		final float y = Gdx.input.getY();
+		// user tapped on "fire space bomb" 				
+		final float iX = Gdx.input.getX();
+		final float iY = Gdx.input.getY();
+		
+		final Vector3 unprojectediXY = App.getGameScreen().getCamera().unproject(new Vector3(iX, iY, 0));
+		
+		final float mX = unprojectediXY.x;
+		final float mY = unprojectediXY.y;
 		
 		final Rectangle hotRect = new Rectangle((int) (Config.getInstance().getScreenWidth() - 
 					 Config.SCOREBOARD_WIDTH + 25),
 			  (int) Config.WORLD_HEIGHT - (175 + 150), 350, (300 * 2));
 
-		if (!hotRect.contains(new Vector2(x, y))) {
-			setCenteredPosition(new Point(x, y));
+		if (!hotRect.contains(new Vector2(mX, mY))) {
+			setCenteredPosition(new Point(mX, mY));
 		}		
 		
 		
