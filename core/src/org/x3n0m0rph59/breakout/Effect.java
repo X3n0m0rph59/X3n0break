@@ -1,7 +1,16 @@
 package org.x3n0m0rph59.breakout;
 
+import java.io.Serializable;
 
-public class Effect implements Stepable {
+import com.badlogic.gdx.Gdx;
+
+
+public class Effect implements Stepable, Serializable {	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1837975219174877641L;
+
 	public enum Type {
 		// Special effects/abilities
 		FIREBALL,
@@ -35,11 +44,11 @@ public class Effect implements Stepable {
 		// Apply effect (if applicable)
 		switch (type) {		
 		case ENLARGE_PADDLE:
-			App.getGameScreen().getPaddle().expand();
+			((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().expand();
 			break;		
 		
 		case MULTIBALL:
-			App.getGameScreen().spawnBall(true);
+			((App) Gdx.app.getApplicationListener()).getGameScreen().spawnBall(true);
 			break;
 			
 		case BOTTOM_WALL:
@@ -52,7 +61,7 @@ public class Effect implements Stepable {
 			break;
 			
 		case SHRINK_PADDLE:
-			App.getGameScreen().getPaddle().shrink();
+			((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().shrink();
 			break;
 			
 		case STICKY_BALL:
@@ -82,7 +91,7 @@ public class Effect implements Stepable {
 			break;
 			
 		case ENLARGE_PADDLE:
-			App.getGameScreen().getPaddle().shrink();
+			((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().shrink();
 			break;
 			
 		case FIREBALL:
@@ -95,6 +104,7 @@ public class Effect implements Stepable {
 			break;
 			
 		case SHRINK_PADDLE:
+			((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().expand();
 			break;
 			
 		case STICKY_BALL:

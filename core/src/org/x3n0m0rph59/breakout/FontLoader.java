@@ -45,4 +45,11 @@ public class FontLoader {
 	private void primeCache() {
 				
 	}
+
+	public void dispose() {
+		for (BitmapFont f : map.values()) {
+			f.dispose();
+			map.remove(f);
+		}
+	}
 }

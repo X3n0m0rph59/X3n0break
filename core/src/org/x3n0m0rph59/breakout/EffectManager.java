@@ -1,13 +1,21 @@
 package org.x3n0m0rph59.breakout;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-public final class EffectManager {
-	private static final EffectManager instance = new EffectManager();	
+import com.badlogic.gdx.Gdx;
+
+public final class EffectManager implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8434448834555883310L;
+	
+	private static EffectManager instance = new EffectManager();	
 	private List<Effect> effectList = new ArrayList<Effect>();
 	
 		
@@ -16,39 +24,39 @@ public final class EffectManager {
 		
 		switch (type) {
 		case BOTTOM_WALL:
-			App.getGameScreen().addTextAnimation("Bottom Wall!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Bottom Wall!");
 			break;
 			
 		case ENLARGE_PADDLE:
-			App.getGameScreen().addTextAnimation("Enlarge!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Enlarge!");
 			break;
 			
 		case FIREBALL:
-			App.getGameScreen().addTextAnimation("Fireball!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Fireball!");
 			break;
 			
 		case MULTIBALL:
-			App.getGameScreen().addTextAnimation("Multiball");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Multiball");
 			break;
 			
 		case PADDLE_GUN:
-			App.getGameScreen().addTextAnimation("Guns!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Guns!");
 			break;
 			
 		case SHRINK_PADDLE:
-			App.getGameScreen().addTextAnimation("Shrink!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Shrink!");
 			break;	
 			
 		case STICKY_BALL:
-			App.getGameScreen().addTextAnimation("Sticky Ball!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Sticky Ball!");
 			break;
 			
 		case SPEED_UP:
-			App.getGameScreen().addTextAnimation("Speed Up!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Speed Up!");
 			break;	
 			
 		case SLOW_DOWN:
-			App.getGameScreen().addTextAnimation("Slow Down!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Slow Down!");
 			break;
 			
 		default:
@@ -63,17 +71,17 @@ public final class EffectManager {
 		case BOTTOM_WALL:
 			// Test if we really are the last active effect of this type
 			if (!isEffectActive(Effect.Type.BOTTOM_WALL))
-				App.getGameScreen().addTextAnimation("No more Bottom Wall!");
+				((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("No more Bottom Wall!");
 			break;
 			
 		case ENLARGE_PADDLE:
-			App.getGameScreen().addTextAnimation("Shrink again!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Shrink again!");
 			break;
 			
 		case FIREBALL:
 			// Test if we really are the last active effect of this type
 			if (!isEffectActive(Effect.Type.FIREBALL))
-				App.getGameScreen().addTextAnimation("Fireball vanished!");
+				((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Fireball vanished!");
 			break;
 			
 		case MULTIBALL:			
@@ -82,25 +90,25 @@ public final class EffectManager {
 		case PADDLE_GUN:
 			// Test if we really are the last active effect of this type
 			if (!isEffectActive(Effect.Type.PADDLE_GUN))
-				App.getGameScreen().addTextAnimation("Guns jammed!");
+				((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Guns jammed!");
 			break;
 			
 		case SHRINK_PADDLE:
-			App.getGameScreen().addTextAnimation("Grow back!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Grow back!");
 			break;	
 			
 		case STICKY_BALL:
 			// Test if we really are the last active effect of this type
 			if (!isEffectActive(Effect.Type.STICKY_BALL))
-				App.getGameScreen().addTextAnimation("No more Sticky Ball!");
+				((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("No more Sticky Ball!");
 			break;
 			
 		case SPEED_UP:
-			App.getGameScreen().addTextAnimation("Slow down again!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Slow down again!");
 			break;	
 			
 		case SLOW_DOWN:
-			App.getGameScreen().addTextAnimation("Speed up again!");
+			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Speed up again!");
 			break;
 			
 		default:
@@ -163,5 +171,9 @@ public final class EffectManager {
 	
 	public static EffectManager getInstance() {
 		return instance;
+	}
+
+	static void setInstance(EffectManager e) {
+		instance = e;
 	}	
 }

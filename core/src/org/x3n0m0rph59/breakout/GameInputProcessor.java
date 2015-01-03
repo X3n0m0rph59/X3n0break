@@ -1,9 +1,12 @@
 package org.x3n0m0rph59.breakout;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class GameInputProcessor implements InputProcessor {
 	@Override
@@ -15,17 +18,17 @@ public class GameInputProcessor implements InputProcessor {
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
 		case Keys.H:
-			App.getGameScreen().getPaddle().getGrapplingHook().toggleSwitch();
+			((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().getGrapplingHook().toggleSwitch();
 			
 			return true;
 			
 		case Keys.B:										
-			App.getGameScreen().releaseSpaceBomb();
+			((App) Gdx.app.getApplicationListener()).getGameScreen().releaseSpaceBomb();
 			
 			return true;
 			
 		case Keys.PLUS:
-			App.getGameScreen().cheat(false);
+			((App) Gdx.app.getApplicationListener()).getGameScreen().cheat(false);
 			
 			return true;
 			
@@ -54,19 +57,19 @@ public class GameInputProcessor implements InputProcessor {
 		case 0:
 			switch (button) {
 			case 2:
-				App.getGameScreen().getPaddle().getGrapplingHook().toggleSwitch();
+				((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().getGrapplingHook().toggleSwitch();
 				
 				return true;
 			
 			case 3:
-				App.getGameScreen().detonateSpaceBombs();
+				((App) Gdx.app.getApplicationListener()).getGameScreen().detonateSpaceBombs();
 				
 				return true;
 			}
 			break;
 			
 		case 1:
-			App.getGameScreen().getPaddle().getGrapplingHook().toggleSwitch();
+			((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().getGrapplingHook().toggleSwitch();
 			
 			break;
 		}
@@ -75,34 +78,37 @@ public class GameInputProcessor implements InputProcessor {
 	}
 
 	@Override
-	public boolean touchUp(int x, int y, int pointer, int button) {
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		final Camera camera = ((GameScreen) ((App) Gdx.app.getApplicationListener()).getCurrentScreen()).getCamera();
+		
+		final float mX = camera.unproject(new Vector3(screenX, screenY, 0.0f)).x;
+		final float mY = camera.unproject(new Vector3(screenX, screenY, 0.0f)).y;
+		
 		final Rectangle hotRectCheat = new Rectangle((int) (Config.getInstance()
 				.getScreenWidth() - Config.SCOREBOARD_WIDTH + 25),
 				(int) Config.WORLD_HEIGHT - (175 + 150*2), 150, 150);
 		
-//		final Rectangle hotRectHook = new Rectangle((int) (Config.getInstance()
-//				.getScreenWidth() - Config.SCOREBOARD_WIDTH + 25),
-//				(int) Config.WORLD_HEIGHT - (175 + 150), 150, 150);
+		final Rectangle hotRectMainMenu = new Rectangle((int) (Config.getInstance()
+				.getScreenWidth() - Config.SCOREBOARD_WIDTH + 25),
+				(int) Config.WORLD_HEIGHT - (175 + 150), 150, 150);
 
 		final Rectangle hotRectBomb = new Rectangle((int) (Config.getInstance()
 				.getScreenWidth() - Config.SCOREBOARD_WIDTH + 25),
 				(int) Config.WORLD_HEIGHT - 175, 350, 300);
 
-		if (hotRectCheat.contains(new Vector2(x, y))) {
-			App.getGameScreen().cheat(true);
-
+		
+		if (hotRectCheat.contains(new Vector2(mX, mY))) {
+			((App) Gdx.app.getApplicationListener()).getGameScreen().cheat(true);
 			return true;
 		}
 		
-//		if (hotRectHook.contains(new Vector2(x, y))) {			
-//			App.getGameScreen().getPaddle().getGrapplingHook().toggleSwitch();
-//
-//			return true;
-//		}
+		if (hotRectMainMenu.contains(new Vector2(mX, mY))) {			
+			ScreenManager.getInstance().showScreen(ScreenType.MENU);
+			return true;
+		}
 		
-		if (hotRectBomb.contains(new Vector2(x, y))) {
-			App.getGameScreen().releaseSpaceBomb();
-
+		if (hotRectBomb.contains(new Vector2(mX, mY))) {
+			((App) Gdx.app.getApplicationListener()).getGameScreen().releaseSpaceBomb();
 			return true;
 		}
 
@@ -116,7 +122,7 @@ public class GameInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int x, int y) {		
-//		App.getGameScreen().setPointerCoords(x, y);
+//		((App) Gdx.app.getApplicationListener()).getGameScreen().setPointerCoords(x, y);
 		
 		return true;
 	}

@@ -12,7 +12,13 @@ public class DesktopLauncher {
 		config.height = 1080;
 		config.fullscreen = true;
 		
-		config.vSyncEnabled = true;
+		// DEBUG
+//		config.width = 800;
+//		config.height = 600;
+//		config.fullscreen = false;
+		
+		config.vSyncEnabled = true;		
+//		config.useGL30 = true;
 		
 		new LwjglApplication(new App(), config);
 	}

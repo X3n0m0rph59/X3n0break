@@ -7,4 +7,8 @@ public final class Logger {
 	public static void debug(String text) {		
 		Gdx.app.debug("X3n0break", text);
 	}
+
+	public static void error(String text) {
+		Gdx.app.error("X3n0break", text);		
+	}
 }

@@ -1,6 +1,13 @@
 package org.x3n0m0rph59.breakout;
 
-public final class Point {
+import java.io.Serializable;
+
+public final class Point implements Serializable {	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 537005823482873982L;
+	
 	private final float x,y;
 
 	public Point(float x, float y) {

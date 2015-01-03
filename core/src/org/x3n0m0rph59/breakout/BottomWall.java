@@ -1,11 +1,18 @@
 package org.x3n0m0rph59.breakout;
 
+import java.io.Serializable;
+
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
-public class BottomWall implements Stepable, Renderable {
+public class BottomWall implements Stepable, Renderable, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1144551017184114286L;
+	
 	private int frameCounter = 0;
 	boolean drawFlash = false;
 

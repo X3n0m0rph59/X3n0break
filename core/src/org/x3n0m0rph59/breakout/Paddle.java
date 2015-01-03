@@ -8,6 +8,11 @@ import com.badlogic.gdx.math.Vector3;
 
 
 public class Paddle extends GameObject {	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2359831494748103391L;
+
 	private float lastX = 0.0f, lastY = 0.0f;
 	
 	boolean drawFlash = false;
@@ -49,28 +54,13 @@ public class Paddle extends GameObject {
 	
 	@Override
 	public void step() {
-		// Clamp mouse to client rect to avoid 
-		// choppy paddle movement
-//		if (!Config.getInstance().isWindowed()) {
-//			// TODO: fix this
-//			int new_x = Mouse.getX(), 
-//				new_y = Mouse.getY();
-//			
-//			if (new_x > Config.getInstance().getClientWidth())
-//				new_x = (int) (Config.getInstance().getClientWidth());
-//			
-//			Mouse.setCursorPosition(new_x, new_y);
-//			
-//			setCenteredPosition(new Point(Mouse.getX(), Mouse.getY()));
-//		}
-		
-		
 		// Do not move the paddle if the 
 		// user tapped on "fire space bomb" 				
 		final float iX = Gdx.input.getX();
 		final float iY = Gdx.input.getY();
 		
-		final Vector3 unprojectediXY = App.getGameScreen().getCamera().unproject(new Vector3(iX, iY, 0));
+		final Vector3 unprojectediXY = ((App) Gdx.app.getApplicationListener()).getGameScreen().
+													getCamera().unproject(new Vector3(iX, iY, 0));
 		
 		final float mX = unprojectediXY.x;
 		final float mY = unprojectediXY.y;

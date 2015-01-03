@@ -1,5 +1,10 @@
 package org.x3n0m0rph59.breakout;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.GL20;
@@ -7,8 +12,16 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
-public class SpriteObject {
-	private Sprite sprite;
+public class SpriteObject implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7452691659892992793L;
+
+	private transient Sprite sprite;
+	
+	private String filename;
+	private int tw,th;
 	
 	private int frameCounter = 0;
 	
@@ -26,10 +39,14 @@ public class SpriteObject {
 		this.width = width;
 		this.height = height;
 		
+		this.filename = filename;
+		this.tw = tw;
+		this.th = th;
+		
 		sprite = SpriteLoader.getInstance().getSprite(filename, tw, th);		
 	}
 	
-	public void render(SpriteBatch batch, Point position, float width, float height) {		
+	public void render(SpriteBatch batch, Point position, float width, float height) {
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		
 		if (!flashed)
@@ -163,5 +180,34 @@ public class SpriteObject {
 		if (Float.floatToIntBits(width) != Float.floatToIntBits(other.width))
 			return false;
 		return true;
-	}	
+	}
+	
+	private synchronized void writeObject(ObjectOutputStream stream) 
+			throws IOException {
+		stream.defaultWriteObject();
+		
+		// work around non-serializability of sprites
+		stream.writeObject(filename);
+		stream.writeInt(tw);
+		stream.writeInt(th);		
+	}
+	
+	private synchronized void readObject(ObjectInputStream stream)
+			throws IOException {
+		
+		try {
+			stream.defaultReadObject();
+			
+			// work around non-serializability of sprites
+			final String filename = (String) stream.readObject();
+			final int tw = stream.readInt();
+			final int th = stream.readInt();
+			
+			sprite = SpriteLoader.getInstance().getSprite(filename, tw, th);
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
 }

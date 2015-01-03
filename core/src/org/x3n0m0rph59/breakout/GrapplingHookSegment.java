@@ -4,6 +4,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
 public class GrapplingHookSegment extends GameObject {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8986716497179709278L;
+
 	public enum Type {HOOK, SEGMENT};
 	Type type;
 	

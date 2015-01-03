@@ -56,6 +56,10 @@ class SoundSprite {
 	public void stop() {		
 		sound.stop();
 	}
+
+	public void dispose() {
+		sound.dispose();
+	}
 }
 
 class MusicStream {
@@ -70,9 +74,9 @@ class MusicStream {
 		music.setLooping(true);
 	}
 	
-	public void playAt(float pos) {
+	public void playAt(float pos) {				
 		this.play();
-		music.setPosition(pos);		
+		music.setPosition(pos);
 	}
 	
 	public void stop() {
@@ -87,6 +91,10 @@ class MusicStream {
 	public float getPosition() {
 		float pos = music.getPosition();
 		return pos;
+	}
+
+	public void dispose() {
+		music.dispose();
 	}	
 }
 
@@ -136,6 +144,10 @@ public final class SoundLayer {
 		playSound(sound, 1.0f, 1.0f, false);
 	}
 	
+	public static void playSound(Sounds sound, float pitch) {
+		playSound(sound, pitch, 1.0f, false);
+	}
+	
 	public static void loopSound(Sounds sound) {
 		playSound(sound, 1.0f, 1.0f, true);
 	}
@@ -178,14 +190,15 @@ public final class SoundLayer {
 		MusicStream m = SoundLayer.getInstance().musicMap.get(music);
 		if (m != null) {
 			m.stop();
+			
 			currentMusic = null;
 		}
 	}
 	
 	public void stopAllMusic()
 	{
-		for (MusicStream ms : musicMap.values()) {
-			ms.stop();
+		for (MusicStream m : musicMap.values()) {
+			m.stop();
 		}
 		
 		currentMusic = null;
@@ -195,7 +208,7 @@ public final class SoundLayer {
 		float pos = 0; 		
 		if (currentMusic != null) {		
 			pos = currentMusic.getPosition();
-			this.stopAllMusic();
+			currentMusic.stop();
 		}
 		
 		MusicStream m;		
@@ -221,5 +234,17 @@ public final class SoundLayer {
 		}
 		
 		currentMusic = m;
+	}
+
+	public void dispose() {
+		for (SoundSprite ss : soundMap.values()) {
+			ss.dispose();
+//			soundMap.remove(ss);
+		}
+		
+		for (MusicStream ms : musicMap.values()) {
+			ms.dispose();
+//			musicMap.remove(ms);
+		}
 	}
 }

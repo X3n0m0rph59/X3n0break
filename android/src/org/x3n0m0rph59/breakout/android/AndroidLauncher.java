@@ -14,6 +14,7 @@ public class AndroidLauncher extends AndroidApplication {
 		
 		config.useWakelock = true;
 		config.useImmersiveMode = true;
+//		config.useGLSurfaceView20API18 = true;
 		
 		initialize(new App(), config);
 	}

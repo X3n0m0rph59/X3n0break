@@ -3,6 +3,11 @@ package org.x3n0m0rph59.breakout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class SpaceBomb extends GameObject {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4830991047432550595L;
+
 	public enum Type {USER_FIRED, BONUS};
 	public enum State {FLOATING, EXPLODING, EXPLODED, STUCK_TO_GRAPPLING_HOOK}
 	
@@ -128,8 +133,10 @@ public class SpaceBomb extends GameObject {
 	}
 
 	public void setState(State state) {
-		if (this.state == State.FLOATING && state == State.EXPLODING)
+		if (this.state == State.FLOATING && state == State.EXPLODING) {
+			ForceFeedback.spaceBombExplosion();
 			SoundLayer.playSound(Sounds.SPACEBOMB_EXPLOSION);
+		}
 		
 		this.state = state;
 	}

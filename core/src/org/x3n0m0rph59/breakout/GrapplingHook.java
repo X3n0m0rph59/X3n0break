@@ -5,6 +5,11 @@ import com.badlogic.gdx.math.Rectangle;
 
 
 public class GrapplingHook extends GameObject {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1847648144682308278L;
+
 	enum State {IDLE, EXTENDING, FULLY_EXTENDED, LOWERING}
 	private State state = State.IDLE;
 	

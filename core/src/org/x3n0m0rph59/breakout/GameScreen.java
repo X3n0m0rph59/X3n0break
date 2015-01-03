@@ -3,6 +3,14 @@ package org.x3n0m0rph59.breakout;
 import org.x3n0m0rph59.breakout.SoundLayer;
 import org.x3n0m0rph59.breakout.SpaceBomb.Type;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,6 +19,7 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -21,17 +30,23 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1326363941962583508L;
+
 	public enum State {LOADING, NEW_STAGE, WAITING_FOR_BALL, RUNNING, STAGE_CLEARED, 
 					   RESTART, PAUSED, GAME_OVER, LEVEL_SET_COMPLETED, TERMINATED};
+	
 	private enum ParticleEffect {BRICK_EXPLOSION, BALL_LOST};
 	
-	private OrthographicCamera camera;
-	private StretchViewport viewport;
+	private transient OrthographicCamera camera;
+	private transient StretchViewport viewport;
 	  
 	private State state = State.LOADING;
 	
-	private ScoreBoard scoreBoard = new ScoreBoard();
+	private transient ScoreBoard scoreBoard;
 	private BottomWall bottomWall = new BottomWall();
 	
 	private HashMap<String, String> levelMetadata;	
@@ -47,7 +62,7 @@ public class GameScreen implements Screen {
 	private List<Background> backgrounds = new ArrayList<Background>();
 	private List<SpaceBomb> spaceBombs = new ArrayList<SpaceBomb>();
 		
-	private BitmapFont font;
+	private transient BitmapFont font;
 	
 	private int frameCounter = 0;
 	
@@ -59,19 +74,27 @@ public class GameScreen implements Screen {
 		GameInputProcessor inputProcessor = new GameInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
+		initializeTransients();
+		
+		initLevel(0);
+		
+		setState(GameScreen.State.NEW_STAGE);
+	}
+	
+	public void initializeTransients() {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(true, Config.WORLD_WIDTH, Config.WORLD_HEIGHT);
 		camera.update();
 
 		viewport = new StretchViewport(Config.WORLD_WIDTH, Config.WORLD_HEIGHT, camera);
-		viewport.apply(true);
+		viewport.apply(true);		
 		
 		font = FontLoader.getInstance().getFont("font", Config.TOAST_FONT_SIZE);
 		
-		initLevel(0);
+		scoreBoard = new ScoreBoard();
 	}
 	
-	private void initLevel(int level) {
+	public void initLevel(int level) {
 		GameState.setLevel(level);
 		
 //		don't reset the frame counter for now (game balance)
@@ -111,6 +134,19 @@ public class GameScreen implements Screen {
 		bricks = LevelLoader.loadLevel(level);
 	}
 	
+	public void newGame() {
+		GameState.setLevel(0);
+		GameState.setScore(0);
+		GameState.setBallsLeft(Config.INITIAL_BALLS_LEFT);
+		GameState.setSpaceBombsLeft(Config.INITIAL_SPACEBOMBS_LEFT);
+		
+		initLevel(0);
+	}
+	
+	public void restartLevel() {
+		initLevel(GameState.getLevel());
+	}
+	
 	private String getLevelMetaData(String key) {
 		String result = levelMetadata.get(key);
 		
@@ -134,7 +170,10 @@ public class GameScreen implements Screen {
 	
 	@Override
 	public void show() {
+		GameInputProcessor inputProcessor = new GameInputProcessor();
+		Gdx.input.setInputProcessor(inputProcessor);
 		
+		setState(State.RUNNING);
 	}
 
 	@Override
@@ -149,26 +188,28 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void resume() {
-		setState(State.RUNNING);
+		Logger.debug("GameScreen: resume()");
+		
+		setState(State.PAUSED);
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-		
+		setState(State.PAUSED);		
 	}
 
 	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
+	public void dispose() {		
+//		setState(State.TERMINATED);		
 	}
 
 	@Override
 	public void render(float delta) {
+		// Advance world
+		this.step(delta);
+		
 		SpriteBatch batch = App.getSpriteBatch();
 		
-		camera.update(true);		
 		batch.setProjectionMatrix(camera.combined);
 		
 		for (Background b : backgrounds) {
@@ -300,11 +341,13 @@ public class GameScreen implements Screen {
 //		GL11.glEnd();
 //	}
 	
-	public void step() {
+	public void step(float delta) {
 		frameCounter++;
 		
 		// input handling
-		final float mdX = Gdx.input.getDeltaX();
+		final float idX = Gdx.input.getDeltaX();
+		
+		final float mdX = camera.unproject(new Vector3(idX, 0, 0)).x * 2.0f;
 		
 		final float iX = Gdx.input.getX();
 		final float iY = Gdx.input.getY();
@@ -332,6 +375,7 @@ public class GameScreen implements Screen {
 			}
 			
 			if (Gdx.input.isKeyPressed(Keys.Q)) {
+				Config.getInstance().setTerminationUserInitiated(true);
 				setState(State.TERMINATED);
 			}
 			break;
@@ -434,7 +478,7 @@ public class GameScreen implements Screen {
 							
 							if (brick.getType() == Brick.Type.POWERUP) {
 								GameState.changeScore(1000);			
-								spawnPowerup(b.getPosition(), Effect.Type.values()[Util.random(0, Effect.Type.values().length - 1)]);
+								spawnPowerup(b.getPosition());
 							}
 							
 							brick.setDestroyed(true);
@@ -472,7 +516,7 @@ public class GameScreen implements Screen {
 			
 			// Spawn a new bonus SpaceBomb?
 			if ((frameCounter % Config.SPACEBOMB_DENSITY) == 0) {
-				spaceBombs.add(new SpaceBomb(new Point((float) Util.random(0, (int) Config.getInstance().getClientWidth()), -50.0f), 
+				spaceBombs.add(new SpaceBomb(new Point((float) Util.random(50, (int) Config.getInstance().getClientWidth() - 200), -50.0f), 
 											 SpaceBomb.Type.BONUS));
 			}
 			
@@ -533,7 +577,7 @@ public class GameScreen implements Screen {
 			break;
 			
 		case TERMINATED:
-			System.exit(0);
+			Gdx.app.exit();
 			break;
 			
 		case WAITING_FOR_BALL:
@@ -653,6 +697,7 @@ public class GameScreen implements Screen {
 					
 					ball.invertXVelocity();
 					
+					ForceFeedback.wallHit();					
 					SoundLayer.playSound(Sounds.WALL_HIT);
 				}
 			}
@@ -666,6 +711,7 @@ public class GameScreen implements Screen {
 					 								  ball.getHeight()) {
 					ball.invertYVelocity();
 					
+					ForceFeedback.paddleHit();
 					SoundLayer.playSound(Sounds.WALL_HIT);
 				}
 			}
@@ -711,6 +757,7 @@ public class GameScreen implements Screen {
 					if (EffectManager.getInstance().isEffectActive(Effect.Type.STICKY_BALL))
 						ball.setState(Ball.State.STUCK_TO_PADDLE);
 					
+					ForceFeedback.paddleHit();
 					SoundLayer.playSound(Sounds.PADDLE_HIT);
 				}
 			}
@@ -817,7 +864,7 @@ public class GameScreen implements Screen {
 			
 			if (b.getType() == Brick.Type.POWERUP) {
 				GameState.changeScore(1000);			
-				spawnPowerup(b.getPosition(), Effect.Type.values()[Util.random(0, Effect.Type.values().length - 1)]);
+				spawnPowerup(b.getPosition());
 			}
 		}
 		else {
@@ -873,7 +920,7 @@ public class GameScreen implements Screen {
 			
 			if (b.getType() == Brick.Type.POWERUP) {
 				GameState.changeScore(1000);			
-				spawnPowerup(b.getPosition(), Effect.Type.values()[Util.random(0, Effect.Type.values().length - 1)]);
+				spawnPowerup(b.getPosition());
 			}
 		}
 	}
@@ -899,6 +946,7 @@ public class GameScreen implements Screen {
 			setState(State.WAITING_FOR_BALL);
 		}			
 		
+		ForceFeedback.ballLost();
 		SoundLayer.playSound(Sounds.BALL_LOST);
 		
 		if (GameState.getBallsLeft() <= 0) {
@@ -929,12 +977,32 @@ public class GameScreen implements Screen {
 		cleanupList(particleEffects);
 	}
 	
-	public void spawnPowerup(Point position, Effect.Type effectType) {
-		Logger.debug("Spawned powerup: " + effectType);
+	public void spawnPowerup(Point position) {		
+		Effect.Type effectType = Effect.Type.values()[Util.random(0, Effect.Type.values().length - 1)];
+		
+		// Filter out some effects if they don't 
+		// make sense at this time in the game		
+		if (effectType == Effect.Type.SLOW_DOWN && 
+			EffectManager.getInstance().isEffectActive(Effect.Type.SLOW_DOWN))
+			effectType = Effect.Type.PADDLE_GUN;		
+		
+		if (effectType == Effect.Type.SPEED_UP && 
+			EffectManager.getInstance().isEffectActive(Effect.Type.SPEED_UP))
+			effectType = Effect.Type.BOTTOM_WALL;		
+		
+		if (effectType == Effect.Type.SHRINK_PADDLE && 
+			getPaddle().getWidth() <= Config.PADDLE_MIN_WIDTH)
+			effectType = Effect.Type.ENLARGE_PADDLE;
+		
+		if (effectType == Effect.Type.ENLARGE_PADDLE && 
+			getPaddle().getWidth() >= Config.PADDLE_MAX_WIDTH)
+			effectType = Effect.Type.SHRINK_PADDLE;
 		
 		powerups.add(new Powerup(position, effectType));
+		
+		Logger.debug("Spawned powerup: " + effectType);
 				
-		SoundLayer.playSound(Sounds.POWERUP_SPAWNED);
+		SoundLayer.playSound(Sounds.POWERUP_SPAWNED);		
 	}
 	
 	public void addTextAnimation(String text) {		
@@ -954,10 +1022,14 @@ public class GameScreen implements Screen {
 		
 		switch (state) {					
 		case NEW_STAGE:
+			Config.getInstance().setGameResumeable(true);
+			
 			SoundLayer.playMusic(Musics.BACKGROUND);
 			break;
 			
 		case RESTART:
+			Config.getInstance().setGameResumeable(true);
+			
 			GameState.setLevel(0);
 			GameState.setScore(0);
 			GameState.setBallsLeft(Config.INITIAL_BALLS_LEFT);
@@ -965,24 +1037,29 @@ public class GameScreen implements Screen {
 			break;
 			
 		case GAME_OVER:
+			Config.getInstance().setGameResumeable(true);
 			break;
 			
 		case LOADING:
 			break;
 			
 		case PAUSED:
+			Config.getInstance().setGameResumeable(true);
 			break;
 			
 		case RUNNING:
+			Config.getInstance().setGameResumeable(true);
 			break;
 			
 		case STAGE_CLEARED:
 			break;
 			
 		case TERMINATED:
+			Config.getInstance().setGameResumeable(false);
 			break;
 			
 		case WAITING_FOR_BALL:
+			Config.getInstance().setGameResumeable(true);
 			break;
 			
 		default:
@@ -1006,11 +1083,7 @@ public class GameScreen implements Screen {
 			break;
 		}
 	}
-
-	public Viewport getViewport() {
-		return viewport;
-	}
-
+	
 	public void cheat(boolean withCounter) {		
 		if (withCounter) {
 			if (cheatTouchCtr++ > 5) {
@@ -1027,7 +1100,109 @@ public class GameScreen implements Screen {
 		}
 	}
 
+	public Viewport getViewport() {
+		return viewport;
+	}
+
 	public Camera getCamera() {
 		return camera;
+	}
+	
+	public void saveGameState() {
+		Logger.debug("Saving game state...");
+		
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutput out = null;
+		
+		try {			
+			out = new ObjectOutputStream(bos);			
+			
+			out.writeInt(GameState.getLevel());
+			out.writeInt(GameState.getBallsLeft());
+			out.writeInt(GameState.getSpaceBombsLeft());
+			out.writeInt(GameState.getScore());
+			
+			out.writeObject(this);			
+			out.writeObject(EffectManager.getInstance());
+			
+			byte[] bytes = bos.toByteArray();
+			
+			FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
+			handle.writeBytes(bytes, false);
+		}	
+		catch (IOException e) {
+			e.printStackTrace();
+		} 
+		finally {
+			try {
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException ex) {
+				// ignore close exception
+			}
+			try {
+				bos.close();
+			} catch (IOException ex) {
+				// ignore close exception
+			}
+		}
+	}
+	
+	public void loadGameState() throws IOException {
+		Logger.debug("Restoring game state...");
+		
+		FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
+		byte[] bytes = handle.readBytes();
+		
+		Logger.debug(handle.path());
+		
+		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+		ObjectInput in = null;
+		
+		try {
+			in = new ObjectInputStream(bis);
+			
+			GameState.setLevel(in.readInt());
+			GameState.setBallsLeft(in.readInt());
+			GameState.setSpaceBombsLeft(in.readInt());
+			GameState.setScore(in.readInt());
+			
+			Object o = in.readObject();
+			EffectManager e = (EffectManager) in.readObject();
+			EffectManager.setInstance(e);
+			
+			((GameScreen) o).initializeTransients();			
+			
+			ScreenManager.getInstance().overrideAndShowScreen(ScreenType.GAME, (GameScreen) o);
+			
+			((App) Gdx.app.getApplicationListener()).getGameScreen().setState(State.PAUSED);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+						
+			Logger.error("Deleting saved state due to invalid format!");
+			handle.delete();
+			
+			throw e;
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				bis.close();
+			} catch (IOException ex) {
+				// ignore close exception
+			}
+			try {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ex) {
+				// ignore close exception
+			}
+		}
 	}
 }

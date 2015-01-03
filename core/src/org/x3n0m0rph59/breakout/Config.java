@@ -26,11 +26,8 @@ public final class Config {
 	public static final int TOAST_FONT_SIZE = 44;
 	
 	/** How long a message is being displayed */
-	public static final float TOAST_DELAY = 4.0f;
-	
-	
-	/** Bias of pitch when in accelerated or decelerated mode */
-	public static final float MUSIC_PITCH_BIAS = 1.5f;
+	public static final float TOAST_DELAY = 3.5f;
+		
 	
 	/** Initial number of lives left */
 	public static final int INITIAL_BALLS_LEFT = 5;
@@ -117,9 +114,15 @@ public final class Config {
 	
 	/** Default width of the paddle */
 	public static final float PADDLE_DEFAULT_WIDTH = 150.0f;
+		
+	/** Minimum width of the paddle */
+	public static final float PADDLE_MIN_WIDTH = 50.0f;
+	
+	/** Maximum width of the paddle */
+	public static final float PADDLE_MAX_WIDTH = 500.0f;
 	
 	/** Specifies how much the paddle grows when an extender bonus has been caught */	
-	public static final float PADDLE_EXPANSION = 45.0f;
+	public static final float PADDLE_EXPANSION = 50.0f;
 	
 	/** The height of the paddle */
 	public static final float PADDLE_HEIGHT = 35.0f;
@@ -163,12 +166,28 @@ public final class Config {
 	public static final float BOTTOM_WALL_SEGMENT_HEIGHT = 25.0f;
 	public static final float BOTTOM_WALL_SEGMENT_SPACING = 5.0f;
 	
+	public static final int VIBRATION_DURATION_BALL_VS_BRICK = 1;
 	
-	private static final Config instance = new Config();
+	public static final int VIBRATION_DURATION_BRICK_DESTROYED = 1;
 	
+	public static final int VIBRATION_DURATION_BALL_VS_WALL = 15;	
+
+	public static final int VIBRATION_DURATION_BALL_VS_PADDLE = 25;
+	
+	public static final int VIBRATION_DURATION_BALL_LOST = 100;
+
+	public static final int VIBRATION_DURATION_SPACEBOMB_EXPLOSION = 2000;
+	
+	
+	private static final Config instance = new Config();	
+
 	private float speedFactor = 1.0f;
 
 	private boolean noMusic;
+
+	private boolean gameResumeable = false;
+
+	private boolean userTerminated = false;
 	
 	
 	public Config() {
@@ -227,5 +246,21 @@ public final class Config {
 	
 	public boolean isMusicMuted() {		
 		return noMusic;
+	}
+
+	public void setGameResumeable(boolean resumeable) {
+		gameResumeable = resumeable;
+	}
+	
+	public boolean isGameResumeable() {
+		return gameResumeable;
+	}
+	
+	public void setTerminationUserInitiated(boolean userInitiated) {
+		userTerminated = userInitiated;
+	}
+	
+	public boolean isTerminationUserInitiated() {
+		return userTerminated;
 	}
 }

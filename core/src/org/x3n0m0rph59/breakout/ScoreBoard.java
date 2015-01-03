@@ -84,9 +84,10 @@ public class ScoreBoard implements Renderable {
 		for (Brick b : bricks)
 			b.render(batch);
 		
-//		grapplingHook.render(batch, new Point(Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH + 25,
-//				  Config.WORLD_HEIGHT - (175 + 150)), 
-//				  	150, 150);
+		
+		font.draw(batch, "MAIN MENU", Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH + 25, 
+									  Config.WORLD_HEIGHT - (175 + 150));
+		
 		
 		spaceBomb.render(batch, new Point(Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH + 40,
 										  Config.WORLD_HEIGHT - 175), 

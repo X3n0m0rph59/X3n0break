@@ -1,10 +1,17 @@
 package org.x3n0m0rph59.breakout;
 
+import java.io.Serializable;
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
 
-public class GameObject implements Renderable, Stepable, Destroyable {
+public class GameObject implements Renderable, Stepable, Destroyable, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5132831131796375252L;
+
 	protected SpriteObject sprite;
 	
 	protected Point position;

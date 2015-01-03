@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.TextureLoader.TextureParameter;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 
@@ -12,7 +15,12 @@ public class SpriteLoader {
 	private static final SpriteLoader instance = new SpriteLoader();
 	private Map<String, Sprite> map = new HashMap<String, Sprite>();
 	
-	public SpriteLoader() {
+	private AssetManager assetManager;
+	
+	public SpriteLoader() {		
+		assetManager = new AssetManager();
+		Texture.setAssetManager(assetManager);
+		
 		primeCache();
 	}
 	
@@ -22,17 +30,24 @@ public class SpriteLoader {
 	
 	public Sprite getSprite(String filename, int tw, int th) {
 		Sprite sprite;		
-		if ((sprite = getSpriteFromCache(filename)) == null) {			
-			Texture t = new Texture(Gdx.files.internal(filename));			
+		if ((sprite = getSpriteFromCache(filename)) == null) {
+			TextureParameter param = new TextureParameter();
 			
-//			t.setFilter(Texture.TextureFilter.Linear, 
-//						Texture.TextureFilter.Linear);			
+			param.minFilter = TextureFilter.Linear;
+			param.genMipMaps = true;
+			
+			assetManager.load(filename, Texture.class, param);			
+			assetManager.finishLoading();
+			
+			Texture t = assetManager.get(filename);
 			
 			sprite = new Sprite(t, tw, th);			
 			sprite.flip(false, true);
 //			sprite.rotate90(true);
 						
 			addSpriteToCache(filename, sprite);
+			
+			Logger.debug("# managed textures: " + Texture.getNumManagedTextures());
 			
 			return sprite;
 		}
@@ -51,5 +66,24 @@ public class SpriteLoader {
 	
 	private void primeCache() {
 				
+	}
+
+	public void dispose() {
+		for (Sprite s : map.values()) {
+			s.getTexture().dispose();
+//			map.remove(s);
+		}
+		
+//		map.clear();
+	}
+
+	public void resumeAssets() {		
+		Logger.debug("Reloading managed textures");
+		Logger.debug("# managed textures: " + Texture.getNumManagedTextures());
+		
+		Texture.invalidateAllTextures(Gdx.app);
+		
+		assetManager.update();
+		assetManager.finishLoading();
 	}
 }

@@ -8,6 +8,11 @@ import java.util.List;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class ParticleSystem extends GameObject {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 547619642611327530L;
+	
 	private final float initialLifeTime;
 	private float lifeTime, particleDensity, angularDeviation, 
 				  ttl, particleSpeed, sizeFactor;

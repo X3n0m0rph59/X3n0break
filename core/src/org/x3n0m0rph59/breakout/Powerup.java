@@ -8,6 +8,11 @@ import org.x3n0m0rph59.breakout.Effect.Type;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Powerup extends GameObject {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7418474324088350613L;
+
 	public enum State {FLOATING, STUCK_TO_GRAPPLING_HOOK}
 	private State state = State.FLOATING;
 	
@@ -20,7 +25,7 @@ public class Powerup extends GameObject {
 										 new SpriteTuple("data/sprites/Star2.png", 345.0f, 342.0f, 345, 342), 
 										 new SpriteTuple("data/sprites/Star3.png", 270.0f, 261.0f, 270, 261), 
 										 new SpriteTuple("data/sprites/Star4.png", 264.0f, 285.0f, 264, 285)}, 
-										 position, -1.0f, 4.0f, 0.0f, 360.0f, 10.0f,  95.0f, 150.0f, 3.5f);
+										 position, -1.0f, 1.75f, 0.0f, 360.0f, 10.0f,  95.0f, 150.0f, 3.5f);
 	
 	public Powerup(Point position, Effect.Type type) {
 		super(null, position, Config.POWERUP_WIDTH, Config.POWERUP_HEIGHT, 0.0f, 0.0f, 0.0f, Config.POWERUP_SPEED);

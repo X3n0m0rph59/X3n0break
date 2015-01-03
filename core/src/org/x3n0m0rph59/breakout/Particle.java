@@ -1,8 +1,15 @@
 package org.x3n0m0rph59.breakout;
 
+import java.io.Serializable;
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class Particle implements Renderable, Stepable, Destroyable {
+public class Particle implements Renderable, Stepable, Destroyable, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8999099247387857149L;
+
 	private final SpriteObject sprite;
 	
 	private Point position;

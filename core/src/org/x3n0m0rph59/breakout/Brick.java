@@ -9,6 +9,11 @@ import org.x3n0m0rph59.breakout.SoundLayer;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Brick extends GameObject {	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2688975363566552406L;
+
 	public enum Type {NORMAL, WEAK, HARD, SOLID, POWERUP};
 	public enum Behavior {MOVE_LEFT, MOVE_RIGHT, ROTATE_LEFT, ROTATE_RIGHT};
 	
@@ -106,11 +111,15 @@ public class Brick extends GameObject {
 		switch (type) {
 		case NORMAL:
 			destroyed = true;
+
+			ForceFeedback.brickDestroyed(type);
 			SoundLayer.playSound(Sounds.BRICK_DESTROYED);
 			break;
 			
 		case WEAK:
 			destroyed = true;
+			
+			ForceFeedback.brickDestroyed(type);
 			SoundLayer.playSound(Sounds.BRICK_DESTROYED);
 			break;
 			
@@ -118,11 +127,14 @@ public class Brick extends GameObject {
 			hitCounter++;
 			if (hitCounter >= Config.HARD_BRICK_HITS_NEEDED)
 			{
+				ForceFeedback.brickDestroyed(type);
 				SoundLayer.playSound(Sounds.BRICK_DESTROYED);
 				destroyed = true;
 			}
-			else
+			else {
+				ForceFeedback.brickHit(type);
 				SoundLayer.playSound(Sounds.BRICK_HIT);
+			}
 			break;
 			
 		case POWERUP:

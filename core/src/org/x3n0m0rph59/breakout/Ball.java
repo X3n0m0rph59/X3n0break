@@ -6,6 +6,11 @@ import com.badlogic.gdx.math.Rectangle;
 
 
 public class Ball extends GameObject {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7834970106675039788L;
+
 	private static final float throwAngle = -45.0f;	
 	
 	boolean drawFlash = false;

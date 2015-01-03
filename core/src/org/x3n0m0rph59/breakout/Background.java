@@ -6,6 +6,11 @@ package org.x3n0m0rph59.breakout;
  */
 public class Background extends GameObject {	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4983875169579795137L;
+
+	/**
 	 * Create a new Background
 	 * 
 	 * @param sprite	The Sprite used to draw the background
