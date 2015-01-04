@@ -21,6 +21,8 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 	protected float angleInDegrees;
 	protected float angularVelocity;
 	
+	protected boolean visible = true;
+	
 	protected boolean destroyed = false;
 	
 	protected int frameCounter = 0;
@@ -43,7 +45,7 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 	}
 	
 	public void render(SpriteBatch batch) {
-		if (sprite != null)
+		if (sprite != null && isVisible())
 			sprite.render(batch, position);
 	}
 	
@@ -179,6 +181,14 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 		this.angularVelocity = angularVelocity;
 	}
 
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+	
 	public boolean isDestroyed() {
 		return destroyed;
 	}

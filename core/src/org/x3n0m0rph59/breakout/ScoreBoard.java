@@ -56,6 +56,8 @@ public class ScoreBoard implements Renderable {
 	}
 	
 	public void render(SpriteBatch batch) {
+		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+		
 		BitmapFont font = FontLoader.getInstance().getFont("small_font", 28);
 		BitmapFont smallFont = FontLoader.getInstance().getFont("small_font", 24);
 		
@@ -105,8 +107,6 @@ public class ScoreBoard implements Renderable {
 			
 			float x = (Config.WORLD_WIDTH - Config.SCOREBOARD_WIDTH) - 8.0f;
 			float y = i * segment_height;			
-			
-			batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 			
 			smallFont.draw(batch, "I", x, y);
 		}		

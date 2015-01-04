@@ -53,8 +53,9 @@ public class ParticleSystem extends GameObject {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		for (Particle p : particles)
-			p.render(batch);
+		if (isVisible())
+			for (Particle p : particles)
+				p.render(batch);
 	}
 
 	@Override

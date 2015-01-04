@@ -132,7 +132,7 @@ public final class Config {
 	public static final float PADDLE_HEIGHT = 35.0f;
 	
 	/** Horizontal offset of the "Engine" particle systems */
-	public static final float PADDLE_ENGINE_OFFSET = 5.0f;
+	public static final float PADDLE_ENGINE_OFFSET = 15f;
 	
 	/**
 	 * Dampening factor for the collision between ball and paddle (Use 1.0f for
