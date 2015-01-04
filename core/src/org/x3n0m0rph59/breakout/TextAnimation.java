@@ -30,8 +30,8 @@ public class TextAnimation implements Renderable, Stepable, Destroyable {
 	}
 
 	@Override
-	public void step() {
-		frameCounter++;
+	public void step(float delta) {
+		frameCounter += Math.round(delta);
 
 		color.a -= 0.015f;
 		

@@ -58,18 +58,18 @@ public class ParticleSystem extends GameObject {
 	}
 
 	@Override
-	public void step() {
+	public void step(float delta) {
 		lifeTime -= 1.0f;
 		if (initialLifeTime >= 0.0f && lifeTime <= 0.0f) {
 			setDestroyed(true);
 		} else {		
-			for (int i = 0; i < (int) particleDensity; i++)
+			for (int i = 0; i < (int) (particleDensity /* * delta*/); i++)
 				addNewParticle();
 			
 			Iterator<Particle> pi = particles.iterator();
 			while (pi.hasNext()) {
 				Particle p = pi.next();
-				p.step();
+				p.step(delta);
 				
 				if (p.isDestroyed())
 					pi.remove();

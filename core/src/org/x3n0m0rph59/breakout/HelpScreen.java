@@ -50,10 +50,10 @@ public class HelpScreen implements Screen {
 		
 		font.draw(batch, "Welcome to " + Config.APP_NAME + " " + Config.APP_VERSION, 50, 50);
 		
-		smallFont.drawMultiLine(batch, "NOTE:\nThis is an early access (alpha) version of the game. " + 
+		smallFont.drawMultiLine(batch, "NOTE:\n\nThis is an early access (alpha) version of the game. " + 
 							  "It may still contain some bugs!", 50, 150);
 		
-		smallFont.drawMultiLine(batch, "Usage:\n\nSwipe with one finger to move the paddle.\n" +
+		smallFont.drawMultiLine(batch, "Usage:\n\nSwipe with one finger to move the paddle.\n\n" +
 							  "Tap with two fingers to toggle the grappling hook.\n\n" +
 							  "Press Main Menu in the lower right corner of the screen " + 
 							  "to go to the main menu.\n\n"+

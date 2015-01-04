@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -29,13 +28,12 @@ public class SpriteObject implements Serializable {
 	
 	private Point centerOfRotation = new Point(0.0f, 0.0f);
 	
+	private boolean alphaBlending = false;
+
 	private boolean flashed = false;
 	
+		
 	public SpriteObject(String filename, float width, float height, int tw, int th) {
-		this(filename, width, height, tw, th, false);
-	}
-	
-	public SpriteObject(String filename, float width, float height, int tw, int th, boolean hasAlphaChannel) {
 		this.width = width;
 		this.height = height;
 		
@@ -43,30 +41,33 @@ public class SpriteObject implements Serializable {
 		this.tw = tw;
 		this.th = th;
 		
-		sprite = SpriteLoader.getInstance().getSprite(filename, tw, th);		
+		sprite = SpriteLoader.getInstance().getSprite(filename, tw, th);
 	}
 	
-	public void render(SpriteBatch batch, Point position, float width, float height) {
-		Gdx.gl.glEnable(GL20.GL_BLEND);
-		
-		if (!flashed)
+	public void render(SpriteBatch batch, Point position, float width, float height) {		
+		if (alphaBlending) {			
 			batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-		else
-			batch.setBlendFunction(GL20.GL_ONE_MINUS_SRC_COLOR, GL20.GL_ONE);
+		} else {
+			if (!flashed)
+				batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+			else
+				batch.setBlendFunction(GL20.GL_ONE_MINUS_SRC_COLOR, GL20.GL_ONE);
+		}
 		
+			
 		if (angleInDegrees != 0) {
+			
 			batch.draw(sprite, position.getX(), position.getY(), 
 					   centerOfRotation.getX(), centerOfRotation.getY(), 
 					   getWidth(), getHeight(), 1.0f, 1.0f, 
 					   angleInDegrees, true);
-		} else {		
+			
+		} else {
+			
 			batch.draw(sprite, position.getX(), position.getY(), 
 					   getWidth(), getHeight());
+			
 		}
-		
-		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-		
-		Gdx.gl.glDisable(GL20.GL_BLEND);
 	}
 	
 	public void render(SpriteBatch batch, Point position) {
@@ -77,11 +78,11 @@ public class SpriteObject implements Serializable {
 		this.render(batch, new Point(r.getX(), r.getY()), r.getWidth(), r.getHeight());
 	}
 	
-	public void step() {
+	public void step(float delta) {
 //		if (++frameCounter >= sprite.getHorizontalCount());
 //			frameCounter = 0;
 			
-		++frameCounter;
+		frameCounter += Math.round(delta);
 	}
 
 	public int getFrameCounter() {
@@ -114,6 +115,8 @@ public class SpriteObject implements Serializable {
 
 	public void setAlpha(float alpha) {
 		this.alpha = alpha;
+		
+		sprite.setAlpha(alpha);
 	}	
 	
 	public float getAngle() {
@@ -130,6 +133,14 @@ public class SpriteObject implements Serializable {
 	
 	public void setCenterOfRotation(Point point) {	
 		this.centerOfRotation = point;
+	}
+	
+	public boolean getAlphaBlending() {
+		return alphaBlending;
+	}
+
+	public void setAlphaBlending(boolean alphaBlending) {
+		this.alphaBlending = alphaBlending;
 	}
 
 	public boolean isFlashed() {

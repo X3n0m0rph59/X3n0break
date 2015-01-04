@@ -30,8 +30,7 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 	public GameObject(SpriteObject sprite, Point position, float width, float height,
 					  float angleInDegrees, float angularVelocity, float deltaX, float deltaY) {
 		super();
-		
-		this.sprite = sprite;
+						
 		this.position = position;
 		this.width = width;
 		this.height = height;
@@ -39,31 +38,29 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 		this.angularVelocity = angularVelocity;
 		this.deltaX = deltaX;
 		this.deltaY = deltaY;
+		
+		setSprite(sprite);
 	}
 	
 	public void render(SpriteBatch batch) {
-		sprite.setWidth(width);
-		sprite.setHeight(height);		
-		sprite.setCenterOfRotation(new Point(sprite.getWidth() / 2, sprite.getHeight() / 2));
-		
 		if (sprite != null)
 			sprite.render(batch, position);
 	}
 	
-	public void step() {
-		frameCounter++;
+	public void step(float delta) {
+		frameCounter += Math.round(delta);
 		
 		float speedFactor = 1.0f;
 		if (!this.isExcemptFromSpeedFactorChange())
 			speedFactor = Config.getInstance().getSpeedFactor();
 		
-		setAngleInDegrees(getAngleInDegrees() + (getAngularVelocity() * speedFactor));
+		setAngleInDegrees(getAngleInDegrees() + (getAngularVelocity() * speedFactor * delta));
 		
-		changePosition(getDeltaX() * speedFactor,
-				       getDeltaY() * speedFactor);
+		changePosition(getDeltaX() * speedFactor * delta,
+				       getDeltaY() * speedFactor * delta);
 
 		if (sprite != null)
-			sprite.step();
+			sprite.step(delta);
 	}
 
 	public boolean isExcemptFromSpeedFactorChange() {
@@ -155,10 +152,16 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 
 	public void setWidth(float width) {
 		this.width = width;
+		
+		if (sprite != null)
+			sprite.setWidth(width);
 	}
 
 	public void setHeight(float height) {
 		this.height = height;
+		
+		if (sprite != null)
+			sprite.setHeight(height);
 	}
 
 	public void setAngleInDegrees(float angleInDegrees) {
@@ -202,6 +205,14 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 
 	public void setSprite(SpriteObject sprite) {
 		this.sprite = sprite;
+		
+		if (sprite != null) {
+			sprite.setWidth(width);
+			sprite.setHeight(height);
+			
+			sprite.setCenterOfRotation(new Point(sprite.getWidth() / 2, sprite.getHeight() / 2));
+			sprite.setAngle(angleInDegrees);
+		}
 	}
 
 	@Override

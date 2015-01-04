@@ -1,5 +1,7 @@
 package org.x3n0m0rph59.breakout;
 
+import org.x3n0m0rph59.breakout.GameScreen.State;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
@@ -42,17 +44,18 @@ public class MenuInputProcessor implements InputProcessor {
 		final float mX = screenX;
 		final float mY = screenY;
 		
-		final Rectangle hotRectNewGame = new Rectangle(0, 200, (float) Gdx.graphics.getWidth() / 2, 100);
-		final Rectangle hotRectSettings = new Rectangle(0, 500, (float) Gdx.graphics.getWidth() / 2, 100);
-		final Rectangle hotRectHighscores = new Rectangle(0, 700, (float) Gdx.graphics.getWidth() / 2, 100);
+		final Rectangle hotRectNewGame = new Rectangle(0, 200, (float) Gdx.graphics.getWidth() / 2, 200);
+		final Rectangle hotRectSettings = new Rectangle(0, 500, (float) Gdx.graphics.getWidth() / 2, 200);
+		final Rectangle hotRectHighscores = new Rectangle(0, 700, (float) Gdx.graphics.getWidth() / 2, 200);
 		
-		final Rectangle hotRectResumeGame = new Rectangle((float) Gdx.graphics.getWidth() / 2, 200, (float) Gdx.graphics.getWidth(), 100);
-		final Rectangle hotRectHelp = new Rectangle((float) Gdx.graphics.getWidth() / 2, 500, (float) Gdx.graphics.getWidth(), 100);
-		final Rectangle hotRectExit = new Rectangle((float) Gdx.graphics.getWidth() / 2, 700, (float) Gdx.graphics.getWidth(), 100);
+		final Rectangle hotRectResumeGame = new Rectangle((float) Gdx.graphics.getWidth() / 2, 200, (float) Gdx.graphics.getWidth(), 200);
+		final Rectangle hotRectHelp = new Rectangle((float) Gdx.graphics.getWidth() / 2, 500, (float) Gdx.graphics.getWidth(), 200);
+		final Rectangle hotRectExit = new Rectangle((float) Gdx.graphics.getWidth() / 2, 700, (float) Gdx.graphics.getWidth(), 200);
 		
 		if (hotRectNewGame.contains(new Vector2(mX, mY))) {
 			ScreenManager.getInstance().showScreen(ScreenType.GAME);
-			((App) Gdx.app.getApplicationListener()).getGameScreen().newGame();;
+			((App) Gdx.app.getApplicationListener()).getGameScreen().newGame();
+			
 			return true;
 		}
 		
@@ -67,12 +70,15 @@ public class MenuInputProcessor implements InputProcessor {
 		}
 		
 		if (hotRectResumeGame.contains(new Vector2(mX, mY))) {
-			ScreenManager.getInstance().showScreen(ScreenType.GAME);
+			ScreenManager.getInstance().showScreen(ScreenType.GAME);			
+			((App) Gdx.app.getApplicationListener()).getGameScreen().setState(State.PAUSED);
+			
 			return true;
 		}
 		
 		if (hotRectHelp.contains(new Vector2(mX, mY))) {
 			ScreenManager.getInstance().showScreen(ScreenType.HELP);
+			
 			return true;
 		}
 		

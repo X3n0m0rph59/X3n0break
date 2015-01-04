@@ -43,8 +43,8 @@ public class Powerup extends GameObject {
 		sprites.put(Effect.Type.SHRINK_PADDLE, new SpriteObject(
 				"data/sprites/powerup_shrink.png", Config.POWERUP_WIDTH,
 				Config.POWERUP_HEIGHT, 100, 100));
-		sprites.put(Effect.Type.ENLARGE_PADDLE, new SpriteObject(
-				"data/sprites/powerup_enlarge.png", Config.POWERUP_WIDTH,
+		sprites.put(Effect.Type.EXPAND_PADDLE, new SpriteObject(
+				"data/sprites/powerup_expand.png", Config.POWERUP_WIDTH,
 				Config.POWERUP_HEIGHT, 100, 100));
 
 		sprites.put(Effect.Type.FIREBALL, new SpriteObject(
@@ -79,15 +79,15 @@ public class Powerup extends GameObject {
 	}
 
 	@Override
-	public void step() {		
+	public void step(float delta) {		
 		trail.setPositionAndAngle(new Point(getBoundingBox().getX(), getBoundingBox().getY()), 180.0f);
-		trail.step();
+		trail.step(delta);
 		
 		for (SpriteObject s : sprites.values())
-			s.step();
+			s.step(delta);
 		
 		if (state != State.STUCK_TO_GRAPPLING_HOOK)
-			super.step();		
+			super.step(delta);		
 		
 		if (getY() >= Config.getInstance().getScreenHeight())
 				setDestroyed(true);

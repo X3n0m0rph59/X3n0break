@@ -35,16 +35,16 @@ public class GrapplingHookSegment extends GameObject {
 		default:
 			throw new RuntimeException("Invalid type: " + type);
 		}
-		
+				
 		super.render(batch);
 	}
 	
 	@Override
-	public void step() {
-		super.step();
+	public void step(float delta) {
+		super.step(delta);
 		
-		hook.step();
-		segment.step();
+		hook.step(delta);
+		segment.step(delta);
 	}
 	
 	@Override

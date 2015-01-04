@@ -1,7 +1,7 @@
 package org.x3n0m0rph59.breakout;
 
 import org.x3n0m0rph59.breakout.SoundLayer;
-import org.x3n0m0rph59.breakout.SpaceBomb.Type;
+//import org.x3n0m0rph59.breakout.SpaceBomb.Type;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -67,7 +67,7 @@ public class GameScreen implements Screen, Serializable {
 	private int frameCounter = 0;
 	
 	private int spaceBombCoolDownTime = 0;
-	private int cheatTouchCtr = 0;
+	private int cheatTouchCtr = 0;;
 	
 	
 	public GameScreen() {
@@ -135,12 +135,16 @@ public class GameScreen implements Screen, Serializable {
 	}
 	
 	public void newGame() {
+		SoundLayer.getInstance().stopAllMusic();
+		
 		GameState.setLevel(0);
 		GameState.setScore(0);
 		GameState.setBallsLeft(Config.INITIAL_BALLS_LEFT);
 		GameState.setSpaceBombsLeft(Config.INITIAL_SPACEBOMBS_LEFT);
 		
 		initLevel(0);
+		
+		setState(State.NEW_STAGE);
 	}
 	
 	public void restartLevel() {
@@ -190,7 +194,10 @@ public class GameScreen implements Screen, Serializable {
 	public void resume() {
 		Logger.debug("GameScreen: resume()");
 		
-		setState(State.PAUSED);
+		if (balls.isEmpty())
+			setState(State.WAITING_FOR_BALL);
+		else			
+			setState(State.PAUSED);
 	}
 
 	@Override
@@ -205,7 +212,6 @@ public class GameScreen implements Screen, Serializable {
 
 	@Override
 	public void render(float delta) {
-		// Advance world
 		this.step(delta);
 		
 		SpriteBatch batch = App.getSpriteBatch();
@@ -347,7 +353,7 @@ public class GameScreen implements Screen, Serializable {
 		// input handling
 		final float idX = Gdx.input.getDeltaX();
 		
-		final float mdX = camera.unproject(new Vector3(idX, 0, 0)).x * 2.0f;
+		final float mdX = camera.unproject(new Vector3(idX, 0, 0)).x;
 		
 		final float iX = Gdx.input.getX();
 		final float iY = Gdx.input.getY();
@@ -364,7 +370,7 @@ public class GameScreen implements Screen, Serializable {
 		
 		// cooldown timers
 		spaceBombCoolDownTime--;
-				
+						
 		switch (state) {
 		case LOADING:
 			break;
@@ -415,45 +421,45 @@ public class GameScreen implements Screen, Serializable {
 			}
 
 			
-			EffectManager.getInstance().step();
-			TextAnimationManager.getInstance().step();
+			EffectManager.getInstance().step(delta);
+			TextAnimationManager.getInstance().step(delta);
 			
 			for (Background b : backgrounds) {
-				b.step();
+				b.step(delta);
 			}
 			
 			for (Star p : stars) {
-				p.step();
+				p.step(delta);
 			}
 			
 			for (Brick b : bricks) {
-				b.step();
+				b.step(delta);
 			}
 			
 			for (Powerup p : powerups) {
-				p.step();
+				p.step(delta);
 			}
 			
 			for (Projectile p : projectiles) {
-				p.step();
+				p.step(delta);
 			}
 			
 			for (SpaceBomb b : spaceBombs) {
-				b.step();
+				b.step(delta);
 			}			
 			
 			for (ParticleSystem p : particleEffects) {
-				p.step();
+				p.step(delta);
 			}
 			
 			
 			for (Ball b : balls) {
-				b.step();
+				b.step(delta);
 			}
 			
-			paddle.step();
+			paddle.step(delta);
 			
-			bottomWall.step();
+			bottomWall.step(delta);
 			
 			doCollisionDetection();
 			doCleanup();
@@ -487,7 +493,7 @@ public class GameScreen implements Screen, Serializable {
 				}
 			}
 			
-			// Spawn new particles
+			// Spawn new stars
 			for (int i = 0; i < Config.STAR_DENSITY; i++) {
 				stars.add(new Star(new Point(Util.random(0, (int) Config.getInstance().getClientWidth()), 0.0f), 
 								   Util.random((int) Config.STAR_MIN_SPEED, 
@@ -542,6 +548,8 @@ public class GameScreen implements Screen, Serializable {
 			// Move caught power ups with the paddle
 			for (Powerup p : powerups) {
 				if (p.getState() == Powerup.State.STUCK_TO_GRAPPLING_HOOK) {
+					paddle.getGrapplingHook().setSomethingAttached(true);
+					
 					if ((mX + mdX + (paddle.getWidth() / 2) >= 0) && 
 						(mX + mdX + (paddle.getWidth() / 2) <= Config.getInstance().getClientWidth())) {						
 						
@@ -555,6 +563,8 @@ public class GameScreen implements Screen, Serializable {
 			// Move caught space bombs with the paddle
 			for (SpaceBomb bomb : spaceBombs) {
 				if (bomb.getState() == SpaceBomb.State.STUCK_TO_GRAPPLING_HOOK) {
+					paddle.getGrapplingHook().setSomethingAttached(true);
+					
 					if ((mX + mdX + (paddle.getWidth() / 2) >= 0) && 
 						(mX + mdX + (paddle.getWidth() / 2) <= Config.getInstance().getClientWidth())) {						
 						
@@ -711,7 +721,17 @@ public class GameScreen implements Screen, Serializable {
 					 								  ball.getHeight()) {
 					ball.invertYVelocity();
 					
-					ForceFeedback.paddleHit();
+					if (ball.getY() <= 0) {
+						// avoid double collisions by placing the ball below the wall
+						ball.setPosition(new Point(ball.getX(), 1.0f));
+						
+					} else {
+						// avoid double collisions by placing the ball above the wall
+						ball.setPosition(new Point(ball.getX(), Config.getInstance().getScreenHeight() - 
+																Config.BOTTOM_WALL_HEIGHT - ball.getHeight() + 1.0f));
+					}
+					
+					ForceFeedback.wallHit();
 					SoundLayer.playSound(Sounds.WALL_HIT);
 				}
 			}
@@ -795,6 +815,8 @@ public class GameScreen implements Screen, Serializable {
 			for (Powerup p : powerups) {
 				if (paddle.getGrapplingHook().collisionTest(p.getBoundingBox())) {
 					
+					paddle.getGrapplingHook().setSomethingAttached(true);
+					
 					p.setState(Powerup.State.STUCK_TO_GRAPPLING_HOOK);
 					
 					Logger.debug("Caught a Power up!");
@@ -809,6 +831,8 @@ public class GameScreen implements Screen, Serializable {
 				if (Util.collisionTest(paddle.getBoundingBox(), p.getBoundingBox())) {
 					EffectManager.getInstance().addEffect(p.getType());
 					p.setDestroyed(true);
+					
+					paddle.getGrapplingHook().setSomethingAttached(false);
 				}
 			}
 		}		
@@ -818,6 +842,8 @@ public class GameScreen implements Screen, Serializable {
 			for (SpaceBomb b : spaceBombs) {
 				//if (b.getType() == SpaceBomb.Type.BONUS) {
 					if (paddle.getGrapplingHook().collisionTest(b.getBoundingBox())) {
+						
+						paddle.getGrapplingHook().setSomethingAttached(true);
 						
 						b.setState(SpaceBomb.State.STUCK_TO_GRAPPLING_HOOK);
 						
@@ -834,19 +860,21 @@ public class GameScreen implements Screen, Serializable {
 				if (Util.collisionTest(paddle.getBoundingBox(), b.getBoundingBox())) {
 					GameState.incrementSpaceBombsLeft();
 					b.setDestroyed(true);
+					
+					paddle.getGrapplingHook().setSomethingAttached(false);
 				}
 			}
 		}
 		
 		// Caught a space bomb with the paddle?
-		for (SpaceBomb b : spaceBombs) {
-			if (b.getState() == SpaceBomb.State.FLOATING && b.getType() == Type.BONUS) {
-				if (Util.collisionTest(paddle.getBoundingBox(), b.getBoundingBox())) {
-					GameState.incrementSpaceBombsLeft();
-					b.setDestroyed(true);
-				}
-			}
-		}
+//		for (SpaceBomb b : spaceBombs) {
+//			if (b.getState() == SpaceBomb.State.FLOATING && b.getType() == Type.BONUS) {
+//				if (Util.collisionTest(paddle.getBoundingBox(), b.getBoundingBox())) {
+//					GameState.incrementSpaceBombsLeft();
+//					b.setDestroyed(true);
+//				}
+//			}
+//		}
 	}
 
 	private void brickHit(Brick b, Ball ball, boolean hitByProjectile) {
@@ -992,9 +1020,9 @@ public class GameScreen implements Screen, Serializable {
 		
 		if (effectType == Effect.Type.SHRINK_PADDLE && 
 			getPaddle().getWidth() <= Config.PADDLE_MIN_WIDTH)
-			effectType = Effect.Type.ENLARGE_PADDLE;
+			effectType = Effect.Type.EXPAND_PADDLE;
 		
-		if (effectType == Effect.Type.ENLARGE_PADDLE && 
+		if (effectType == Effect.Type.EXPAND_PADDLE && 
 			getPaddle().getWidth() >= Config.PADDLE_MAX_WIDTH)
 			effectType = Effect.Type.SHRINK_PADDLE;
 		
@@ -1024,6 +1052,7 @@ public class GameScreen implements Screen, Serializable {
 		case NEW_STAGE:
 			Config.getInstance().setGameResumeable(true);
 			
+			SoundLayer.getInstance().stopAllMusic();
 			SoundLayer.playMusic(Musics.BACKGROUND);
 			break;
 			
@@ -1188,7 +1217,6 @@ public class GameScreen implements Screen, Serializable {
 			throw e;
 			
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			try {

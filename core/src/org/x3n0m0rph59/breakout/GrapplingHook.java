@@ -17,6 +17,8 @@ public class GrapplingHook extends GameObject {
 	private GrapplingHookSegment segment = new GrapplingHookSegment(GrapplingHookSegment.Type.SEGMENT, new Point(0.0f,0.0f));
 	
 	private float length = 0.0f;
+
+	private boolean somethingAttached = false;
 	
 	public GrapplingHook(Point position) {
 		super(null, position, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -47,8 +49,10 @@ public class GrapplingHook extends GameObject {
 	}
 	
 	public void resetState() {
-		this.state = State.IDLE;
+		state = State.IDLE;
 		length = 0.0f;
+		somethingAttached = false;
+		
 		SoundLayer.stopLoop(Sounds.GRAPPLING_HOOK_LOOP);
 	}
 	
@@ -71,7 +75,7 @@ public class GrapplingHook extends GameObject {
 	}
 	
 	@Override
-	public void step() {
+	public void step(float delta) {
 		switch (state) {
 		case IDLE:
 			// do nothing
@@ -133,12 +137,26 @@ public class GrapplingHook extends GameObject {
 		if (this.state == State.IDLE && state == State.EXTENDING)
 			SoundLayer.loopSound(Sounds.GRAPPLING_HOOK_LOOP);
 		
-		if (this.state == State.FULLY_EXTENDED && state == State.LOWERING)
-			SoundLayer.loopSound(Sounds.GRAPPLING_HOOK_LOOP);
+		if (this.state == State.FULLY_EXTENDED && state == State.LOWERING) {
+			float pitch = 1.0f;
+			
+			if (isSomethingAttached())
+				pitch = 0.85f;
+			
+			SoundLayer.loopSound(Sounds.GRAPPLING_HOOK_LOOP, pitch);
+		}
 		
 		if (state == State.IDLE || state == State.FULLY_EXTENDED)
 			SoundLayer.stopLoop(Sounds.GRAPPLING_HOOK_LOOP);
 					
 		this.state = state;
+	}
+
+	public boolean isSomethingAttached() {		
+		return somethingAttached;
+	}
+	
+	public void setSomethingAttached(boolean somethingAttached) {		
+		this.somethingAttached = somethingAttached;
 	}
 }

@@ -36,14 +36,14 @@ public class TextAnimationManager implements Stepable, Renderable {
 	}
 
 	@Override
-	public void step() {
+	public void step(float delta) {
 //		for (TextAnimation ta : textAnimations) {
 //			ta.step();
 //		}
 		
 		if (textAnimations.size() > 0) {
 			TextAnimation ta = textAnimations.get(0);
-			ta.step();
+			ta.step(delta);
 		}
 		
 		doCleanup();

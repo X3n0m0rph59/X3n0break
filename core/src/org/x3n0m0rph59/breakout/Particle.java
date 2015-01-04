@@ -25,8 +25,8 @@ public class Particle implements Renderable, Stepable, Destroyable, Serializable
 		this.angle = angleInDegrees;
 		
 		this.angularDeviation = (float) Util.random((int) -angularDeviation, (int) +angularDeviation);
-		this.dx = (float) Math.cos(Math.toRadians(angleInDegrees + this.angularDeviation)) * speed;
-		this.dy = (float) Math.sin(Math.toRadians(angleInDegrees + this.angularDeviation)) * speed;
+		this.dx = (float) Math.cos(Math.toRadians(angleInDegrees + 90 + this.angularDeviation)) * speed;
+		this.dy = (float) Math.sin(Math.toRadians(angleInDegrees + 90 + this.angularDeviation)) * speed;
 		
 		this.angularVelocity = angularVelocity;
 		
@@ -35,34 +35,38 @@ public class Particle implements Renderable, Stepable, Destroyable, Serializable
 		
 		this.size = 1.0f;
 		this.sizeIncrease = sizeIncrease;
+		
+		if (sprite != null)
+			sprite.setAlphaBlending(true);
 	}
 
 	@Override
 	public void render(SpriteBatch batch) {	
 		final SpriteObject sprite = this.getSprite();
 		
-		sprite.setAlpha(initialttl / (getAge() + 0.1f) / 5);		
-		
-		sprite.setAngle(angle);
+		sprite.setAlpha(initialttl / (getAge() + 0.1f) / 150.0f);		
 		
 		sprite.setWidth(size);
 		sprite.setHeight(size);
+		
 		sprite.setCenterOfRotation(new Point(sprite.getWidth() / 2, sprite.getHeight() / 2));
+		if (angularVelocity != 0)
+			sprite.setAngle(angle + 90);		
 		
 		sprite.render(batch, new Point(position.getX(), position.getY()));
 	}
 
 	@Override
-	public void step() {
-		if ((ttl -= 1.0f) <= 0)
+	public void step(float delta) {
+		if ((ttl -= 1.0f /* delta */) <= 0)
 			setDestroyed(true);
 		
-		angle += angularVelocity;
-		size += sizeIncrease;
+		angle += angularVelocity /* * delta */;
+		size += sizeIncrease /* * delta */;
 		
-		position = new Point(position.getX() + dx, position.getY() + dy);
+		position = new Point(position.getX() + (dx /* * delta */), position.getY() + (dy /* * delta */));
 		
-		getSprite().step();
+		getSprite().step(delta);
 	}
 	
 	public int getTtl() {
@@ -128,7 +132,7 @@ public class Particle implements Renderable, Stepable, Destroyable, Serializable
 	}
 
 	public void setAngle(float angle) {
-		this.angle = angle;
+		this.angle = angle;		
 	}
 
 	public float getAngularDeviation() {

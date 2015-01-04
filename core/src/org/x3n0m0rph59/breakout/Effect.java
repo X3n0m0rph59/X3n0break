@@ -15,7 +15,7 @@ public class Effect implements Stepable, Serializable {
 		// Special effects/abilities
 		FIREBALL,
 		MULTIBALL,
-		ENLARGE_PADDLE, 
+		EXPAND_PADDLE, 
 		SHRINK_PADDLE, 
 		BOTTOM_WALL, 
 		PADDLE_GUN,
@@ -43,7 +43,7 @@ public class Effect implements Stepable, Serializable {
 		
 		// Apply effect (if applicable)
 		switch (type) {		
-		case ENLARGE_PADDLE:
+		case EXPAND_PADDLE:
 			((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().expand();
 			break;		
 		
@@ -90,7 +90,7 @@ public class Effect implements Stepable, Serializable {
 		case BOTTOM_WALL:
 			break;
 			
-		case ENLARGE_PADDLE:
+		case EXPAND_PADDLE:
 			((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().shrink();
 			break;
 			
@@ -124,8 +124,8 @@ public class Effect implements Stepable, Serializable {
 	}
 	
 	@Override
-	public void step() {
-		if (--effectDuration <= 0) {
+	public void step(float delta) {
+		if ((effectDuration -= delta) <= 0) {
 			expire();
 		}		
 	}

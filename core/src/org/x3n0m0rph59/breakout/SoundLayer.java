@@ -152,6 +152,10 @@ public final class SoundLayer {
 		playSound(sound, 1.0f, 1.0f, true);
 	}
 	
+	public static void loopSound(Sounds sound, float pitch) {
+		playSound(sound, pitch, 1.0f, true);
+	}
+	
 	public static void stopLoop(Sounds sound) {
 		Logger.debug("Stopping sound: " + sound);
 		
@@ -208,7 +212,7 @@ public final class SoundLayer {
 		float pos = 0; 		
 		if (currentMusic != null) {		
 			pos = currentMusic.getPosition();
-			currentMusic.stop();
+			stopAllMusic();
 		}
 		
 		MusicStream m;		

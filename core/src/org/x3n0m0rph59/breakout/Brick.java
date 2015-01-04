@@ -77,15 +77,15 @@ public class Brick extends GameObject {
 	}
 	
 	@Override
-	public void step() {
+	public void step(float delta) {
 		if(behavior.contains(Behavior.MOVE_LEFT)) {
-			setPosition(new Point(getX() - speed * Config.getInstance().getSpeedFactor(), getY()));
+			setPosition(new Point(getX() - speed * Config.getInstance().getSpeedFactor() * delta, getY()));
 			
 			if (getX() + getWidth() <= 0 + Config.BRICK_OFFSET_X)
 				setPosition(new Point(Config.getInstance().getClientWidth() - Config.BRICK_OFFSET_X, getY()));
 			
 		} else if(behavior.contains(Behavior.MOVE_RIGHT)) {
-			setPosition(new Point(getX() + speed * Config.getInstance().getSpeedFactor(), getY()));
+			setPosition(new Point(getX() + speed * Config.getInstance().getSpeedFactor() * delta, getY()));
 			
 			if (getX() >= Config.getInstance().getClientWidth() - Config.BRICK_OFFSET_X)
 				setPosition(new Point(Config.BRICK_OFFSET_X - width, getY()));
@@ -102,9 +102,9 @@ public class Brick extends GameObject {
 		
 		
 		for (SpriteObject s : sprites.values())
-			s.step();
+			s.step(delta);
 		
-		super.step();
+		super.step(delta);
 	}
 	
 	public void hit() {

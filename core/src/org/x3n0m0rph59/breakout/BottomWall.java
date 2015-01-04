@@ -31,17 +31,17 @@ public class BottomWall implements Stepable, Renderable, Serializable {
 			
 			final boolean inGracePeriod = EffectManager.getInstance().isEffectInGracePeriod(Effect.Type.BOTTOM_WALL);			
 			
-			if (inGracePeriod && drawFlash)
-				batch.setBlendFunction(GL20.GL_ONE_MINUS_SRC_COLOR, GL20.GL_ONE);
-			else
-				batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+			batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 			
-			f.draw(batch, "-", x, y);
+			if (inGracePeriod && drawFlash)
+				f.draw(batch, " ", x, y);
+			else
+				f.draw(batch, "-", x, y);			
 		}		
 	}
 
 	@Override
-	public void step() {
+	public void step(float delta) {
 		if ((frameCounter % (Config.SYNC_FPS * Config.GRACE_PERIOD_BLINK_RATE)) == 0)
 			drawFlash = !drawFlash;
 			

@@ -12,8 +12,8 @@ public class Projectile extends GameObject {
 	}
 	
 	@Override
-	public void step() {
-		super.step();
+	public void step(float delta) {
+		super.step(delta);
 		
 		if (getY() < 0)
 			setDestroyed(true);

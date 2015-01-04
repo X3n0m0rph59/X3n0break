@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.x3n0m0rph59.breakout.Effect.Type;
+
 import com.badlogic.gdx.Gdx;
 
 public final class EffectManager implements Serializable {
@@ -19,51 +21,69 @@ public final class EffectManager implements Serializable {
 	private List<Effect> effectList = new ArrayList<Effect>();
 	
 		
-	public void addEffect(Effect.Type type) {
-		effectList.add(new Effect(type, Config.SYNC_FPS * Config.EFFECT_DURATION));
-		
-		switch (type) {
-		case BOTTOM_WALL:
-			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Bottom Wall!");
-			break;
+	public void addEffect(Effect.Type type) {		
+		// perform basic sanity checking on new effects
+		if (!isEffectAllowed(type)) {
+			Logger.debug("Disallowed effect: " + type);
 			
-		case ENLARGE_PADDLE:
-			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Enlarge!");
-			break;
+			return;
 			
-		case FIREBALL:
-			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Fireball!");
-			break;
-			
-		case MULTIBALL:
-			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Multiball");
-			break;
-			
-		case PADDLE_GUN:
-			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Guns!");
-			break;
-			
-		case SHRINK_PADDLE:
-			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Shrink!");
-			break;	
-			
-		case STICKY_BALL:
-			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Sticky Ball!");
-			break;
-			
-		case SPEED_UP:
-			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Speed Up!");
-			break;	
-			
-		case SLOW_DOWN:
-			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Slow Down!");
-			break;
-			
-		default:
-			throw new RuntimeException("Unsupported type: " + type);		
+		} else {
+			effectList.add(new Effect(type, Gdx.graphics.getFramesPerSecond()
+					* Config.EFFECT_DURATION));
+
+			switch (type) {
+			case BOTTOM_WALL:
+				((App) Gdx.app.getApplicationListener()).getGameScreen()
+						.addTextAnimation("Bottom Wall!");
+				break;
+
+			case EXPAND_PADDLE:
+				((App) Gdx.app.getApplicationListener()).getGameScreen()
+						.addTextAnimation("Expand!");
+				break;
+
+			case FIREBALL:
+				((App) Gdx.app.getApplicationListener()).getGameScreen()
+						.addTextAnimation("Fireball!");
+				break;
+
+			case MULTIBALL:
+				((App) Gdx.app.getApplicationListener()).getGameScreen()
+						.addTextAnimation("Multiball");
+				break;
+
+			case PADDLE_GUN:
+				((App) Gdx.app.getApplicationListener()).getGameScreen()
+						.addTextAnimation("Guns!");
+				break;
+
+			case SHRINK_PADDLE:
+				((App) Gdx.app.getApplicationListener()).getGameScreen()
+						.addTextAnimation("Shrink!");
+				break;
+
+			case STICKY_BALL:
+				((App) Gdx.app.getApplicationListener()).getGameScreen()
+						.addTextAnimation("Sticky Ball!");
+				break;
+
+			case SPEED_UP:
+				((App) Gdx.app.getApplicationListener()).getGameScreen()
+						.addTextAnimation("Speed Up!");
+				break;
+
+			case SLOW_DOWN:
+				((App) Gdx.app.getApplicationListener()).getGameScreen()
+						.addTextAnimation("Slow Down!");
+				break;
+
+			default:
+				throw new RuntimeException("Unsupported type: " + type);
+			}
+
+			Logger.debug("New active effect: " + type);
 		}
-				
-		Logger.debug("New active effect: " + type);
 	}
 	
 	public void expireEffect(Effect e) {		
@@ -74,7 +94,7 @@ public final class EffectManager implements Serializable {
 				((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("No more Bottom Wall!");
 			break;
 			
-		case ENLARGE_PADDLE:
+		case EXPAND_PADDLE:
 			((App) Gdx.app.getApplicationListener()).getGameScreen().addTextAnimation("Shrink again!");
 			break;
 			
@@ -149,11 +169,59 @@ public final class EffectManager implements Serializable {
 		return false;
 	}
 	
-	public void step() {		
+	public boolean isEffectAllowed(Effect.Type type) {
+		boolean allowed = true;
+		
+		switch (type) {
+		case BOTTOM_WALL:
+			break;
+			
+		case EXPAND_PADDLE:
+			if (((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().getWidth() >= 
+					Config.PADDLE_MAX_WIDTH)
+				allowed = false;
+			break;
+			
+		case FIREBALL:
+			break;
+			
+		case MULTIBALL:
+			break;
+			
+		case PADDLE_GUN:
+			break;
+			
+		case SHRINK_PADDLE:
+			if (((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().getWidth() <= 
+				Config.PADDLE_MIN_WIDTH)
+				allowed = false;
+			break;
+			
+		case SLOW_DOWN:
+			if (isEffectActive(Type.SLOW_DOWN))
+				allowed = false;
+			break;
+			
+		case SPEED_UP:
+			if (isEffectActive(Type.SPEED_UP))
+				allowed = false;
+			break;
+			
+		case STICKY_BALL:
+			break;
+			
+		default:
+			break;		
+		}
+		
+		return allowed;
+	}
+	
+	public void step(float delta) {		
 		Iterator<Effect> i = effectList.iterator();				
 		while (i.hasNext()) {
 			Effect e = i.next();
-			e.step();
+			e.step(delta);
 			
 			if (e.isExpired()) {
 				expireEffect(e);		

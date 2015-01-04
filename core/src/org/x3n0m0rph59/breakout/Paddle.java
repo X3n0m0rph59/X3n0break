@@ -32,6 +32,9 @@ public class Paddle extends GameObject {
 			  Config.PADDLE_DEFAULT_WIDTH, Config.PADDLE_HEIGHT, 0.0f, 0.0f, 0.0f, 0.0f);
 		
 		grapplingHook = new GrapplingHook(new Point(0.0f, 0.0f));
+		
+		updateEnginePosition();
+		updateGrapplingHookPosition();
 	}
 	
 	@Override
@@ -41,7 +44,7 @@ public class Paddle extends GameObject {
 		
 		getGrapplingHook().render(batch);
 		
-		final boolean inGracePeriod = EffectManager.getInstance().isEffectInGracePeriod(Effect.Type.ENLARGE_PADDLE) || 
+		final boolean inGracePeriod = EffectManager.getInstance().isEffectInGracePeriod(Effect.Type.EXPAND_PADDLE) || 
 									  EffectManager.getInstance().isEffectInGracePeriod(Effect.Type.SHRINK_PADDLE);
 		
 		if (inGracePeriod && drawFlash)
@@ -53,9 +56,9 @@ public class Paddle extends GameObject {
 	}
 	
 	@Override
-	public void step() {
+	public void step(float delta) {
 		// Do not move the paddle if the 
-		// user tapped on "fire space bomb" 				
+		// user tapped on "menu" or "fire space bomb" 				
 		final float iX = Gdx.input.getX();
 		final float iY = Gdx.input.getY();
 		
@@ -74,15 +77,15 @@ public class Paddle extends GameObject {
 		}		
 		
 		
-		leftEngine.step();
-		rightEngine.step();
+		leftEngine.step(delta);
+		rightEngine.step(delta);
 		
-		grapplingHook.step();
+		grapplingHook.step(delta);
 		
 		if ((frameCounter % (Config.SYNC_FPS * Config.GRACE_PERIOD_BLINK_RATE)) == 0)
 			drawFlash = !drawFlash;
 		
-		super.step();
+		super.step(delta);
 	}
 	
 	public void setCenteredPosition(Point position) {
@@ -97,8 +100,11 @@ public class Paddle extends GameObject {
 	}
 
 	private void updateEnginePosition() {
-		leftEngine.setPositionAndAngle(new Point(getX() + Config.PADDLE_ENGINE_OFFSET, getY() + getHeight()), 140);
-		rightEngine.setPositionAndAngle(new Point((getX() + getWidth()) - Config.PADDLE_ENGINE_OFFSET, getY() + getHeight()), 140);
+		leftEngine.setPositionAndAngle(new Point(getX() + Config.PADDLE_ENGINE_OFFSET, 
+												 getY() + getHeight()), 45.0f);
+		
+		rightEngine.setPositionAndAngle(new Point((getX() + getWidth()) - Config.PADDLE_ENGINE_OFFSET, 
+												   getY() + getHeight()), 45.0f);
 	}
 	
 	private void updateGrapplingHookPosition() {
@@ -107,10 +113,14 @@ public class Paddle extends GameObject {
 	
 	public void expand() {
 		this.width += Config.PADDLE_EXPANSION;
+		
+		sprite.setWidth(width);
 	}
 	
 	public void shrink() {
 		this.width -= Config.PADDLE_EXPANSION;
+		
+		sprite.setWidth(width);
 	}
 
 	@Override

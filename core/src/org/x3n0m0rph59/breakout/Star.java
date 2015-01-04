@@ -1,5 +1,7 @@
 package org.x3n0m0rph59.breakout;
 
+//import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 public class Star extends GameObject {	
 	/**
 	 * 
@@ -11,9 +13,18 @@ public class Star extends GameObject {
 			  position, Config.STAR_WIDTH, Config.STAR_HEIGHT, 0.0f, 0.0f, 0.0f, speed);		
 	}
 	
+//	@Override
+//	public void render(SpriteBatch batch) {
+//		batch.disableBlending();
+//		
+//		super.render(batch);
+//		
+//		batch.enableBlending();
+//	}
+	
 	@Override
-	public void step() {
-		super.step();
+	public void step(float delta) {
+		super.step(delta);
 		
 		if(getY() >= Config.getInstance().getScreenHeight())
 			setDestroyed(true);

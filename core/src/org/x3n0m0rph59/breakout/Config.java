@@ -1,33 +1,30 @@
 package org.x3n0m0rph59.breakout;
 
 
-public final class Config {	
+public final class Config {
 	// Global configuration parameters
-	
+
 	/** The name of the application */
 	public static final String APP_NAME = "X3n0break";
-	
+
 	/** The version of the application */
 	public static final String APP_VERSION = "0.0.1";
-	
-	
+
 	public static final float WORLD_WIDTH = 1920.0f;
-			
-	
+
 	public static final float WORLD_HEIGHT = 1080.0f;
-	
-	/** Synchronize to this framerate */
+
+	/** Target framerate */
 	public static final int SYNC_FPS = 60;
-	
+
 	/** The width of the scoreboard on the right edge of the screen */
 	public static final float SCOREBOARD_WIDTH = 250;
-	
+
 	/** Size of the font used to render messages on the screen */
 	public static final int TOAST_FONT_SIZE = 44;
-	
+
 	/** How long a message is being displayed */
 	public static final float TOAST_DELAY = 3.5f;
-		
 	
 	/** Initial number of lives left */
 	public static final int INITIAL_BALLS_LEFT = 5;
@@ -49,7 +46,6 @@ public final class Config {
 	
 	/** Get a free ball every nth points */
 	public static final int BONUS_BALL_SCORE = 50000;
-		
 	
 	/** Speed up the game by this factor when a speedup powerup is caught */
 	public static final float POWERUP_SPEEDUP_FACTOR = 2.0f;
@@ -57,29 +53,35 @@ public final class Config {
 	/** Slow down the game by this factor when a speed powerup is caught */
 	public static final float POWERUP_SLOWDOWN_FACTOR = 2.0f;
 	
-	
 	/** Time in seconds before an active effect is expired */
 	public static final float EFFECT_DURATION = 20.0f;
+	
 	public static final float EFFECT_GRACE_PERIOD = SYNC_FPS * 3;
 	
 	/** How many times a second an object flashes when in "effect grace period" */
 	public static final float GRACE_PERIOD_BLINK_RATE = 0.25f;
 	
-	/** Lower end of the range of randomized scroll speeds for background sprites */
-	public static final float BACKGROUND_MIN_SPEED = 1.0f;
+	/**
+	 * Lower end of the range of randomized scroll speeds for background sprites
+	 */
+	public static final float BACKGROUND_MIN_SPEED = 0.75f;
 	
-	/** Upper end of the range of randomized scroll speeds for background sprites */
-	public static final float BACKGROUND_MAX_SPEED = 2.0f;
+	/**
+	 * Upper end of the range of randomized scroll speeds for background sprites
+	 */
+	public static final float BACKGROUND_MAX_SPEED = 1.5f;
 	
-	/** Density of background sprites (the lower the value the more backgrounds are generated per time unit) */
-	public static final int BACKGROUND_DENSITY = 450;
+	/**
+	 * Density of background sprites (the lower the value the more backgrounds
+	 * are generated per time unit)
+	 */
+	public static final int BACKGROUND_DENSITY = 350;
 	
 	/** Transparency level of background sprites */
-	public static final float BACKGROUND_ALPHA = 0.35f;
-	
+	public static final float BACKGROUND_ALPHA = 0.25f;
 	
 	/** Force width of bricks */
-//	public static final float BRICK_WIDTH = 33.5f;
+	// public static final float BRICK_WIDTH = 33.5f;
 	
 	/** Height of bricks */
 	public static final float BRICK_HEIGHT = 30.0f;
@@ -108,20 +110,22 @@ public final class Config {
 	/** Specifies how many hits are needed to destroy a hard brick */
 	public static final int HARD_BRICK_HITS_NEEDED = 3;
 	
-	
 	/** Distance of the paddle from the bottom of the screen */
 	public static final float PADDLE_BOTTOM_SPACING = 180.0f;
 	
 	/** Default width of the paddle */
 	public static final float PADDLE_DEFAULT_WIDTH = 150.0f;
-		
+	
 	/** Minimum width of the paddle */
 	public static final float PADDLE_MIN_WIDTH = 50.0f;
 	
 	/** Maximum width of the paddle */
 	public static final float PADDLE_MAX_WIDTH = 500.0f;
 	
-	/** Specifies how much the paddle grows when an extender bonus has been caught */	
+	/**
+	 * Specifies how much the paddle grows when an extender bonus has been
+	 * caught
+	 */
 	public static final float PADDLE_EXPANSION = 50.0f;
 	
 	/** The height of the paddle */
@@ -130,7 +134,10 @@ public final class Config {
 	/** Horizontal offset of the "Engine" particle systems */
 	public static final float PADDLE_ENGINE_OFFSET = 5.0f;
 	
-	/** Dampening factor for the collision between ball and paddle (Use 1.0f for a perfect elastic collision)*/
+	/**
+	 * Dampening factor for the collision between ball and paddle (Use 1.0f for
+	 * a perfect elastic collision)
+	 */
 	public static final float PADDLE_DAMPENING_FACTOR = 0.85f;
 	
 	public static final int STAR_DENSITY = 3;
@@ -160,26 +167,25 @@ public final class Config {
 	public static final float GRAPPLING_HOOK_EXTEND_SPEED = 10.0f;
 	public static final float GRAPPLING_HOOK_LOWER_SPEED = GRAPPLING_HOOK_EXTEND_SPEED;
 	public static final float GRAPPLING_HOOK_LENGTH = 400.0f;
-	
-	public static final float BOTTOM_WALL_HEIGHT = 15.0f;	
+
+	public static final float BOTTOM_WALL_HEIGHT = 15.0f;
 	public static final float BOTTOM_WALL_SEGMENT_WIDTH = 45.0f;
 	public static final float BOTTOM_WALL_SEGMENT_HEIGHT = 25.0f;
 	public static final float BOTTOM_WALL_SEGMENT_SPACING = 5.0f;
-	
+
 	public static final int VIBRATION_DURATION_BALL_VS_BRICK = 1;
-	
+
 	public static final int VIBRATION_DURATION_BRICK_DESTROYED = 1;
-	
-	public static final int VIBRATION_DURATION_BALL_VS_WALL = 15;	
+
+	public static final int VIBRATION_DURATION_BALL_VS_WALL = 15;
 
 	public static final int VIBRATION_DURATION_BALL_VS_PADDLE = 25;
-	
+
 	public static final int VIBRATION_DURATION_BALL_LOST = 100;
 
 	public static final int VIBRATION_DURATION_SPACEBOMB_EXPLOSION = 2000;
-	
-	
-	private static final Config instance = new Config();	
+
+	private static final Config instance = new Config();
 
 	private float speedFactor = 1.0f;
 

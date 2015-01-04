@@ -1,5 +1,7 @@
 package org.x3n0m0rph59.breakout;
 
+//import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 /**
  * A background sprite that scrolls through the scene from top to bottom at a constant speed
  * @author user
@@ -26,15 +28,24 @@ public class Background extends GameObject {
 		getSprite().setAlpha(Config.BACKGROUND_ALPHA);
 	}
 	
+//	@Override
+//	public void render(SpriteBatch batch) {
+//		batch.disableBlending();
+//		
+//		super.render(batch);
+//		
+//		batch.enableBlending();
+//	}
+	
 	/**
 	 * Step one frame forward, animate our sprite and advance our 
 	 * position by speed units 
 	 */
 	@Override
-	public void step() {
-		super.step();
+	public void step(float delta) {
+		super.step(delta);
 		
-		if (getBoundingBox().getY() >= Config.getInstance().getScreenHeight())
+		if (getBoundingBox().getY() - getHeight() >= Config.getInstance().getScreenHeight())
 			setDestroyed(true);
 	}
 }

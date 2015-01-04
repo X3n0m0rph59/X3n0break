@@ -20,7 +20,7 @@ public class App extends ApplicationAdapter {
 	@Override
 	public void create () {
 		Gdx.graphics.setTitle(Config.APP_NAME);
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		Gdx.app.setLogLevel(Application.LOG_NONE);
 		
 		Logger.debug("App: create()");
 		
@@ -38,8 +38,11 @@ public class App extends ApplicationAdapter {
 		
 		
 		// restore saved state?
+		boolean lastExitWasUserInitiated = prefs.getBoolean("userExitedApp");
+		
 		FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
-		if (Gdx.files.isLocalStorageAvailable() && handle.exists()) {
+		if (Gdx.files.isLocalStorageAvailable() && handle.exists() && 
+			!lastExitWasUserInitiated) {
 			ScreenManager.getInstance().showScreen(ScreenType.GAME);
 			
 			try {
@@ -55,6 +58,8 @@ public class App extends ApplicationAdapter {
 			catch (RuntimeException e) {
 				// do nothing
 			}
+		} else if (lastExitWasUserInitiated) {
+			ScreenManager.getInstance().showScreen(ScreenType.MENU);
 		}
 	}
 	
@@ -76,9 +81,12 @@ public class App extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		batch.begin();		
+		batch.enableBlending();
 		
-		currentScreen.render(Gdx.graphics.getDeltaTime());
+		batch.begin();
+		
+		currentScreen.render(Gdx.graphics.getDeltaTime() * Config.SYNC_FPS
+							 /* Gdx.graphics.getFramesPerSecond() */);
 		
 		batch.end();
 	}	
@@ -110,17 +118,36 @@ public class App extends ApplicationAdapter {
 		try {
 			GameScreen gameScreen = getGameScreen();
 			
-			if (!Config.getInstance().isTerminationUserInitiated())
-				gameScreen.saveGameState();
+			if (!Config.getInstance().isTerminationUserInitiated()) {
+				if (gameScreen != null) {
+					gameScreen.saveGameState();
+					
+					Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
+					
+					prefs.putBoolean("userExitedApp", false);
+					prefs.flush();
+				}
+			}
 			else {
 				Logger.debug("Deleting saved state (user requested exit)");
 				
-				FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");				
-				handle.delete();
+				Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
+				
+				prefs.putBoolean("userExitedApp", true);
+				prefs.flush();
+				
+				
+				FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
+				
+				if (handle.exists())
+					handle.delete();
 			}
 		}
 		catch (RuntimeException e) {
-			// do nothing
+			Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
+			
+			prefs.putBoolean("userExitedApp", Config.getInstance().isTerminationUserInitiated());
+			prefs.flush();
 		}
 		
 		currentScreen.dispose();				

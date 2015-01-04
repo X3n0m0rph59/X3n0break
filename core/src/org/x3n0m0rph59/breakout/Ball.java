@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 
 
-
 public class Ball extends GameObject {
 	/**
 	 * 
@@ -29,10 +28,10 @@ public class Ball extends GameObject {
 																	  new SpriteTuple("data/sprites/Star2.png", 345.0f, 342.0f, 345, 342), 
 																	  new SpriteTuple("data/sprites/Star3.png", 270.0f, 261.0f, 270, 261), 
 																	  new SpriteTuple("data/sprites/Star4.png", 264.0f, 285.0f, 264, 285)}, 
-															new Point(0.0f, 0.0f), -1.0f, 5.0f, 0.0f, 45.0f, 2.0f, 15.0f, 15.0f, 5.0f);
+															new Point(0.0f, 0.0f), -1.0f, 5.0f, 0.0f, 45.0f, 0.0f, 15.0f, 15.0f, 5.0f);
 	
 	private final ParticleSystem fireBallTrail = new ParticleSystem(new SpriteTuple[]{new SpriteTuple("data/sprites/fire.png", 198.0f, 197.0f, 198, 197)}, 
-															new Point(0.0f, 0.0f), -1.0f, 25.0f, 0.0f, 25.0f, 2.0f, 15.0f, 25.0f, 25.0f);
+															new Point(0.0f, 0.0f), -1.0f, 25.0f, 10.0f, 45.0f, 0.0f, 15.0f, 150.f, 20.0f);
 
 		
 	public Ball(Point position) {
@@ -41,7 +40,7 @@ public class Ball extends GameObject {
 	
 	public Ball(Point position, boolean multiball) {
 		super(null, position, Config.BALL_RADIUS * 2, Config.BALL_RADIUS * 2, 
-			  throwAngle, 0.0f, 
+			  0.0f, 0.0f, 
 			  (float) Math.cos(Math.toRadians(throwAngle)) * +Config.BALL_SPEED, 
 			  (float) Math.sin(Math.toRadians(throwAngle)) * -Config.BALL_SPEED);
 		
@@ -53,12 +52,13 @@ public class Ball extends GameObject {
 		if (EffectManager.getInstance().isEffectActive(Effect.Type.FIREBALL)) {
 			
 			fireBallTrail.render(batch);			
-			setSprite(spriteFireBall);							
+			setSprite(spriteFireBall);	
+			
 		} else {
 			if (EffectManager.getInstance().isEffectActive(Effect.Type.STICKY_BALL))
 				trail.render(batch);
 			
-			setSprite(spriteNormalBall);
+			setSprite(spriteNormalBall);			
 		}
 		
 		final boolean inGracePeriod = EffectManager.getInstance().isEffectInGracePeriod(Effect.Type.STICKY_BALL) || 
@@ -91,18 +91,18 @@ public class Ball extends GameObject {
 	}
 
 	@Override
-	public void step() {
+	public void step(float delta) {
 		if (state != State.STUCK_TO_PADDLE) {						
-			super.step();	
+			super.step(delta);	
 		}
 		
-		spriteNormalBall.step();
-		spriteFireBall.step();
+		spriteNormalBall.step(delta);
+		spriteFireBall.step(delta);
 		
 		updateTrailPosition();
 
-		trail.step();
-		fireBallTrail.step();
+		trail.step(delta);
+		fireBallTrail.step(delta);
 		
 		if ((frameCounter % (Config.SYNC_FPS * Config.GRACE_PERIOD_BLINK_RATE)) == 0)
 			drawFlash = !drawFlash;
@@ -110,7 +110,10 @@ public class Ball extends GameObject {
 
 	private void updateTrailPosition() {
 		trail.setPositionAndAngle(this.getPosition(), getMovementAngleInDegrees());
+		trail.setParticleSpeed(getSpeed());
+		
 		fireBallTrail.setPositionAndAngle(this.getPosition(), getMovementAngleInDegrees());
+		fireBallTrail.setParticleSpeed(getSpeed());
 	}
 
 	@Override
@@ -191,6 +194,6 @@ public class Ball extends GameObject {
 	}
 	
 	public float getMovementAngleInDegrees() {
-		return (float) Math.toDegrees(Math.atan2(getX(), getY()));
+		return (float) Math.toDegrees(Math.atan2(getDeltaX(), -getDeltaY()));
 	}
 }

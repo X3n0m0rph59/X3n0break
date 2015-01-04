@@ -19,7 +19,7 @@ public class ScoreBoard implements Renderable {
 	private SpriteObject spaceBomb = new SpriteObject("data/sprites/spacebomb.png", 
 													  Config.SPACEBOMB_WIDTH, 
 													  Config.SPACEBOMB_HEIGHT, 
-													  150, 150);
+													  145, 130);
 	
 	public ScoreBoard() {
 		final float y_start = 285.0f;
@@ -52,7 +52,7 @@ public class ScoreBoard implements Renderable {
 							 65.0f, Config.BRICK_HEIGHT));
 		
 //		grapplingHook.setWidth(90.0f);		
-		spaceBomb.setAngle(45.0f);
+//		spaceBomb.setAngle(45.0f);
 	}
 	
 	public void render(SpriteBatch batch) {
@@ -89,12 +89,12 @@ public class ScoreBoard implements Renderable {
 									  Config.WORLD_HEIGHT - (175 + 150));
 		
 		
-		spaceBomb.render(batch, new Point(Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH + 40,
+		spaceBomb.render(batch, new Point(Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH,
 										  Config.WORLD_HEIGHT - 175), 
 						 150, 150);
 		
-		smallFont.draw(batch, "PRESS HERE", (Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH + 40) + 45, 
-											 Config.WORLD_HEIGHT - 125);
+		smallFont.draw(batch, "PRESS HERE", (Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH) + 25, 
+											 Config.WORLD_HEIGHT - 100);
 		
 		
 		
@@ -105,8 +105,8 @@ public class ScoreBoard implements Renderable {
 			
 			float x = (Config.WORLD_WIDTH - Config.SCOREBOARD_WIDTH) - 8.0f;
 			float y = i * segment_height;			
-						
-			batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+			
+			batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 			
 			smallFont.draw(batch, "I", x, y);
 		}		
