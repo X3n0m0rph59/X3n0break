@@ -21,7 +21,7 @@ public class BottomWall implements Stepable, Renderable, Serializable {
 		BitmapFont f = FontLoader.getInstance().getFont("font", 44);
 		
 		final float segment_width = f.getBounds("-").width; //Config.BOTTOM_WALL_SEGMENT_WIDTH
-		final float segment_height = f.getLineHeight(); //Config.BOTTOM_WALL_SEGMENT_HEIGHT
+		final float segment_height = f.getLineHeight() - 25.0f; //Config.BOTTOM_WALL_SEGMENT_HEIGHT
 		
 		for (int i = 0; i <= Config.getInstance().getClientWidth() / 
 							 (segment_width + Config.BOTTOM_WALL_SEGMENT_SPACING); i++) {

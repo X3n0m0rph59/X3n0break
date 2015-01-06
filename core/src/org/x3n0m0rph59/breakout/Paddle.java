@@ -19,6 +19,12 @@ public class Paddle extends GameObject {
 	
 	boolean drawFlash = false;
 	
+	public enum State {IDLE, CHASING};
+	
+	State state = State.IDLE;
+	
+	private Point chasePoint;
+	
 //	private final ParticleSystem leftEngine = new ParticleSystem(new SpriteTuple[]{new SpriteTuple("data/sprites/fire.png", 198.0f, 197.0f, 198, 197)}, 
 //			    new Point(0.0f, 0.0f), -1.0f, 15.0f, 0.0f, 25.0f, 0.0f, 15.0f, 10.0f, 8.5f);
 //	
@@ -84,8 +90,52 @@ public class Paddle extends GameObject {
 					 								   Config.SCOREBOARD_WIDTH + 25),
 					 								   (int) Config.WORLD_HEIGHT - (175 + 150), 350, (300 * 2));
 
-		if (!hotRect.contains(new Vector2(mX, mY))) {
-			setCenteredPosition(new Point(mX, mY));
+		if (!hotRect.contains(new Vector2(mX, mY))) {			
+			if (getState() == State.IDLE) {
+				final float distanceX = Math.abs(getCenterPoint().getX() - mX);
+				
+				if (distanceX > getWidth()) {
+					// the new point is far away
+					// use a chasing algorithm to "fly" to it
+					Logger.debug("Begin chasing to point: " + mX + ", " + mY);
+					chaseTo(new Point(mX, mY));
+					
+				} else {
+					// the new point is within immediate range
+					// simply set our new position
+					setCenteredPosition(new Point(mX, mY));
+				}
+			}
+		}
+		
+		if (getState() == State.CHASING) {
+			final float currentX = getCenterPosition().getX();
+			final float currentY = getCenterPosition().getY();
+			
+			final float targetX = getChasePoint().getX();
+//			final float targetY = getChasePoint().getY();
+			
+			if (Math.abs(currentX - targetX) <= Config.PADDLE_CHASING_SPEED + 1.0f /*&& 
+				Math.abs(currentY - targetY) <= Config.PADDLE_CHASING_SPEED + 1.0f */) {
+				
+				// chase destination reached				
+				setState(State.IDLE);
+				Logger.debug("Target point reached");
+				
+			} else {			
+				float newX = currentX;
+				float newY = currentY;
+				
+				if (currentX - targetX < 0) {
+					newX += Config.PADDLE_CHASING_SPEED;
+				} else {
+					newX -= Config.PADDLE_CHASING_SPEED;
+				}
+				
+				setCenteredPosition(new Point(newX, newY));
+				
+				Logger.debug("Closing in...");				
+			}
 		}
 		
 		thrust /= 2.0f;
@@ -109,17 +159,30 @@ public class Paddle extends GameObject {
 	public void setCenteredPosition(Point position) {
 		setPosition(new Point(position.getX() - (getWidth() / 2), Config.getInstance().getScreenHeight() - Config.PADDLE_BOTTOM_SPACING));
 		
-		if (getX() < 0) 
+		if (getX() < 0) {
 			setPosition(new Point(0.0f, Config.getInstance().getScreenHeight() - Config.PADDLE_BOTTOM_SPACING));
+			
+			// if we were chasing, cancel the chase
+			if (getState() == State.CHASING)
+				setState(State.IDLE);
+		}
 		
-		if (getX() > Config.getInstance().getClientWidth() - getWidth()) 
+		if (getX() > Config.getInstance().getClientWidth() - getWidth()) { 
 			setPosition(new Point(Config.getInstance().getClientWidth() - getWidth(), 
 								  Config.getInstance().getScreenHeight() - Config.PADDLE_BOTTOM_SPACING));
+			
+			// if we were chasing, cancel the chase
+			if (getState() == State.CHASING)
+				setState(State.IDLE);
+		}
 	}
 
 	private void updateEnginePosition() {		
 		final float dX = getX() - lastX;
 		thrust += Math.abs(dX);
+		
+		if (thrust >= Config.THRUST_CAP)
+			thrust = Config.THRUST_CAP;
 		
 //		Logger.debug("Thrust: " + thrust + "; deltaX: " + dX);
 		
@@ -135,7 +198,7 @@ public class Paddle extends GameObject {
 			
 		}
 		
-		if (thrust < 0.1f) {
+		if (thrust < Config.THRUST_EPSILON) {
 			thruster.setVisible(false);
 		} else {
 			thruster.setVisible(true);
@@ -202,4 +265,26 @@ public class Paddle extends GameObject {
 	public GrapplingHook getGrapplingHook() {
 		return grapplingHook;
 	}
+	
+	public void setState(State state) {
+		this.state = state;
+	}
+	
+	public State getState() {
+		return state;
+	}
+	
+	public void chaseTo(Point position) {		
+		setChasePoint(position);
+		setState(State.CHASING);
+	}
+	
+	public Point getChasePoint() {
+		return chasePoint;
+	}
+
+	public void setChasePoint(Point chasePoint) {
+		this.chasePoint = chasePoint;
+	}
+
 }

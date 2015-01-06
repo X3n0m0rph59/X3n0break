@@ -36,10 +36,10 @@ public final class Config {
 	public static final float BALL_SPEED = 8.0f;
 	
 	/** The maximum amount at which the ball speed is capped */
-	public static final float BALL_SPEED_MAX = 16.0f;
+	public static final float BALL_SPEED_MAX = 50.0f;
 	
 	/** The minimum amount at which the ball speed is capped */
-	public static final float BALL_SPEED_MIN = 2.0f;
+	public static final float BALL_SPEED_MIN = 1.0f;
 	
 	/** Ball radius */
 	public static final float BALL_RADIUS = 15.0f;
@@ -122,6 +122,8 @@ public final class Config {
 	/** Maximum width of the paddle */
 	public static final float PADDLE_MAX_WIDTH = 500.0f;
 	
+	public static final float PADDLE_CHASING_SPEED = 50.0f;
+	
 	/**
 	 * Specifies how much the paddle grows when an extender bonus has been
 	 * caught
@@ -133,6 +135,10 @@ public final class Config {
 	
 	/** Horizontal offset of the "Engine" particle systems */
 	public static final float PADDLE_ENGINE_OFFSET = 15f;
+	
+	public static final float THRUST_EPSILON = 0.1f;
+	
+	public static final float THRUST_CAP = 45.0f;
 	
 	/**
 	 * Dampening factor for the collision between ball and paddle (Use 1.0f for
@@ -168,9 +174,8 @@ public final class Config {
 	public static final float GRAPPLING_HOOK_LOWER_SPEED = GRAPPLING_HOOK_EXTEND_SPEED;
 	public static final float GRAPPLING_HOOK_LENGTH = 400.0f;
 
-	public static final float BOTTOM_WALL_HEIGHT = 15.0f;
-	public static final float BOTTOM_WALL_SEGMENT_WIDTH = 45.0f;
-	public static final float BOTTOM_WALL_SEGMENT_HEIGHT = 25.0f;
+	public static final float BOTTOM_WALL_HEIGHT = 5.0f;	
+	
 	public static final float BOTTOM_WALL_SEGMENT_SPACING = 5.0f;
 
 	public static final int VIBRATION_DURATION_BALL_VS_BRICK = 1;
@@ -185,7 +190,7 @@ public final class Config {
 
 	public static final int VIBRATION_DURATION_SPACEBOMB_EXPLOSION = 2000;
 
-	private static final Config instance = new Config();
+	private static final Config instance = new Config();	
 
 	private float speedFactor = 1.0f;
 

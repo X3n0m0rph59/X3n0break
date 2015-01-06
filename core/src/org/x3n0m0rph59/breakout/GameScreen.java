@@ -768,6 +768,12 @@ public class GameScreen implements Screen, Serializable {
 					
 					ball.setDeltaX(result.getX());
 					ball.setDeltaY(-result.getY());
+										
+					// Apply speed constraints
+					if (ball.getSpeed() > Config.BALL_SPEED_MAX)
+						ball.setSpeed(Config.BALL_SPEED_MAX);
+					else if (ball.getSpeed() < Config.BALL_SPEED_MIN)
+						ball.setSpeed(Config.BALL_SPEED_MIN);
 						
 					// avoid double collisions by placing the ball above the paddle
 					ball.setPosition(new Point(ball.getX(), paddle.getY() - (ball.getHeight() + 1.0f)));
