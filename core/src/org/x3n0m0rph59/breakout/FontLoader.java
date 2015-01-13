@@ -47,7 +47,7 @@ public class FontLoader {
 	}
 
 	public void dispose() {
-		for (BitmapFont f : map.values()) {
+		for (final BitmapFont f : map.values()) {
 			f.dispose();
 			map.remove(f);
 		}

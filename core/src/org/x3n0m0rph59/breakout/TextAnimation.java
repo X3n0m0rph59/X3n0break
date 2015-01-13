@@ -9,7 +9,7 @@ public class TextAnimation implements Renderable, Stepable, Destroyable {
 	private String text;
 	private Color color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 	
-	private BitmapFont font;
+	private final BitmapFont font;
 	
 	private int frameCounter = 0;
 	private boolean destroyed = false;

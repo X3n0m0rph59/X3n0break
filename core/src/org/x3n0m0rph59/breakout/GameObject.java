@@ -26,7 +26,7 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 	protected boolean destroyed = false;
 	
 	protected int frameCounter = 0;
-	protected int tag;
+//	protected int tag;
 	
 	
 	public GameObject(SpriteObject sprite, Point position, float width, float height,
@@ -144,9 +144,9 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 		return angleInDegrees;
 	}
 
-	public int getTag() {
-		return tag;
-	}
+//	public int getTag() {
+//		return tag;
+//	}
 
 	public void setPosition(Point position) {
 		this.position = position;
@@ -205,9 +205,9 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 		this.frameCounter = frameCounter;
 	}
 
-	public void setTag(int tag) {
-		this.tag = tag;
-	}
+//	public void setTag(int tag) {
+//		this.tag = tag;
+//	}
 
 	public SpriteObject getSprite() {
 		return sprite;
@@ -239,7 +239,7 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 		result = prime * result
 				+ ((position == null) ? 0 : position.hashCode());
 		result = prime * result + ((sprite == null) ? 0 : sprite.hashCode());
-		result = prime * result + tag;
+//		result = prime * result + tag;
 		result = prime * result + Float.floatToIntBits(width);
 		return result;
 	}
@@ -279,8 +279,8 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 				return false;
 		} else if (!sprite.equals(other.sprite))
 			return false;
-		if (tag != other.tag)
-			return false;
+//		if (tag != other.tag)
+//			return false;
 		if (Float.floatToIntBits(width) != Float.floatToIntBits(other.width))
 			return false;
 		return true;
@@ -292,7 +292,7 @@ public class GameObject implements Renderable, Stepable, Destroyable, Serializab
 				+ ", deltaX=" + deltaX + ", deltaY=" + deltaY + ", width="
 				+ width + ", height=" + height + ", angleInDegrees="
 				+ angleInDegrees + ", angularVelocity=" + angularVelocity
-				+ ", destroyed=" + destroyed + ", frameCounter=" + frameCounter
-				+ ", tag=" + tag + "]";
+				+ ", destroyed=" + destroyed + ", frameCounter=" + frameCounter + "]";
+//				+ ", tag=" + tag + "]";
 	}
 }

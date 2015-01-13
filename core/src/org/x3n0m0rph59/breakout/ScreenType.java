@@ -27,6 +27,24 @@ public enum ScreenType {
 			return new GameScreen();
 		}
 		
+	},
+	
+	SETTINGS {
+
+		@Override
+		protected Screen getScreenInstance() {
+			return new SettingsScreen();
+		}
+		
+	},
+	
+	HIGHSCORE {
+
+		@Override
+		protected Screen getScreenInstance() {
+			return new HighScoreScreen();
+		}
+		
 	};
 	
 	protected abstract Screen getScreenInstance();

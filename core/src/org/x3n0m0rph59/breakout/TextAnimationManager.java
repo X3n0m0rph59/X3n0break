@@ -7,9 +7,9 @@ import java.util.List;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class TextAnimationManager implements Stepable, Renderable {
-	private static TextAnimationManager instance = new TextAnimationManager();
+	private static final TextAnimationManager instance = new TextAnimationManager();
 	
-	private List<TextAnimation> textAnimations = new ArrayList<TextAnimation>();
+	private final List<TextAnimation> textAnimations = new ArrayList<TextAnimation>();
 	
 	public static TextAnimationManager getInstance() {
 		return instance;
@@ -25,24 +25,24 @@ public class TextAnimationManager implements Stepable, Renderable {
 	
 	@Override
 	public void render(SpriteBatch batch) {
-//		for (TextAnimation ta : textAnimations) {
+//		for (final TextAnimation ta : textAnimations) {
 //			ta.render();
 //		}
 		
 		if (textAnimations.size() > 0) {
-			TextAnimation ta = textAnimations.get(0);
+			final TextAnimation ta = textAnimations.get(0);
 			ta.render(batch);
 		}
 	}
 
 	@Override
 	public void step(float delta) {
-//		for (TextAnimation ta : textAnimations) {
+//		for (final TextAnimation ta : textAnimations) {
 //			ta.step();
 //		}
 		
 		if (textAnimations.size() > 0) {
-			TextAnimation ta = textAnimations.get(0);
+			final TextAnimation ta = textAnimations.get(0);
 			ta.step(delta);
 		}
 		
@@ -50,9 +50,9 @@ public class TextAnimationManager implements Stepable, Renderable {
 	}
 	
 	private void doCleanup() {
-		Iterator<TextAnimation> i = textAnimations.iterator();		
+		final Iterator<TextAnimation> i = textAnimations.iterator();		
 		while (i.hasNext()) {
-			TextAnimation t = i.next();
+			final TextAnimation t = i.next();
 			
 			if (t.isDestroyed()) {
 				i.remove();

@@ -54,7 +54,7 @@ public class ParticleSystem extends GameObject {
 	@Override
 	public void render(SpriteBatch batch) {
 		if (isVisible())
-			for (Particle p : particles)
+			for (final Particle p : particles)
 				p.render(batch);
 	}
 
@@ -67,9 +67,9 @@ public class ParticleSystem extends GameObject {
 			for (int i = 0; i < (int) (particleDensity /* * delta*/); i++)
 				addNewParticle();
 			
-			Iterator<Particle> pi = particles.iterator();
+			final Iterator<Particle> pi = particles.iterator();
 			while (pi.hasNext()) {
-				Particle p = pi.next();
+				final Particle p = pi.next();
 				p.step(delta);
 				
 				if (p.isDestroyed())
@@ -84,7 +84,7 @@ public class ParticleSystem extends GameObject {
 		final float speed = Util.random((int) 1.0f, (int) this.particleSpeed);		
 		final int 	ttl = Util.random(0, (int) this.ttl);
 		
-		SpriteObject sprite = spriteList.get(Util.random(0, spriteList.size() - 1));
+		final SpriteObject sprite = spriteList.get(Util.random(0, spriteList.size() - 1));
 															  
 		particles.add(new Particle(sprite, position, angleInDegrees, angularDeviation, speed, angularVelocity, ttl, this.sizeFactor));
 	}

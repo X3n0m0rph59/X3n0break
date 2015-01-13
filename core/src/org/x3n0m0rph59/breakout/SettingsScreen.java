@@ -3,13 +3,14 @@ package org.x3n0m0rph59.breakout;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 
-public class HighScoreScreen implements Screen {
+public class SettingsScreen implements Screen {
 	
 	private final OrthographicCamera camera;
 	private final StretchViewport viewport;
@@ -17,7 +18,7 @@ public class HighScoreScreen implements Screen {
 	BitmapFont font;
 	BitmapFont normalFont;
 	
-	public HighScoreScreen() {
+	public SettingsScreen() {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(true, Config.WORLD_WIDTH, Config.WORLD_HEIGHT);
 		camera.update();
@@ -31,7 +32,7 @@ public class HighScoreScreen implements Screen {
 
 	@Override
 	public void show() {
-		final HighscoreInputProcessor inputProcessor = new HighscoreInputProcessor();
+		final SettingsInputProcessor inputProcessor = new SettingsInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
 		font = FontLoader.getInstance().getFont("font", Config.TOAST_FONT_SIZE);
@@ -48,19 +49,12 @@ public class HighScoreScreen implements Screen {
 			
 		batch.setProjectionMatrix(camera.combined);
 		
-		font.draw(batch, "Highscores", 50, 50);
+		font.draw(batch, "Settings", 50, 50);
 		
-		String highscores = "User                Date                                  Score\n\n";
+		normalFont.drawMultiLine(batch, "Sound Effects: " + (Config.getInstance().isSoundMuted() ? "OFF" : "ON"), 50, 300);
+		normalFont.drawMultiLine(batch, "Background Music: " + (Config.getInstance().isMusicMuted() ? "OFF" : "ON"), 50, 500);
 		
-		for (final HighScore hs : HighScoreManager.getInstance().getTop10Scores()) {
-			highscores += hs.getName()  + "                ";			
-			highscores += hs.getDate()  + "                ";
-			highscores += hs.getScore();
-			highscores += "\n";
-		}
-		
-		normalFont.drawMultiLine(batch, highscores, 50, 150);
-		
+		normalFont.drawMultiLine(batch, "Back", 1740, 990);		
 	}
 
 	@Override
@@ -92,4 +86,7 @@ public class HighScoreScreen implements Screen {
 //		smallFont.dispose();
 	}
 
+	public Camera getCamera() {
+		return camera;
+	}
 }

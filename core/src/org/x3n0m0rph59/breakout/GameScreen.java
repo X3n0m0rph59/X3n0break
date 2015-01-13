@@ -47,20 +47,20 @@ public class GameScreen implements Screen, Serializable {
 	private State state = State.LOADING;
 	
 	private transient ScoreBoard scoreBoard;
-	private BottomWall bottomWall = new BottomWall();
+	private final BottomWall bottomWall = new BottomWall();
 	
 	private HashMap<String, String> levelMetadata;	
 	
-	private Paddle paddle = new Paddle();
+	private final Paddle paddle = new Paddle();
 	
-	private List<Ball> balls = new ArrayList<Ball>();
-	private List<Brick> bricks = new ArrayList<Brick>();
-	private List<Powerup> powerups = new ArrayList<Powerup>();
-	private List<Star> stars = new ArrayList<Star>();
-	private List<Projectile> projectiles = new ArrayList<Projectile>();		
-	private List<ParticleSystem> particleEffects = new ArrayList<ParticleSystem>();
-	private List<Background> backgrounds = new ArrayList<Background>();
-	private List<SpaceBomb> spaceBombs = new ArrayList<SpaceBomb>();
+	private final List<Ball> balls = new ArrayList<Ball>();
+	private /*final*/ List<Brick> bricks = new ArrayList<Brick>();
+	private final List<Powerup> powerups = new ArrayList<Powerup>();
+	private final List<Star> stars = new ArrayList<Star>();
+	private final List<Projectile> projectiles = new ArrayList<Projectile>();		
+	private final List<ParticleSystem> particleEffects = new ArrayList<ParticleSystem>();
+	private final List<Background> backgrounds = new ArrayList<Background>();
+	private final List<SpaceBomb> spaceBombs = new ArrayList<SpaceBomb>();
 		
 	private transient BitmapFont font;
 	
@@ -71,7 +71,7 @@ public class GameScreen implements Screen, Serializable {
 	
 	
 	public GameScreen() {
-		GameInputProcessor inputProcessor = new GameInputProcessor();
+		final GameInputProcessor inputProcessor = new GameInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
 		initializeTransients();
@@ -94,44 +94,51 @@ public class GameScreen implements Screen, Serializable {
 		scoreBoard = new ScoreBoard();
 	}
 	
-	public void initLevel(int level) {
-		GameState.setLevel(level);
+	public void initLevel(int level) {				
+		// check if the new level is in valid range
+		final int totalLevelsInSet = Integer.parseInt(LevelLoader.getLevelSetMetaData().get("Total Levels"));
 		
-//		don't reset the frame counter for now (game balance)
-//		it influences whether new space bombs are spawned etc. 
-//		frameCounter = 0;
-		
-		// reset cooldown timers
-		spaceBombCoolDownTime = 0;
-		
-		EffectManager.getInstance().clearEffects();
-		TextAnimationManager.getInstance().clear();
-		
-		paddle.getGrapplingHook().resetState();
-		paddle.setWidth(Config.PADDLE_DEFAULT_WIDTH);
-		
-		balls.clear();
-		balls.add(new Ball(new Point((Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH) / 2, 
-									  Config.getInstance().getScreenHeight() / 2)));
-						
-		powerups.clear();
-		projectiles.clear();
-		spaceBombs.clear();		
-				
-		// Spawn initial set of particles
-		stars.clear();
-		for (int i = 0; i < Config.SYNC_FPS * Config.STAR_DENSITY; i++) {
-			stars.add(new Star(new Point(Util.random(0, (int) Config.getInstance().getClientWidth()), 
-									   	 Util.random(0, (int) Config.getInstance().getScreenHeight())), 
-									   	 Util.random((int) Config.STAR_MIN_SPEED, 
-											   	   	 (int) Config.STAR_MAX_SPEED)));
+		if (level >= totalLevelsInSet) {
+			setState(State.LEVEL_SET_COMPLETED);			
+		} else {
+			
+			GameState.setLevel(level);
+			
+	//		don't reset the frame counter for now (game balance)
+	//		it influences whether new space bombs are spawned etc. 
+	//		frameCounter = 0;
+			
+			// reset cooldown timers
+			spaceBombCoolDownTime = 0;
+			
+			EffectManager.getInstance().clearEffects();
+			TextAnimationManager.getInstance().clear();
+			
+			paddle.getGrapplingHook().resetState();
+			paddle.setWidth(Config.PADDLE_DEFAULT_WIDTH);
+			
+			balls.clear();
+			spawnBall(false);
+							
+			powerups.clear();
+			projectiles.clear();
+			spaceBombs.clear();		
+					
+			// Spawn initial set of particles
+			stars.clear();
+			for (int i = 0; i < Config.SYNC_FPS * Config.STAR_DENSITY; i++) {
+				stars.add(new Star(new Point(Util.random(0, (int) Config.getInstance().getClientWidth()), 
+										   	 Util.random(0, (int) Config.getInstance().getScreenHeight())), 
+										   	 Util.random((int) Config.STAR_MIN_SPEED, 
+												   	   	 (int) Config.STAR_MAX_SPEED)));
+			}
+			
+			backgrounds.clear();
+			backgrounds.add(BackgroundFactory.getRandomBackground());
+			
+			levelMetadata = LevelLoader.getLevelMetaData(level);
+			bricks = LevelLoader.loadLevel(level);
 		}
-		
-		backgrounds.clear();
-		backgrounds.add(BackgroundFactory.getRandomBackground());
-		
-		levelMetadata = LevelLoader.getLevelMetaData(level);
-		bricks = LevelLoader.loadLevel(level);
 	}
 	
 	public void newGame() {
@@ -162,9 +169,9 @@ public class GameScreen implements Screen, Serializable {
 	
 	private void drawCenteredText(SpriteBatch batch, String[] lines, boolean eraseBackground) {	
 		int cnt = 0;
-		for (String line : lines) {
-			float width = font.getBounds(line).width;
-			float height = font.getBounds(line).height + 5;
+		for (final String line : lines) {
+			final float width = font.getBounds(line).width;
+			final float height = font.getBounds(line).height + 5;
 			
 			font.draw(batch, line, (Config.getInstance().getClientWidth() / 2) - (width / 2), 
 							 (height * cnt) + Config.getInstance().getScreenHeight() / 2);
@@ -174,7 +181,7 @@ public class GameScreen implements Screen, Serializable {
 	
 	@Override
 	public void show() {
-		GameInputProcessor inputProcessor = new GameInputProcessor();
+		final GameInputProcessor inputProcessor = new GameInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
 		setState(State.RUNNING);
@@ -214,35 +221,35 @@ public class GameScreen implements Screen, Serializable {
 	public void render(float delta) {
 		this.step(delta);
 		
-		SpriteBatch batch = App.getSpriteBatch();
+		final SpriteBatch batch = App.getSpriteBatch();
 		
 		batch.setProjectionMatrix(camera.combined);
 		
-		for (Background b : backgrounds) {
+		for (final Background b : backgrounds) {
 			b.render(batch);
 		}
 		
-		for (Star p : stars) {
+		for (final Star p : stars) {
 			p.render(batch);
 		}
 		
-		for (Brick b : bricks) {			
+		for (final Brick b : bricks) {			
 			b.render(batch);
 		}
 		
-		for (Powerup p : powerups) {
+		for (final Powerup p : powerups) {
 			p.render(batch);
 		}
 		
-		for (Projectile p : projectiles) {
+		for (final Projectile p : projectiles) {
 			p.render(batch);
 		}
 		
-		for (SpaceBomb b : spaceBombs) {
+		for (final SpaceBomb b : spaceBombs) {
 			b.render(batch);
 		}
 
-		for (Ball b : balls) {
+		for (final Ball b : balls) {
 			b.render(batch);
 		}
 		
@@ -251,7 +258,7 @@ public class GameScreen implements Screen, Serializable {
 			bottomWall.render(batch);
 		}
 		
-		for (ParticleSystem p : particleEffects) {
+		for (final ParticleSystem p : particleEffects) {
 			p.render(batch);
 		}
 		
@@ -259,14 +266,17 @@ public class GameScreen implements Screen, Serializable {
 		
 		scoreBoard.render(batch);
 
-		TextAnimationManager.getInstance().render(batch);
+		
+		boolean drawTextAnimations = true;
 		
 		switch (state) {
 		case LOADING:
+			drawTextAnimations = false;
 			drawCenteredText(batch, new String[] {"Loading, please wait..."}, true);
 			break;
 			
 		case NEW_STAGE:
+			drawTextAnimations = false;
 			drawCenteredText(batch, new String[] {"Level Set: " + getLevelMetaData("Level Set"),
 										   "Level: " + getLevelMetaData("Level"), 
 										   "\"" + getLevelMetaData("Name") + "\""},
@@ -277,10 +287,12 @@ public class GameScreen implements Screen, Serializable {
 			break;
 			
 		case RESTART:
+			drawTextAnimations = false;
 			drawCenteredText(batch, new String[] {"Restarting stage"}, true);
 			break;
 			
 		case PAUSED:
+			drawTextAnimations = false;
 			drawCenteredText(batch, new String[] {"*GAME PAUSED*",
 										   "",
 										   "Level Set: " + getLevelMetaData("Level Set"),
@@ -289,10 +301,12 @@ public class GameScreen implements Screen, Serializable {
 			break;
 			
 		case WAITING_FOR_BALL:
+			drawTextAnimations = false;
 			drawCenteredText(batch, new String[] {"*BALL LOST*"}, true);
 			break;
 			
 		case STAGE_CLEARED:
+			drawTextAnimations = false;
 			drawCenteredText(batch, new String[] {"*STAGE CLEARED*", "",
 										   "Level Set: " + getLevelMetaData("Level Set"),
 										   "Level: " + getLevelMetaData("Level"), 
@@ -300,16 +314,26 @@ public class GameScreen implements Screen, Serializable {
 			break;
 			
 		case GAME_OVER:
+			drawTextAnimations = false;
 			drawCenteredText(batch, new String[] {"*GAME OVER!*"}, true);
 			break;
 						
 		case TERMINATED:
+			drawTextAnimations = false;
 			drawCenteredText(batch, new String[] {"Good bye!"}, true);
 			break;
+		
+		case LEVEL_SET_COMPLETED:
+			drawTextAnimations = false;
+			drawCenteredText(batch, new String[] {"Congratulations!","*Level Set Completed*"}, true);
+			break;			
 			
 		default:
 			throw new RuntimeException("Unsupported state: " + state);			
 		}
+		
+		if (drawTextAnimations)
+			TextAnimationManager.getInstance().render(batch);
 		
 		// Debugging:
 		// Draw bounding boxes around the paddle 
@@ -424,36 +448,36 @@ public class GameScreen implements Screen, Serializable {
 			EffectManager.getInstance().step(delta);
 			TextAnimationManager.getInstance().step(delta);
 			
-			for (Background b : backgrounds) {
+			for (final Background b : backgrounds) {
 				b.step(delta);
 			}
 			
-			for (Star p : stars) {
+			for (final Star p : stars) {
 				p.step(delta);
 			}
 			
-			for (Brick b : bricks) {
+			for (final Brick b : bricks) {
 				b.step(delta);
 			}
 			
-			for (Powerup p : powerups) {
+			for (final Powerup p : powerups) {
 				p.step(delta);
 			}
 			
-			for (Projectile p : projectiles) {
+			for (final Projectile p : projectiles) {
 				p.step(delta);
 			}
 			
-			for (SpaceBomb b : spaceBombs) {
+			for (final SpaceBomb b : spaceBombs) {
 				b.step(delta);
 			}			
 			
-			for (ParticleSystem p : particleEffects) {
+			for (final ParticleSystem p : particleEffects) {
 				p.step(delta);
 			}
 			
 			
-			for (Ball b : balls) {
+			for (final Ball b : balls) {
 				b.step(delta);
 			}
 			
@@ -466,14 +490,14 @@ public class GameScreen implements Screen, Serializable {
 			
 			// check for exploding space bombs
 			// and apply effect to bricks
-			for (SpaceBomb b : spaceBombs) {
+			for (final SpaceBomb b : spaceBombs) {
 				if (b.getState() == SpaceBomb.State.EXPLODING) {
 					final Point centerOfExplosion = b.getCenterOfExplosion();
 					final Circle explosionCircle = new Circle(centerOfExplosion.getX(), 
 															  centerOfExplosion.getY(), 
 															  Config.SPACEBOMB_EXPLOSION_RADIUS);					
 									
-					for (Brick brick : bricks) {
+					for (final Brick brick : bricks) {
 						if (explosionCircle.contains(brick.getBoundingBox().getX(), 
 													 brick.getBoundingBox().getY())) {
 //							brickHit(brick, null, true);
@@ -510,7 +534,7 @@ public class GameScreen implements Screen, Serializable {
 				if (true /*(Gdx.input.isTouched(2) || lastKeyID == Keyboard.KEY_SPACE)*/ && 
 					(frameCounter % Config.PROJECTILE_FIRE_RATE == 0)) {
 					for (int i = 0; i < 2; i++) {
-						float x = (frameCounter % (Config.PROJECTILE_FIRE_RATE * 2) == 0) ? 
+						final float x = (frameCounter % (Config.PROJECTILE_FIRE_RATE * 2) == 0) ? 
 								paddle.getX() : paddle.getX() + paddle.getWidth() - Config.PROJECTILE_WIDTH; 
 						
 						projectiles.add(new Projectile(new Point(x, paddle.getY())));
@@ -528,7 +552,7 @@ public class GameScreen implements Screen, Serializable {
 			
 			// Move sticky balls with the paddle and
 			// release them if a mouse button is pushed
-			for (Ball ball : balls) {
+			for (final Ball ball : balls) {
 				if (ball.getState() == Ball.State.STUCK_TO_PADDLE) {
 					if ((mX + mdX + (paddle.getWidth() / 2) >= 0) && 
 						(mX + mdX + (paddle.getWidth() / 2) <= Config.getInstance().getClientWidth())) {						
@@ -546,7 +570,7 @@ public class GameScreen implements Screen, Serializable {
 			}
 			
 			// Move caught power ups with the paddle
-			for (Powerup p : powerups) {
+			for (final Powerup p : powerups) {
 				if (p.getState() == Powerup.State.STUCK_TO_GRAPPLING_HOOK) {
 					paddle.getGrapplingHook().setSomethingAttached(true);
 					
@@ -561,7 +585,7 @@ public class GameScreen implements Screen, Serializable {
 			}
 			
 			// Move caught space bombs with the paddle
-			for (SpaceBomb bomb : spaceBombs) {
+			for (final SpaceBomb bomb : spaceBombs) {
 				if (bomb.getState() == SpaceBomb.State.STUCK_TO_GRAPPLING_HOOK) {
 					paddle.getGrapplingHook().setSomethingAttached(true);
 					
@@ -612,10 +636,28 @@ public class GameScreen implements Screen, Serializable {
 				setState(State.TERMINATED);
 			}
 			
-			if (Gdx.input.isKeyPressed(Keys.F2) || Gdx.input.justTouched()) {
-				setState(State.RESTART);
+			if (Gdx.input.isKeyPressed(Keys.F2) || Gdx.input.justTouched()) {				
+				if (HighScoreManager.getInstance().isNewHighScore(GameState.getScore())) {
+					
+					HighScoreManager.getInstance().addHighScore(Config.getInstance().getUserName(), 
+																GameState.getScore());
+					ScreenManager.getInstance().showScreen(ScreenType.HIGHSCORE);
+					
+				} else				
+					setState(State.RESTART);
+				
 			}
 			break;
+		
+		case LEVEL_SET_COMPLETED:			
+			if (Gdx.input.justTouched()) {
+				if (HighScoreManager.getInstance().isNewHighScore(GameState.getScore()))					
+					HighScoreManager.getInstance().addHighScore(Config.getInstance().getUserName(), 
+																GameState.getScore());									
+				
+				ScreenManager.getInstance().showScreen(ScreenType.HIGHSCORE);
+			}
+			break;			
 			
 		default:
 			throw new RuntimeException("Unsupported state: " + state);
@@ -648,7 +690,7 @@ public class GameScreen implements Screen, Serializable {
 	}
 
 	public void detonateSpaceBombs() {
-		for (SpaceBomb b : spaceBombs) {
+		for (final SpaceBomb b : spaceBombs) {
 			if (b.getType() == SpaceBomb.Type.USER_FIRED) {
 				b.detonate();
 			}
@@ -665,7 +707,7 @@ public class GameScreen implements Screen, Serializable {
 		
 		int destructibleBricks = 0;
 		
-		for (Brick b : bricks)
+		for (final Brick b : bricks)
 			if (b.getType() != Brick.Type.SOLID)
 				destructibleBricks++;
 		
@@ -676,7 +718,7 @@ public class GameScreen implements Screen, Serializable {
 		float pdx = paddle.getdX();		
 		
 		// Ball vs. Edges
-		for (Ball ball : balls) {			
+		for (final Ball ball : balls) {			
 			// sanity check ball coordinates
 			// clamp ball to client area
 			if ((ball.getX() + ball.getWidth()) >= Config.getInstance().getClientWidth()) {
@@ -713,7 +755,7 @@ public class GameScreen implements Screen, Serializable {
 			}
 		}
 
-		for (Ball ball : balls) {
+		for (final Ball ball : balls) {
 			if (ball.getState() != Ball.State.STUCK_TO_PADDLE) {
 				if (ball.getY() <= 0 || 
 					(EffectManager.getInstance().isEffectActive(Effect.Type.BOTTOM_WALL)) && 
@@ -740,7 +782,7 @@ public class GameScreen implements Screen, Serializable {
 		// Ball lost?
 		Iterator<Ball> bi = balls.iterator();
 		while (bi.hasNext()) {			
-			Ball ball = bi.next();
+			final Ball ball = bi.next();
 			if (ball.getBoundingBox().getY() >= Config.getInstance().getScreenHeight() && 				
 				!EffectManager.getInstance().isEffectActive(Effect.Type.BOTTOM_WALL)) {					
 				ballLost(ball, bi);
@@ -748,7 +790,7 @@ public class GameScreen implements Screen, Serializable {
 		}
 		
 		// Ball vs. Paddle
-		for (Ball ball : balls) {
+		for (final Ball ball : balls) {
 			if (ball.getState() != Ball.State.STUCK_TO_PADDLE) {
 				if (Util.collisionTest(paddle.getBoundingBox(), ball.getBoundingBox())) {					
 //					final Edge edge = Util.getCollisionEdge(ball.getBoundingBox(), paddle.getBoundingBox());
@@ -758,9 +800,9 @@ public class GameScreen implements Screen, Serializable {
 					// N - The Normal Vector of the plane
 					// Vnew = -2*(V dot N)*N + V
 													
-					Vector ballVector = new Vector(ball.getDeltaX(), ball.getDeltaY(), ball.getMovementAngleInDegrees());					
-					Vector paddleVector =  new Vector(pdx, 1.0f, 0.0f);
-					Vector surfaceNormal = paddleVector.cross(ballVector).normalize();
+					final Vector ballVector = new Vector(ball.getDeltaX(), ball.getDeltaY(), ball.getMovementAngleInDegrees());					
+					final Vector paddleVector =  new Vector(pdx, 1.0f, 0.0f);
+					final Vector surfaceNormal = paddleVector.cross(ballVector).normalize();
 					
 					Vector result = surfaceNormal.mult(-2 * (ballVector.dot(surfaceNormal))).add(ballVector);
 					result = result.mult(Config.PADDLE_DAMPENING_FACTOR);					
@@ -790,8 +832,8 @@ public class GameScreen implements Screen, Serializable {
 		}
 		
 		// Ball vs. Bricks
-		for (Ball ball : balls) {
-			for (Brick b : bricks) {
+		for (final Ball ball : balls) {
+			for (final Brick b : bricks) {
 				if (Util.collisionTest(ball.getBoundingBox(), b.getBoundingBox())) {
 					brickHit(b, ball, false);
 				}
@@ -799,7 +841,7 @@ public class GameScreen implements Screen, Serializable {
 		}
 		
 		// Caught a powerup with the paddle?
-		for (Powerup p : powerups) {
+		for (final Powerup p : powerups) {
 			if (Util.collisionTest(paddle.getBoundingBox(), p.getBoundingBox())) {
 				EffectManager.getInstance().addEffect(p.getType());
 				p.setDestroyed(true);
@@ -807,8 +849,8 @@ public class GameScreen implements Screen, Serializable {
 		}
 		
 		// Projectile vs. Bricks		
-		for (Projectile p : projectiles) {
-			for (Brick b : bricks) {
+		for (final Projectile p : projectiles) {
+			for (final Brick b : bricks) {
 				if (Util.collisionTest(p.getBoundingBox(), b.getBoundingBox())) {
 					brickHit(b, null, true);
 					p.setDestroyed(true);
@@ -818,7 +860,7 @@ public class GameScreen implements Screen, Serializable {
 		
 		// Caught a power up with the grappling hook?
 		if (paddle.getGrapplingHook().getState() != GrapplingHook.State.IDLE) {
-			for (Powerup p : powerups) {
+			for (final Powerup p : powerups) {
 				if (paddle.getGrapplingHook().collisionTest(p.getBoundingBox())) {
 					
 					paddle.getGrapplingHook().setSomethingAttached(true);
@@ -832,7 +874,7 @@ public class GameScreen implements Screen, Serializable {
 		
 		// Consume caught power ups if they are 
 		// drawn in with the grappling hook
-		for (Powerup p : powerups) {
+		for (final Powerup p : powerups) {
 			if (p.getState() == Powerup.State.STUCK_TO_GRAPPLING_HOOK) {
 				if (Util.collisionTest(paddle.getBoundingBox(), p.getBoundingBox())) {
 					EffectManager.getInstance().addEffect(p.getType());
@@ -845,7 +887,7 @@ public class GameScreen implements Screen, Serializable {
 		
 		// Caught a space bomb with the grappling hook?
 		if (paddle.getGrapplingHook().getState() != GrapplingHook.State.IDLE) {
-			for (SpaceBomb b : spaceBombs) {
+			for (final SpaceBomb b : spaceBombs) {
 				//if (b.getType() == SpaceBomb.Type.BONUS) {
 					if (paddle.getGrapplingHook().collisionTest(b.getBoundingBox())) {
 						
@@ -861,7 +903,7 @@ public class GameScreen implements Screen, Serializable {
 		
 		// Consume caught space bombs if they are 
 		// drawn in with the grappling hook
-		for (SpaceBomb b : spaceBombs) {
+		for (final SpaceBomb b : spaceBombs) {
 			if (b.getState() == SpaceBomb.State.STUCK_TO_GRAPPLING_HOOK) {
 				if (Util.collisionTest(paddle.getBoundingBox(), b.getBoundingBox())) {
 					GameState.incrementSpaceBombsLeft();
@@ -873,7 +915,7 @@ public class GameScreen implements Screen, Serializable {
 		}
 		
 		// Caught a space bomb with the paddle?
-//		for (SpaceBomb b : spaceBombs) {
+//		for (final SpaceBomb b : spaceBombs) {
 //			if (b.getState() == SpaceBomb.State.FLOATING && b.getType() == Type.BONUS) {
 //				if (Util.collisionTest(paddle.getBoundingBox(), b.getBoundingBox())) {
 //					GameState.incrementSpaceBombsLeft();
@@ -908,39 +950,63 @@ public class GameScreen implements Screen, Serializable {
 				
 				switch (Util.getCollisionEdge(ball.getBoundingBox(), b.getBoundingBox())) {
 				case LEFT:
-					ball.invertXVelocity();					
+					ball.invertXVelocity();
+					
+					// avoid double collisions and tunneling
+					ball.setPosition(new Point(b.getX() - ball.getWidth(), ball.getY()));
 					break;
 					
 				case TOP_LEFT:
 					ball.invertXVelocity();
 					ball.invertYVelocity();
+					
+					// avoid double collisions and tunneling
+					ball.setPosition(new Point(b.getX() - ball.getWidth(), ball.getY()));
 					break;
 					
 				case TOP:
 					ball.invertYVelocity();
+					
+					// avoid double collisions and tunneling
+					ball.setPosition(new Point(ball.getX(), b.getY() - ball.getHeight()));
 					break;
 					
 				case TOP_RIGHT:
 					ball.invertXVelocity();
 					ball.invertYVelocity();
+					
+					// avoid double collisions and tunneling
+					ball.setPosition(new Point(ball.getX(), b.getY() - ball.getHeight()));
 					break;
 					
 				case RIGHT:
 					ball.invertXVelocity();
+					
+					// avoid double collisions and tunneling
+					ball.setPosition(new Point(b.getX() + b.getWidth(), ball.getY()));
 					break;									
 					
 				case BOTTOM_RIGHT:
 					ball.invertXVelocity();
 					ball.invertYVelocity();
+					
+					// avoid double collisions and tunneling
+					ball.setPosition(new Point(b.getX() + b.getWidth(), b.getY() + b.getHeight()));
 					break;
 					
 				case BOTTOM:
 					ball.invertYVelocity();
+					
+					// avoid double collisions and tunneling
+					ball.setPosition(new Point(ball.getX(), b.getY() + b.getHeight()));
 					break;
 					
 				case BOTTOM_LEFT:
 					ball.invertXVelocity();
 					ball.invertYVelocity();
+					
+					// avoid double collisions and tunneling
+					ball.setPosition(new Point(b.getX() - ball.getWidth(), b.getY() + b.getHeight()));
 					break;
 
 				default:
@@ -960,8 +1026,19 @@ public class GameScreen implements Screen, Serializable {
 	}
 
 	public void spawnBall(boolean isMultiball) {
+		final float y;
+		float lowestY = Config.getInstance().getScreenHeight() / 2;
+		
+		// find y coordinate of the bottom most row		
+		for (final Brick b : bricks) {
+			if (b.getPosition().getY() > lowestY)
+				lowestY = b.getPosition().getY(); 
+		}
+		
+		y = lowestY + Config.BRICK_HEIGHT;
+		
 		balls.add(new Ball(new Point((Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH) / 2, 
-									  Config.getInstance().getScreenHeight() / 2), isMultiball));
+									  y + Config.BALL_SPAWN_Y_OFFSET), isMultiball));
 	}
 	
 	private void ballLost(Ball ball, Iterator<Ball> bi) {
@@ -983,13 +1060,13 @@ public class GameScreen implements Screen, Serializable {
 		ForceFeedback.ballLost();
 		SoundLayer.playSound(Sounds.BALL_LOST);
 		
-		if (GameState.getBallsLeft() <= 0) {
+		if (GameState.getBallsLeft() <= 0 && balls.isEmpty()) {
 			setState(State.GAME_OVER);
 		}
 	}
 	
 	private <T extends Destroyable> void cleanupList(List<T> list) {
-		Iterator<T> i = list.iterator();		
+		final Iterator<T> i = list.iterator();		
 		while (i.hasNext()) {
 			T t = i.next();
 			
@@ -1053,7 +1130,7 @@ public class GameScreen implements Screen, Serializable {
 
 	public void setState(State state) {
 		this.state = state;
-		
+				
 		switch (state) {					
 		case NEW_STAGE:
 			Config.getInstance().setGameResumeable(true);
@@ -1072,7 +1149,7 @@ public class GameScreen implements Screen, Serializable {
 			break;
 			
 		case GAME_OVER:
-			Config.getInstance().setGameResumeable(true);
+			Config.getInstance().setGameResumeable(false);
 			break;
 			
 		case LOADING:
@@ -1087,6 +1164,13 @@ public class GameScreen implements Screen, Serializable {
 			break;
 			
 		case STAGE_CLEARED:
+			Config.getInstance().setGameResumeable(false);
+			
+			// check if we completed the whole level set
+			final int totalLevelsInSet = Integer.parseInt(LevelLoader.getLevelSetMetaData().get("Total Levels"));
+			
+			if (GameState.getLevel() + 1 >= totalLevelsInSet)
+				setState(State.LEVEL_SET_COMPLETED);
 			break;
 			
 		case TERMINATED:
@@ -1095,6 +1179,9 @@ public class GameScreen implements Screen, Serializable {
 			
 		case WAITING_FOR_BALL:
 			Config.getInstance().setGameResumeable(true);
+			break;
+		
+		case LEVEL_SET_COMPLETED:
 			break;
 			
 		default:
@@ -1121,7 +1208,7 @@ public class GameScreen implements Screen, Serializable {
 	
 	public void cheat(boolean withCounter) {		
 		if (withCounter) {
-			if (cheatTouchCtr++ > 5) {
+			if (cheatTouchCtr++ > 3) {
 				cheatTouchCtr = 0;
 				
 				initLevel(GameState.getLevel() + 1);
@@ -1146,7 +1233,7 @@ public class GameScreen implements Screen, Serializable {
 	public void saveGameState() {
 		Logger.debug("Saving game state...");
 		
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ObjectOutput out = null;
 		
 		try {			
@@ -1187,12 +1274,12 @@ public class GameScreen implements Screen, Serializable {
 	public void loadGameState() throws IOException {
 		Logger.debug("Restoring game state...");
 		
-		FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
-		byte[] bytes = handle.readBytes();
+		final FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
+		final byte[] bytes = handle.readBytes();
 		
 		Logger.debug(handle.path());
 		
-		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+		final ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
 		ObjectInput in = null;
 		
 		try {
@@ -1204,7 +1291,7 @@ public class GameScreen implements Screen, Serializable {
 			GameState.setScore(in.readInt());
 			
 			Object o = in.readObject();
-			EffectManager e = (EffectManager) in.readObject();
+			final EffectManager e = (EffectManager) in.readObject();
 			EffectManager.setInstance(e);
 			
 			((GameScreen) o).initializeTransients();			

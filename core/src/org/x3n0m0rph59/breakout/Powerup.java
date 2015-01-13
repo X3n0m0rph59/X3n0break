@@ -18,7 +18,7 @@ public class Powerup extends GameObject {
 	
 	private Effect.Type type;
 	
-	private Map<Effect.Type, SpriteObject> sprites = new EnumMap<Type, SpriteObject>(Effect.Type.class);
+	private final Map<Effect.Type, SpriteObject> sprites = new EnumMap<Type, SpriteObject>(Effect.Type.class);
 	
 	private final ParticleSystem trail = new ParticleSystem(new SpriteTuple[]{
 										 new SpriteTuple("data/sprites/Star1.png", 255.0f, 255.0f, 255, 255), 
@@ -70,7 +70,7 @@ public class Powerup extends GameObject {
 	public void render(SpriteBatch batch) {
 		trail.render(batch);
 		
-		SpriteObject sprite = sprites.get(type);
+		final SpriteObject sprite = sprites.get(type);
 		if (sprite != null) {
 			setSprite(sprite);			
 		}
@@ -83,7 +83,7 @@ public class Powerup extends GameObject {
 		trail.setPositionAndAngle(new Point(getBoundingBox().getX(), getBoundingBox().getY()), 180.0f);
 		trail.step(delta);
 		
-		for (SpriteObject s : sprites.values())
+		for (final SpriteObject s : sprites.values())
 			s.step(delta);
 		
 		if (state != State.STUCK_TO_GRAPPLING_HOOK)

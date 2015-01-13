@@ -10,7 +10,7 @@ public class Ball extends GameObject {
 	 */
 	private static final long serialVersionUID = -7834970106675039788L;
 
-	private static final float throwAngle = -45.0f;	
+	private static final float throwAngle = Config.BALL_THROW_ANGLE;	
 	
 	boolean drawFlash = false;
 	

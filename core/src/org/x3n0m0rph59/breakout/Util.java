@@ -11,16 +11,16 @@ public final class Util {
 	public static Edge getCollisionEdge(Rectangle r1, Rectangle r2) {
 		if (collisionTest(r1, r2)) {
 			
-			Point r1Center = new Point(r1.x + r1.getWidth() / 2, r1.y + r1.getHeight() / 2);
+			final Point r1Center = new Point(r1.x + r1.getWidth() / 2, r1.y + r1.getHeight() / 2);
 
-			Rectangle left 			= new Rectangle(r2.getX() - r1.getWidth(), r2.getY(), r1.getWidth(), r2.getHeight());
-			Rectangle top_left 		= new Rectangle(r2.getX() - r1.getWidth(), r2.getY() - r1.getHeight(), r1.getWidth(), r1.getHeight());
-			Rectangle top 			= new Rectangle(r2.getX(), r2.getY() - r1.getHeight(), r2.getWidth(), r1.getHeight());
-			Rectangle top_right 	= new Rectangle(r2.getX() + r2.getWidth(), r2.getY() - r1.getHeight(), r1.getWidth(), r1.getHeight());
-			Rectangle right 		= new Rectangle(r2.getX() + r2.getWidth(), r2.getY(), r1.getWidth(), r2.getHeight());
-			Rectangle bottom_right 	= new Rectangle(r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight(), r1.getWidth(), r1.getHeight());
-			Rectangle bottom 		= new Rectangle(r2.getX(), r2.getY() + r2.getHeight(), r2.getWidth(), r1.getHeight());
-			Rectangle bottom_left 	= new Rectangle(r2.getX() - r1.getWidth(), r2.getY() + r2.getHeight(), r1.getWidth(), r1.getHeight());
+			final Rectangle left 			= new Rectangle(r2.getX() - r1.getWidth(), r2.getY(), r1.getWidth(), r2.getHeight());
+			final Rectangle top_left 		= new Rectangle(r2.getX() - r1.getWidth(), r2.getY() - r1.getHeight(), r1.getWidth(), r1.getHeight());
+			final Rectangle top 			= new Rectangle(r2.getX(), r2.getY() - r1.getHeight(), r2.getWidth(), r1.getHeight());
+			final Rectangle top_right 	= new Rectangle(r2.getX() + r2.getWidth(), r2.getY() - r1.getHeight(), r1.getWidth(), r1.getHeight());
+			final Rectangle right 		= new Rectangle(r2.getX() + r2.getWidth(), r2.getY(), r1.getWidth(), r2.getHeight());
+			final Rectangle bottom_right 	= new Rectangle(r2.getX() + r2.getWidth(), r2.getY() + r2.getHeight(), r1.getWidth(), r1.getHeight());
+			final Rectangle bottom 		= new Rectangle(r2.getX(), r2.getY() + r2.getHeight(), r2.getWidth(), r1.getHeight());
+			final Rectangle bottom_left 	= new Rectangle(r2.getX() - r1.getWidth(), r2.getY() + r2.getHeight(), r1.getWidth(), r1.getHeight());
 			
 			if (left.contains(r1Center.getX(), r1Center.getY()))
 				return Edge.LEFT;
@@ -39,10 +39,11 @@ public final class Util {
 			else if (bottom_left.contains(r1Center.getX(), r1Center.getY()))
 				return Edge.BOTTOM_LEFT;
 			
-			// TODO: Fix this
-			// HACK: If all else fails simply guess
-			else if (r2.contains(r1Center.getX(), r1Center.getY()))
+			// Collision occurred in the center of the rectangle?
+			else if (r2.contains(r1Center.getX(), r1Center.getY())) {
+//				Logger.error("WARNING: Collision detector failed to detect collision edge!");
 				return Edge.BOTTOM;
+			}
 			
 			throw new RuntimeException("Bug in collision detector");
 		}
@@ -55,7 +56,7 @@ public final class Util {
 	}
 
 	public static int random(int min, int max) {
-		Random rnd = new Random();
+		final Random rnd = new Random();
 		return rnd.nextInt(Math.abs(max - min) + 1) + min;
 	}
 

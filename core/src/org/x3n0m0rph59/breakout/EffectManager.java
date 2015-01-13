@@ -139,7 +139,7 @@ public final class EffectManager implements Serializable {
 	}
 	
 	public boolean isEffectActive(Effect.Type effect) {
-		for (Effect e : effectList) {
+		for (final Effect e : effectList) {
 			if (e.getType() == effect)
 				return true;			
 		}
@@ -150,7 +150,7 @@ public final class EffectManager implements Serializable {
 	public boolean isEffectInGracePeriod(Effect.Type effect) {
 		List<Effect> candidates = new ArrayList<Effect>();
 		
-		for (Effect e : effectList) {
+		for (final Effect e : effectList) {
 			if (e.getType() == effect) {
 				candidates.add(e);
 			}
@@ -218,7 +218,7 @@ public final class EffectManager implements Serializable {
 	}
 	
 	public void step(float delta) {		
-		Iterator<Effect> i = effectList.iterator();				
+		final Iterator<Effect> i = effectList.iterator();				
 		while (i.hasNext()) {
 			Effect e = i.next();
 			e.step(delta);
@@ -231,7 +231,7 @@ public final class EffectManager implements Serializable {
 	}
 	
 	public void clearEffects() {
-		for (Effect e : effectList)
+		for (final Effect e : effectList)
 			e.expire();
 		
 		effectList.clear();

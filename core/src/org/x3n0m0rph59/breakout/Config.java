@@ -44,6 +44,10 @@ public final class Config {
 	/** Ball radius */
 	public static final float BALL_RADIUS = 15.0f;
 	
+	public static final float BALL_THROW_ANGLE = -45.0f;			
+			
+	public static final float BALL_SPAWN_Y_OFFSET = 15.0f;
+	
 	/** Get a free ball every nth points */
 	public static final int BONUS_BALL_SCORE = 50000;
 	
@@ -190,11 +194,12 @@ public final class Config {
 
 	public static final int VIBRATION_DURATION_SPACEBOMB_EXPLOSION = 2000;
 
+	
 	private static final Config instance = new Config();	
 
 	private float speedFactor = 1.0f;
 
-	private boolean noMusic;
+	private boolean noSound, noMusic;
 
 	private boolean gameResumeable = false;
 
@@ -255,8 +260,29 @@ public final class Config {
 			SoundLayer.getInstance().changeMusicPitch(MusicPitch.HIGH);
 	}
 	
+	public boolean isSoundMuted() {		
+		return noSound;
+	}
+	
+	public void setSoundMuted(boolean muted) {		
+		noSound = muted;
+		
+//		if (noMusic)
+//			SoundLayer.getInstance().stopAllSounds();
+	}
+	
 	public boolean isMusicMuted() {		
 		return noMusic;
+	}
+	
+	public void setMusicMuted(boolean muted) {		
+		noMusic = muted;
+		
+		if (noMusic)
+			SoundLayer.getInstance().stopAllMusic();
+		else
+			// re-enable and play music with the right pitch
+			changeMusicPitch();
 	}
 
 	public void setGameResumeable(boolean resumeable) {
@@ -273,5 +299,9 @@ public final class Config {
 	
 	public boolean isTerminationUserInitiated() {
 		return userTerminated;
+	}
+
+	public String getUserName() {
+		return "user";
 	}
 }

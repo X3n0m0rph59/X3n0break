@@ -28,7 +28,10 @@ public class App extends ApplicationAdapter {
 		
 		batch = new SpriteBatch();
 		
-		Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
+		final Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
+		
+		Config.getInstance().setSoundMuted(prefs.getBoolean("soundMuted"));
+		Config.getInstance().setMusicMuted(prefs.getBoolean("musicMuted"));
 		
 		if (!prefs.getBoolean("helpRead")) {
 			ScreenManager.getInstance().showScreen(ScreenType.HELP);
@@ -38,7 +41,7 @@ public class App extends ApplicationAdapter {
 		
 		
 		// restore saved state?
-		boolean lastExitWasUserInitiated = prefs.getBoolean("userExitedApp");
+		final boolean lastExitWasUserInitiated = prefs.getBoolean("userExitedApp");
 		
 		FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
 		if (Gdx.files.isLocalStorageAvailable() && handle.exists() && 
@@ -116,7 +119,7 @@ public class App extends ApplicationAdapter {
 		
 		// store saved state?
 		try {
-			GameScreen gameScreen = getGameScreen();
+			final GameScreen gameScreen = getGameScreen();
 			
 			if (!Config.getInstance().isTerminationUserInitiated()) {
 				if (gameScreen != null) {

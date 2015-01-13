@@ -11,11 +11,11 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class HelpScreen implements Screen {
 	
-	private OrthographicCamera camera;
-	private StretchViewport viewport;
+	private final OrthographicCamera camera;
+	private final StretchViewport viewport;
 	
 	BitmapFont font;
-	BitmapFont smallFont;
+	BitmapFont normalFont;
 	
 	public HelpScreen() {
 		camera = new OrthographicCamera();
@@ -26,39 +26,39 @@ public class HelpScreen implements Screen {
 		viewport.apply(true);
 		
 		font = FontLoader.getInstance().getFont("font", Config.TOAST_FONT_SIZE);
-		smallFont = FontLoader.getInstance().getFont("small_font", Config.TOAST_FONT_SIZE);
+		normalFont = FontLoader.getInstance().getFont("normal_font", Config.TOAST_FONT_SIZE);
 	}
 
 	@Override
 	public void show() {
-		HelpInputProcessor inputProcessor = new HelpInputProcessor();
+		final HelpInputProcessor inputProcessor = new HelpInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
 		font = FontLoader.getInstance().getFont("font", Config.TOAST_FONT_SIZE);
-		smallFont = FontLoader.getInstance().getFont("small_font", Config.TOAST_FONT_SIZE);
+		normalFont = FontLoader.getInstance().getFont("normal_font", Config.TOAST_FONT_SIZE);
 		
-		Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);		
+		final Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);		
 		prefs.putBoolean("helpRead", true);
 		prefs.flush();
 	}
 
 	@Override
 	public void render(float delta) {
-		SpriteBatch batch = App.getSpriteBatch();		
+		final SpriteBatch batch = App.getSpriteBatch();		
 			
 		batch.setProjectionMatrix(camera.combined);
 		
 		font.draw(batch, "Welcome to " + Config.APP_NAME + " " + Config.APP_VERSION, 50, 50);
 		
-		smallFont.drawMultiLine(batch, "NOTE:\n\nThis is an early access (alpha) version of the game. " + 
+		normalFont.drawMultiLine(batch, "NOTE:\nThis is an early access version of the game.\n" + 
 							  "It may still contain some bugs!", 50, 150);
 		
-		smallFont.drawMultiLine(batch, "Usage:\n\nSwipe with one finger to move the paddle.\n\n" +
+		normalFont.drawMultiLine(batch, "Usage:\nSwipe with one finger to move the paddle.\n\n" +
 							  "Tap with two fingers to toggle the grappling hook.\n\n" +
-							  "Press Main Menu in the lower right corner of the screen " + 
+							  "Press Main Menu in the lower right corner of the screen\n" + 
 							  "to go to the main menu.\n\n"+
-							  "Tap PRESS HERE field in the lower right corner of " + 
-							  "the screen to release a space bomb\n\n\nTAP now to CONTINUE", 50, 300);
+							  "Tap PRESS HERE field in the lower right corner of\n" + 
+							  "the screen to release a space bomb\n\nTAP now to CONTINUE", 50, 350);
 	}
 
 	@Override

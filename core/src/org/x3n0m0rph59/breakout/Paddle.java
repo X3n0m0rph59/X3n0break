@@ -37,7 +37,7 @@ public class Paddle extends GameObject {
 	private final ParticleSystem thruster = new ParticleSystem(new SpriteTuple[]{new SpriteTuple("data/sprites/fire.png", 198.0f, 197.0f, 198, 197)}, 
 				new Point(0.0f, 0.0f), -1.0f, 15.0f, 0.0f, 25.0f, 0.0f, 15.0f, 10.0f, 8.5f);
 
-	private GrapplingHook grapplingHook;
+	private final GrapplingHook grapplingHook;
 	
 	public Paddle() {
 		super(new SpriteObject("data/sprites/paddle.png", Config.PADDLE_DEFAULT_WIDTH, Config.PADDLE_HEIGHT, 600, 150), 

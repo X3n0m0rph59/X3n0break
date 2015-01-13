@@ -11,12 +11,9 @@ import java.util.List;
 
 
 public class ScoreBoard implements Renderable {
-	private List<Brick> bricks = new ArrayList<Brick>();
+	private final List<Brick> bricks = new ArrayList<Brick>();
 	
-//	private SpriteObject grapplingHook = new SpriteObject("data/sprites/hook.png", 
-//			  											  60, 60, 150, 150);
-	
-	private SpriteObject spaceBomb = new SpriteObject("data/sprites/spacebomb.png", 
+	private final SpriteObject spaceBomb = new SpriteObject("data/sprites/spacebomb.png", 
 													  Config.SPACEBOMB_WIDTH, 
 													  Config.SPACEBOMB_HEIGHT, 
 													  145, 130);
@@ -58,8 +55,8 @@ public class ScoreBoard implements Renderable {
 	public void render(SpriteBatch batch) {
 		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		
-		BitmapFont font = FontLoader.getInstance().getFont("small_font", 28);
-		BitmapFont smallFont = FontLoader.getInstance().getFont("small_font", 24);
+		final BitmapFont font = FontLoader.getInstance().getFont("small_font", 28);
+		final BitmapFont smallFont = FontLoader.getInstance().getFont("small_font", 24);
 		
 		final float fps = Gdx.graphics.getFramesPerSecond();
 		final int score = GameState.getScore();
@@ -94,6 +91,9 @@ public class ScoreBoard implements Renderable {
 		spaceBomb.render(batch, new Point(Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH,
 										  Config.WORLD_HEIGHT - 175), 
 						 150, 150);
+		
+		smallFont.draw(batch, "" + spaceBombsLeft, (Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH) + 55, 
+				 				Config.WORLD_HEIGHT - 130);
 		
 		smallFont.draw(batch, "PRESS HERE", (Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH) + 25, 
 											 Config.WORLD_HEIGHT - 100);

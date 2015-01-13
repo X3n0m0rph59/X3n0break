@@ -10,8 +10,8 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 public class MenuScreen implements Screen {
 
-	private OrthographicCamera camera;
-	private StretchViewport viewport;
+	private final OrthographicCamera camera;
+	private final StretchViewport viewport;
 
 	BitmapFont font;
 	BitmapFont smallFont;
@@ -32,7 +32,7 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void show() {
-		MenuInputProcessor inputProcessor = new MenuInputProcessor();
+		final MenuInputProcessor inputProcessor = new MenuInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 
 		font = FontLoader.getInstance().getFont("font", Config.TOAST_FONT_SIZE);
@@ -42,7 +42,7 @@ public class MenuScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
-		SpriteBatch batch = App.getSpriteBatch();
+		final SpriteBatch batch = App.getSpriteBatch();
 
 		batch.setProjectionMatrix(camera.combined);
 

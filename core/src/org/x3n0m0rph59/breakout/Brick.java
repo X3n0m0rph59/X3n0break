@@ -18,7 +18,7 @@ public class Brick extends GameObject {
 	public enum Behavior {MOVE_LEFT, MOVE_RIGHT, ROTATE_LEFT, ROTATE_RIGHT};
 	
 	private Type type;
-	private EnumSet<Behavior> behavior;
+	private final EnumSet<Behavior> behavior;
 	private float speed;
 	
 	private int hitCounter = 0;
@@ -64,7 +64,7 @@ public class Brick extends GameObject {
 		}
 		
 		
-		SpriteObject sprite = sprites.get(type);
+		final SpriteObject sprite = sprites.get(type);
 		if (sprite != null) {
 			sprite.setWidth(width);
 			sprite.setHeight(height);
@@ -101,7 +101,7 @@ public class Brick extends GameObject {
 //		}
 		
 		
-		for (SpriteObject s : sprites.values())
+		for (final SpriteObject s : sprites.values())
 			s.step(delta);
 		
 		super.step(delta);

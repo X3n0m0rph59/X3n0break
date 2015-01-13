@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.IntMap;
 public class ScreenManager {	
 	private static final ScreenManager instance = new ScreenManager();
 	
-	private IntMap<Screen> screens;
+	private final IntMap<Screen> screens;
 
 	private ScreenManager() {
 		screens = new IntMap<Screen>();

@@ -43,7 +43,7 @@ enum MusicPitch {
 }
 
 class SoundSprite {
-	private Sound sound;
+	private final Sound sound;
 	
 	public SoundSprite(String filename) {		
 		sound = Gdx.audio.newSound(Gdx.files.internal("data/sounds/" + filename));
@@ -63,7 +63,7 @@ class SoundSprite {
 }
 
 class MusicStream {
-	private Music music;
+	private final Music music;
 	
 	public MusicStream(String filename) {		
 		music = Gdx.audio.newMusic(Gdx.files.internal("data/music/" + filename));		
@@ -76,7 +76,14 @@ class MusicStream {
 	
 	public void playAt(float pos) {				
 		this.play();
+		
+		// TODO: Bug in libGDX, why is this needed ??
+//		while (!music.isPlaying())
+//			;
+		
 		music.setPosition(pos);
+		
+		Logger.debug("Music pos: " + pos);
 	}
 	
 	public void stop() {
@@ -89,7 +96,7 @@ class MusicStream {
 	}
 	
 	public float getPosition() {
-		float pos = music.getPosition();
+		final float pos = music.getPosition();
 		return pos;
 	}
 
@@ -101,8 +108,10 @@ class MusicStream {
 public final class SoundLayer {
 	private static final SoundLayer instance = new SoundLayer();
 	
-	private Map<Sounds, SoundSprite> soundMap = new HashMap<Sounds, SoundSprite>();
-	private Map<Musics, MusicStream> musicMap = new HashMap<Musics, MusicStream>();
+	private final Map<Sounds, SoundSprite> soundMap = new HashMap<Sounds, SoundSprite>();
+	private final Map<Musics, MusicStream> musicMap = new HashMap<Musics, MusicStream>();
+
+//	private MusicPitch currentMusicPitch = MusicPitch.NORMAL;
 	
 	private static MusicStream currentMusic;
 	
@@ -159,7 +168,7 @@ public final class SoundLayer {
 	public static void stopLoop(Sounds sound) {
 		Logger.debug("Stopping sound: " + sound);
 		
-		SoundSprite s = SoundLayer.getInstance().soundMap.get(sound);
+		final SoundSprite s = SoundLayer.getInstance().soundMap.get(sound);
 		if (s != null)
 			s.stop();
 	}
@@ -167,21 +176,23 @@ public final class SoundLayer {
 	public static void playSound(Sounds sound, float pitch, float gain, boolean loop) {
 		Logger.debug("Playing sound: " + sound);
 		
-		SoundSprite s = SoundLayer.getInstance().soundMap.get(sound);
-		if (s != null) 
-//			if (loop)
-//				s.loop(pitch, gain);
-//			else
-//				s.play(pitch, gain);
-			
-			s.play(pitch, gain);
+		if (!Config.getInstance().isSoundMuted()) {
+			final SoundSprite s = SoundLayer.getInstance().soundMap.get(sound);
+			if (s != null) 
+	//			if (loop)
+	//				s.loop(pitch, gain);
+	//			else
+	//				s.play(pitch, gain);
+				
+				s.play(pitch, gain);
+		}
 	}
 	
 	public static void playMusic(Musics music) {
 		Logger.debug("Playing music: " + music);
 		
 		if (!Config.getInstance().isMusicMuted()) {
-			MusicStream m = SoundLayer.getInstance().musicMap.get(music);
+			final MusicStream m = SoundLayer.getInstance().musicMap.get(music);
 			if (m != null) {
 				m.play();
 				
@@ -191,7 +202,7 @@ public final class SoundLayer {
 	}
 	
 	public void stopMusic(Musics music) {
-		MusicStream m = SoundLayer.getInstance().musicMap.get(music);
+		final MusicStream m = SoundLayer.getInstance().musicMap.get(music);
 		if (m != null) {
 			m.stop();
 			
@@ -201,52 +212,74 @@ public final class SoundLayer {
 	
 	public void stopAllMusic()
 	{
-		for (MusicStream m : musicMap.values()) {
+		for (final MusicStream m : musicMap.values()) {
 			m.stop();
 		}
 		
 		currentMusic = null;
 	}
 
-	public void changeMusicPitch(MusicPitch pitch) {		
-		float pos = 0; 		
-		if (currentMusic != null) {		
-			pos = currentMusic.getPosition();
-			stopAllMusic();
+	public void changeMusicPitch(MusicPitch toPitch) {
+		if (!Config.getInstance().isMusicMuted()) {
+			float pos = 0.0f; 		
+			if (currentMusic != null) {
+				
+	//			switch (currentMusicPitch) {
+	//			case NORMAL:
+	//				pos = currentMusic.getPosition();
+	//				break;
+	//			
+	//			case HIGH:
+	//				pos = currentMusic.getPosition() * 0.25926f;
+	//				break;
+	//				
+	//			case LOW:
+	//				pos = currentMusic.getPosition() * 0.35f;
+	//				break;
+	//
+	//			default:
+	//				throw new RuntimeException("Unsupported Music Pitch!");
+	//			}
+				
+				pos = currentMusic.getPosition();
+				
+				stopAllMusic();
+			}
+			
+			MusicStream m;		
+			
+			switch (toPitch) {
+			case NORMAL:
+				m = SoundLayer.getInstance().musicMap.get(Musics.BACKGROUND);
+				m.playAt(pos);
+				break;
+				
+			case LOW:
+				m = SoundLayer.getInstance().musicMap.get(Musics.BACKGROUND_LO);
+				m.playAt(pos);
+				break;
+				
+			case HIGH:
+				m = SoundLayer.getInstance().musicMap.get(Musics.BACKGROUND_HI);
+				m.playAt(pos);
+				break;
+				
+			default:
+				throw new RuntimeException("Unsupported Music Pitch!");
+			}
+			
+	//		currentMusicPitch = toPitch;
+			currentMusic = m;
 		}
-		
-		MusicStream m;		
-		
-		switch (pitch) {
-		case NORMAL:
-			m = SoundLayer.getInstance().musicMap.get(Musics.BACKGROUND);
-			m.playAt(pos);
-			break;
-			
-		case LOW:
-			m = SoundLayer.getInstance().musicMap.get(Musics.BACKGROUND_LO);
-			m.playAt(pos);
-			break;
-			
-		case HIGH:
-			m = SoundLayer.getInstance().musicMap.get(Musics.BACKGROUND_HI);
-			m.playAt(pos);
-			break;
-			
-		default:
-			throw new RuntimeException("Unsupported Music Pitch!");
-		}
-		
-		currentMusic = m;
 	}
 
 	public void dispose() {
-		for (SoundSprite ss : soundMap.values()) {
+		for (final SoundSprite ss : soundMap.values()) {
 			ss.dispose();
 //			soundMap.remove(ss);
 		}
 		
-		for (MusicStream ms : musicMap.values()) {
+		for (final MusicStream ms : musicMap.values()) {
 			ms.dispose();
 //			musicMap.remove(ms);
 		}

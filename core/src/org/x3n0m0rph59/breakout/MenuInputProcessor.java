@@ -4,8 +4,10 @@ import org.x3n0m0rph59.breakout.GameScreen.State;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 
 public class MenuInputProcessor implements InputProcessor {
@@ -36,13 +38,10 @@ public class MenuInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-//		final Camera camera = ((MenuScreen) ((App) Gdx.app.getApplicationListener()).getCurrentScreen()).getCamera();
-//		
-//		final float mX = camera.unproject(new Vector3(screenX, screenY, 0.0f)).x;
-//		final float mY = camera.unproject(new Vector3(screenX, screenY, 0.0f)).y;
+		final Camera camera = ((MenuScreen) ((App) Gdx.app.getApplicationListener()).getCurrentScreen()).getCamera();
 		
-		final float mX = screenX;
-		final float mY = screenY;
+		final float mX = camera.unproject(new Vector3(screenX, screenY, 0.0f)).x;
+		final float mY = camera.unproject(new Vector3(screenX, screenY, 0.0f)).y;
 		
 		final Rectangle hotRectNewGame = new Rectangle(0, 200, (float) Gdx.graphics.getWidth() / 2, 200);
 		final Rectangle hotRectSettings = new Rectangle(0, 500, (float) Gdx.graphics.getWidth() / 2, 200);
@@ -60,12 +59,12 @@ public class MenuInputProcessor implements InputProcessor {
 		}
 		
 		if (hotRectSettings.contains(new Vector2(mX, mY))) {
-//			ScreenManager.getInstance().showScreen(ScreenType.SETTINGS);
+			ScreenManager.getInstance().showScreen(ScreenType.SETTINGS);
 			return true;
 		}
 		
 		if (hotRectHighscores.contains(new Vector2(mX, mY))) {
-//			ScreenManager.getInstance().showScreen(ScreenType.HIGHSCORES);
+			ScreenManager.getInstance().showScreen(ScreenType.HIGHSCORE);
 			return true;
 		}
 		

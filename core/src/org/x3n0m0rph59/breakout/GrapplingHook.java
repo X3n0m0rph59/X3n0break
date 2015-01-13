@@ -13,8 +13,8 @@ public class GrapplingHook extends GameObject {
 	enum State {IDLE, EXTENDING, FULLY_EXTENDED, LOWERING}
 	private State state = State.IDLE;
 	
-	private GrapplingHookSegment hook 	 = new GrapplingHookSegment(GrapplingHookSegment.Type.HOOK, new Point(0.0f,0.0f));
-	private GrapplingHookSegment segment = new GrapplingHookSegment(GrapplingHookSegment.Type.SEGMENT, new Point(0.0f,0.0f));
+	private final GrapplingHookSegment hook 	 = new GrapplingHookSegment(GrapplingHookSegment.Type.HOOK, new Point(0.0f,0.0f));
+	private final GrapplingHookSegment segment = new GrapplingHookSegment(GrapplingHookSegment.Type.SEGMENT, new Point(0.0f,0.0f));
 	
 	private float length = 0.0f;
 

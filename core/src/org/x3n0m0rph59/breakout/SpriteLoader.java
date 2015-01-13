@@ -13,9 +13,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class SpriteLoader {
 	private static final SpriteLoader instance = new SpriteLoader();
-	private Map<String, Sprite> map = new HashMap<String, Sprite>();
+	private final Map<String, Sprite> map = new HashMap<String, Sprite>();
 	
-	private AssetManager assetManager;
+	private final AssetManager assetManager;
 	
 	public SpriteLoader() {		
 		assetManager = new AssetManager();
@@ -31,7 +31,7 @@ public class SpriteLoader {
 	public Sprite getSprite(String filename, int tw, int th) {
 		Sprite sprite;		
 		if ((sprite = getSpriteFromCache(filename)) == null) {
-			TextureParameter param = new TextureParameter();
+			final TextureParameter param = new TextureParameter();
 			
 			param.minFilter = TextureFilter.Linear;
 			param.genMipMaps = true;
@@ -39,7 +39,7 @@ public class SpriteLoader {
 			assetManager.load(filename, Texture.class, param);			
 			assetManager.finishLoading();
 			
-			Texture t = assetManager.get(filename);
+			final Texture t = assetManager.get(filename);
 			
 			sprite = new Sprite(t, tw, th);			
 			sprite.flip(false, true);
@@ -69,7 +69,7 @@ public class SpriteLoader {
 	}
 
 	public void dispose() {
-		for (Sprite s : map.values()) {
+		for (final Sprite s : map.values()) {
 			s.getTexture().dispose();
 //			map.remove(s);
 		}
