@@ -52,7 +52,7 @@ public class GameInputProcessor implements InputProcessor {
 	}
 
 	@Override
-	public boolean touchDown(int x, int y, int pointer, int button) {		
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {						
 		switch (pointer) {
 		case 0:
 			switch (button) {
@@ -76,7 +76,7 @@ public class GameInputProcessor implements InputProcessor {
 		
 		return false;
 	}
-
+	
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		final Camera camera = ((GameScreen) ((App) Gdx.app.getApplicationListener()).getCurrentScreen()).getCamera();
@@ -110,18 +110,18 @@ public class GameInputProcessor implements InputProcessor {
 		if (hotRectBomb.contains(new Vector2(mX, mY))) {
 			((App) Gdx.app.getApplicationListener()).getGameScreen().releaseSpaceBomb();
 			return true;
-		}
-
+		}		
+		
 		return false;
 	}
 
 	@Override
-	public boolean touchDragged(int x, int y, int pointer) {
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
 		return false;
 	}
 
 	@Override
-	public boolean mouseMoved(int x, int y) {		
+	public boolean mouseMoved(int screenX, int screenY) {		
 //		((App) Gdx.app.getApplicationListener()).getGameScreen().setPointerCoords(x, y);
 		
 		return true;

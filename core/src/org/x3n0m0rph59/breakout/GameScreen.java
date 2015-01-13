@@ -67,7 +67,9 @@ public class GameScreen implements Screen, Serializable {
 	private int frameCounter = 0;
 	
 	private int spaceBombCoolDownTime = 0;
-	private int cheatTouchCtr = 0;;
+	private int cheatTouchCtr = 0;
+	
+	private Brick lastHitBrick;
 	
 	
 	public GameScreen() {
@@ -117,6 +119,9 @@ public class GameScreen implements Screen, Serializable {
 			paddle.getGrapplingHook().resetState();
 			paddle.setWidth(Config.PADDLE_DEFAULT_WIDTH);
 			
+			
+			// Carry over Multiballs to the new level
+			GameState.setBallsLeft(GameState.getBallsLeft() + (balls.size() - 1));			
 			balls.clear();
 			spawnBall(false);
 							
@@ -135,6 +140,8 @@ public class GameScreen implements Screen, Serializable {
 			
 			backgrounds.clear();
 			backgrounds.add(BackgroundFactory.getRandomBackground());
+			
+			particleEffects.clear();
 			
 			levelMetadata = LevelLoader.getLevelMetaData(level);
 			bricks = LevelLoader.loadLevel(level);
@@ -640,7 +647,7 @@ public class GameScreen implements Screen, Serializable {
 				if (HighScoreManager.getInstance().isNewHighScore(GameState.getScore())) {
 					
 					HighScoreManager.getInstance().addHighScore(Config.getInstance().getUserName(), 
-																GameState.getScore());
+																GameState.getScore(), GameState.getLevel() + 1);
 					ScreenManager.getInstance().showScreen(ScreenType.HIGHSCORE);
 					
 				} else				
@@ -653,7 +660,7 @@ public class GameScreen implements Screen, Serializable {
 			if (Gdx.input.justTouched()) {
 				if (HighScoreManager.getInstance().isNewHighScore(GameState.getScore()))					
 					HighScoreManager.getInstance().addHighScore(Config.getInstance().getUserName(), 
-																GameState.getScore());									
+																GameState.getScore(), GameState.getLevel() + 1);									
 				
 				ScreenManager.getInstance().showScreen(ScreenType.HIGHSCORE);
 			}
@@ -749,6 +756,8 @@ public class GameScreen implements Screen, Serializable {
 					
 					ball.invertXVelocity();
 					
+					lastHitBrick = null;
+					
 					ForceFeedback.wallHit();					
 					SoundLayer.playSound(Sounds.WALL_HIT);
 				}
@@ -772,6 +781,8 @@ public class GameScreen implements Screen, Serializable {
 						ball.setPosition(new Point(ball.getX(), Config.getInstance().getScreenHeight() - 
 																Config.BOTTOM_WALL_HEIGHT - ball.getHeight() + 1.0f));
 					}
+					
+					lastHitBrick = null;
 					
 					ForceFeedback.wallHit();
 					SoundLayer.playSound(Sounds.WALL_HIT);
@@ -824,6 +835,8 @@ public class GameScreen implements Screen, Serializable {
 					// Sticky ball?
 					if (EffectManager.getInstance().isEffectActive(Effect.Type.STICKY_BALL))
 						ball.setState(Ball.State.STUCK_TO_PADDLE);
+					
+					lastHitBrick = null;
 					
 					ForceFeedback.paddleHit();
 					SoundLayer.playSound(Sounds.PADDLE_HIT);
@@ -926,101 +939,106 @@ public class GameScreen implements Screen, Serializable {
 	}
 
 	private void brickHit(Brick b, Ball ball, boolean hitByProjectile) {
-		b.hit();
+		// avoid double collisions		
+		if (b != lastHitBrick) {
+			lastHitBrick = b;
 		
-		if (b.isDestroyed()) {
-			addParticleEffect(new Point(b.getBoundingBox().getX(), b.getBoundingBox().getY()), 
-							  ParticleEffect.BRICK_EXPLOSION);
-		}
-		
-		if (hitByProjectile) {
-			if (b.getType() != Brick.Type.SOLID) {
-				GameState.changeScore(100);
+			b.hit();
+			
+			if (b.isDestroyed()) {
+				addParticleEffect(new Point(b.getBoundingBox().getX(), b.getBoundingBox().getY()), 
+								  ParticleEffect.BRICK_EXPLOSION);
 			}
 			
-			if (b.getType() == Brick.Type.POWERUP) {
-				GameState.changeScore(1000);			
-				spawnPowerup(b.getPosition());
-			}
-		}
-		else {
-			// Reflect the ball?			
-			if (!EffectManager.getInstance().isEffectActive(Effect.Type.FIREBALL) &&
-				b.getType() != Brick.Type.WEAK) {
+			if (hitByProjectile) {
+				if (b.getType() != Brick.Type.SOLID) {
+					GameState.changeScore(100);
+				}
 				
-				switch (Util.getCollisionEdge(ball.getBoundingBox(), b.getBoundingBox())) {
-				case LEFT:
-					ball.invertXVelocity();
-					
-					// avoid double collisions and tunneling
-					ball.setPosition(new Point(b.getX() - ball.getWidth(), ball.getY()));
-					break;
-					
-				case TOP_LEFT:
-					ball.invertXVelocity();
-					ball.invertYVelocity();
-					
-					// avoid double collisions and tunneling
-					ball.setPosition(new Point(b.getX() - ball.getWidth(), ball.getY()));
-					break;
-					
-				case TOP:
-					ball.invertYVelocity();
-					
-					// avoid double collisions and tunneling
-					ball.setPosition(new Point(ball.getX(), b.getY() - ball.getHeight()));
-					break;
-					
-				case TOP_RIGHT:
-					ball.invertXVelocity();
-					ball.invertYVelocity();
-					
-					// avoid double collisions and tunneling
-					ball.setPosition(new Point(ball.getX(), b.getY() - ball.getHeight()));
-					break;
-					
-				case RIGHT:
-					ball.invertXVelocity();
-					
-					// avoid double collisions and tunneling
-					ball.setPosition(new Point(b.getX() + b.getWidth(), ball.getY()));
-					break;									
-					
-				case BOTTOM_RIGHT:
-					ball.invertXVelocity();
-					ball.invertYVelocity();
-					
-					// avoid double collisions and tunneling
-					ball.setPosition(new Point(b.getX() + b.getWidth(), b.getY() + b.getHeight()));
-					break;
-					
-				case BOTTOM:
-					ball.invertYVelocity();
-					
-					// avoid double collisions and tunneling
-					ball.setPosition(new Point(ball.getX(), b.getY() + b.getHeight()));
-					break;
-					
-				case BOTTOM_LEFT:
-					ball.invertXVelocity();
-					ball.invertYVelocity();
-					
-					// avoid double collisions and tunneling
-					ball.setPosition(new Point(b.getX() - ball.getWidth(), b.getY() + b.getHeight()));
-					break;
-
-				default:
-					throw new RuntimeException("Invalid egde type");				
-				}				
-			}			
-			
-			if (b.getType() != Brick.Type.SOLID) {
-				GameState.changeScore(100);		
+				if (b.getType() == Brick.Type.POWERUP) {
+					GameState.changeScore(1000);			
+					spawnPowerup(b.getPosition());
+				}
 			}
-			
-			if (b.getType() == Brick.Type.POWERUP) {
-				GameState.changeScore(1000);			
-				spawnPowerup(b.getPosition());
+			else {
+				// Reflect the ball?			
+				if (!EffectManager.getInstance().isEffectActive(Effect.Type.FIREBALL) &&
+					b.getType() != Brick.Type.WEAK) {
+					
+					switch (Util.getCollisionEdge(ball.getBoundingBox(), b.getBoundingBox())) {
+					case LEFT:
+						ball.invertXVelocity();
+						
+						// avoid double collisions and tunneling
+						ball.setPosition(new Point(b.getX() - ball.getWidth(), ball.getY()));
+						break;
+						
+					case TOP_LEFT:
+						ball.invertXVelocity();
+						ball.invertYVelocity();
+						
+						// avoid double collisions and tunneling
+						ball.setPosition(new Point(b.getX() - ball.getWidth(), ball.getY()));
+						break;
+						
+					case TOP:
+						ball.invertYVelocity();
+						
+						// avoid double collisions and tunneling
+						ball.setPosition(new Point(ball.getX(), b.getY() - ball.getHeight()));
+						break;
+						
+					case TOP_RIGHT:
+						ball.invertXVelocity();
+						ball.invertYVelocity();
+						
+						// avoid double collisions and tunneling
+						ball.setPosition(new Point(ball.getX(), b.getY() - ball.getHeight()));
+						break;
+						
+					case RIGHT:
+						ball.invertXVelocity();
+						
+						// avoid double collisions and tunneling
+						ball.setPosition(new Point(b.getX() + b.getWidth(), ball.getY()));
+						break;									
+						
+					case BOTTOM_RIGHT:
+						ball.invertXVelocity();
+						ball.invertYVelocity();
+						
+						// avoid double collisions and tunneling
+						ball.setPosition(new Point(b.getX() + b.getWidth(), b.getY() + b.getHeight()));
+						break;
+						
+					case BOTTOM:
+						ball.invertYVelocity();
+						
+						// avoid double collisions and tunneling
+						ball.setPosition(new Point(ball.getX(), b.getY() + b.getHeight()));
+						break;
+						
+					case BOTTOM_LEFT:
+						ball.invertXVelocity();
+						ball.invertYVelocity();
+						
+						// avoid double collisions and tunneling
+						ball.setPosition(new Point(b.getX() - ball.getWidth(), b.getY() + b.getHeight()));
+						break;
+	
+					default:
+						throw new RuntimeException("Invalid egde type");				
+					}				
+				}			
+				
+				if (b.getType() != Brick.Type.SOLID) {
+					GameState.changeScore(100);		
+				}
+				
+				if (b.getType() == Brick.Type.POWERUP) {
+					GameState.changeScore(1000);			
+					spawnPowerup(b.getPosition());
+				}
 			}
 		}
 	}

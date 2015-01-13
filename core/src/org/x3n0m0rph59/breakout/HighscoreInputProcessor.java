@@ -1,9 +1,12 @@
 package org.x3n0m0rph59.breakout;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 
 public class HighscoreInputProcessor implements InputProcessor {
+	
+	boolean touchedDown = false;
 
 	@Override
 	public boolean keyDown(int keycode) {
@@ -15,7 +18,7 @@ public class HighscoreInputProcessor implements InputProcessor {
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
 		case Keys.Q:
-			System.exit(0);
+			Gdx.app.exit();
 			return true;
 		}
 		
@@ -30,13 +33,18 @@ public class HighscoreInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		touchedDown = true;
+		
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		ScreenManager.getInstance().showScreen(ScreenType.MENU);
+		if (touchedDown) {
+			touchedDown = false;
+			
+			ScreenManager.getInstance().showScreen(ScreenType.MENU);
+		}
 		return true;
 	}
 

@@ -156,24 +156,24 @@ public class Paddle extends GameObject {
 		super.step(delta);
 	}
 	
-	public void setCenteredPosition(Point position) {
-		setPosition(new Point(position.getX() - (getWidth() / 2), Config.getInstance().getScreenHeight() - Config.PADDLE_BOTTOM_SPACING));
-		
-		if (getX() < 0) {
+	public void setCenteredPosition(Point position) {				
+		if (position.getX() < 0 + (getWidth() / 2)) {
 			setPosition(new Point(0.0f, Config.getInstance().getScreenHeight() - Config.PADDLE_BOTTOM_SPACING));
 			
 			// if we were chasing, cancel the chase
 			if (getState() == State.CHASING)
 				setState(State.IDLE);
-		}
-		
-		if (getX() > Config.getInstance().getClientWidth() - getWidth()) { 
+			
+		} else if (position.getX() > Config.getInstance().getClientWidth() - (getWidth() / 2)) { 
 			setPosition(new Point(Config.getInstance().getClientWidth() - getWidth(), 
 								  Config.getInstance().getScreenHeight() - Config.PADDLE_BOTTOM_SPACING));
 			
 			// if we were chasing, cancel the chase
 			if (getState() == State.CHASING)
 				setState(State.IDLE);
+			
+		} else {		
+			setPosition(new Point(position.getX() - (getWidth() / 2), Config.getInstance().getScreenHeight() - Config.PADDLE_BOTTOM_SPACING));
 		}
 	}
 

@@ -20,7 +20,8 @@ public class App extends ApplicationAdapter {
 	@Override
 	public void create () {
 		Gdx.graphics.setTitle(Config.APP_NAME);
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+//		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		Gdx.app.setLogLevel(Application.LOG_NONE);
 		
 		Logger.debug("App: create()");
 		
@@ -44,8 +45,8 @@ public class App extends ApplicationAdapter {
 		final boolean lastExitWasUserInitiated = prefs.getBoolean("userExitedApp");
 		
 		FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
-		if (Gdx.files.isLocalStorageAvailable() && handle.exists() && 
-			!lastExitWasUserInitiated) {
+		if (Gdx.files.isLocalStorageAvailable() && handle.exists() /*&& 
+			!lastExitWasUserInitiated*/) {
 			ScreenManager.getInstance().showScreen(ScreenType.GAME);
 			
 			try {
@@ -88,8 +89,7 @@ public class App extends ApplicationAdapter {
 		
 		batch.begin();
 		
-		currentScreen.render(Gdx.graphics.getDeltaTime() * Config.SYNC_FPS
-							 /* Gdx.graphics.getFramesPerSecond() */);
+		currentScreen.render(Gdx.graphics.getRawDeltaTime() * Config.SYNC_FPS);
 		
 		batch.end();
 	}	
@@ -121,33 +121,33 @@ public class App extends ApplicationAdapter {
 		try {
 			final GameScreen gameScreen = getGameScreen();
 			
-			if (!Config.getInstance().isTerminationUserInitiated()) {
+//			if (!Config.getInstance().isTerminationUserInitiated()) {
 				if (gameScreen != null) {
 					gameScreen.saveGameState();
 					
-					Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
+					final Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
 					
 					prefs.putBoolean("userExitedApp", false);
 					prefs.flush();
 				}
-			}
-			else {
-				Logger.debug("Deleting saved state (user requested exit)");
-				
-				Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
-				
-				prefs.putBoolean("userExitedApp", true);
-				prefs.flush();
-				
-				
-				FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
-				
-				if (handle.exists())
-					handle.delete();
-			}
+//			}
+//			else {
+//				Logger.debug("Deleting saved state (user requested exit)");
+//				
+//				Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
+//				
+//				prefs.putBoolean("userExitedApp", true);
+//				prefs.flush();
+//				
+//				
+//				FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
+//				
+//				if (handle.exists())
+//					handle.delete();
+//			}
 		}
 		catch (RuntimeException e) {
-			Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
+			final Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
 			
 			prefs.putBoolean("userExitedApp", Config.getInstance().isTerminationUserInitiated());
 			prefs.flush();
@@ -172,10 +172,10 @@ public class App extends ApplicationAdapter {
 	}
 	
 	public GameScreen getGameScreen() {		
-		if (currentScreen instanceof GameScreen) {
+		if (currentScreen instanceof GameScreen)
 			return (GameScreen) ((App) Gdx.app.getApplicationListener()).currentScreen;
-		}
-		else throw new RuntimeException("Current Screen is not the GameScreen!");			
+		else 
+			return (GameScreen) ScreenManager.getInstance().getScreen(ScreenType.GAME);
 	}
 
 	public void setScreen(Screen screen) {

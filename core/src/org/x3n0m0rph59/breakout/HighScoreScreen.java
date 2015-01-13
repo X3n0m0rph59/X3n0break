@@ -50,17 +50,28 @@ public class HighScoreScreen implements Screen {
 		
 		font.draw(batch, "Highscores", 50, 50);
 		
-		String highscores = "User                Date                                  Score\n\n";
-		
-		for (final HighScore hs : HighScoreManager.getInstance().getTop10Scores()) {
-			highscores += hs.getName()  + "                ";			
-			highscores += hs.getDate()  + "                ";
-			highscores += hs.getScore();
-			highscores += "\n";
+		normalFont.draw(batch, "Rank",    50, 150);
+		normalFont.draw(batch, "User",   250, 150);
+		normalFont.draw(batch, "Date",   700, 150);
+		normalFont.draw(batch, "Score", 1400, 150);
+		normalFont.draw(batch, "Level", 1750, 150);
+			
+		int row = 0;
+		for (final HighScore hs : HighScoreManager.getInstance().getTop15Scores()) {			
+			// Highlight "current" highscore
+			if (hs == HighScoreManager.getInstance().getCurrentHighScore()) {
+				normalFont.draw(batch, ">",    5, 220 + row * 50);
+				normalFont.draw(batch, "<", 1890, 220 + row * 50);
+			}
+											
+			normalFont.draw(batch, String.format("%02d", row),			   120, 220 + row * 50);
+			normalFont.draw(batch, hs.getName(),   					       250, 220 + row * 50);			
+			normalFont.draw(batch, hs.getDate(),  						   700, 220 + row * 50);
+			normalFont.draw(batch, String.format("%08d", hs.getScore()),  1400, 220 + row * 50);
+			normalFont.draw(batch, String.format("%02d", hs.getLevel()),  1820, 220 + row * 50);
+			
+			row++;
 		}
-		
-		normalFont.drawMultiLine(batch, highscores, 50, 150);
-		
 	}
 
 	@Override

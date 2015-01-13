@@ -1,6 +1,7 @@
 package org.x3n0m0rph59.breakout;
 
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 
 public class HelpInputProcessor implements InputProcessor {
@@ -15,7 +16,7 @@ public class HelpInputProcessor implements InputProcessor {
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
 		case Keys.Q:
-			System.exit(0);
+			Gdx.app.exit();
 			return true;
 		}
 		

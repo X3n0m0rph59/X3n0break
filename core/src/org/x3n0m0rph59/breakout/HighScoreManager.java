@@ -16,6 +16,7 @@ public class HighScoreManager {
 	private static final HighScoreManager instance = new HighScoreManager();
 	
 	private List<HighScore> highScores = new LinkedList<HighScore>();
+	private HighScore currentHighScore = null;
 	
 	public static HighScoreManager getInstance() {
 		return instance;
@@ -91,28 +92,37 @@ public class HighScoreManager {
 			return false;
 	}
 	
-	public void addHighScore(String name, int score) {
+	public void addHighScore(String name, int score, int level) {
 		final String date = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(Calendar.getInstance().getTime());		
-		HighScore hs = new HighScore(name, date, score);
+		HighScore hs = new HighScore(name, date, score, level);
 		
 		highScores.add(hs);
+		setCurrentHighScore(hs);
 		
 		sort();
 		
 		saveHighScores();
 	}
 	
-	public List<HighScore> getTop10Scores() {
-		List<HighScore> top10Scores = new LinkedList<HighScore>();
+	public List<HighScore> getTop15Scores() {
+		List<HighScore> top15Scores = new LinkedList<HighScore>();
 		
 		sort();
 		
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 15; i++)
 			if (i >= highScores.size())
 				break;
 			else
-				top10Scores.add(highScores.get(i));
+				top15Scores.add(highScores.get(i));
 		
-		return top10Scores;
+		return top15Scores;
+	}
+
+	public HighScore getCurrentHighScore() {
+		return currentHighScore;
+	}
+
+	public void setCurrentHighScore(HighScore currentHighScore) {
+		this.currentHighScore = currentHighScore;
 	}
 }
