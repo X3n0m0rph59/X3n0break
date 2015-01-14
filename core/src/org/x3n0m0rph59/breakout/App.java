@@ -20,8 +20,8 @@ public final class App extends ApplicationAdapter {
 	@Override
 	public void create () {
 		Gdx.graphics.setTitle(Config.APP_NAME);
-//		Gdx.app.setLogLevel(Application.LOG_DEBUG);
-		Gdx.app.setLogLevel(Application.LOG_ERROR);
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+//		Gdx.app.setLogLevel(Application.LOG_ERROR);
 		
 		Logger.debug("App: create()");
 		

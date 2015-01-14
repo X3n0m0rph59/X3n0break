@@ -57,9 +57,16 @@ public final class Util {
 				return Edge.BOTTOM_LEFT;
 			
 			// Collision occurred in the center of the rectangle?
-			else if (r2.contains(r1Center.getX(), r1Center.getY())) {
-//				Logger.error("WARNING: Collision detector failed to detect exact collision edge!");
-				return Edge.CENTER;
+			else if (r2.contains(r1Center.getX(), r1Center.getY())) {				
+				if (r1Center.getX() >= r2.getX() + (r2.getWidth() / 2))
+					return Edge.RIGHT;
+				else if (r1Center.getX() <= r2.getX() + (r2.getWidth() / 2))
+					return Edge.LEFT;
+				
+				else {
+					Logger.error("WARNING: Collision detector failed to detect exact collision edge!");
+					return Edge.CENTER;
+				}
 			}
 			
 			throw new RuntimeException("Bug in collision detector");

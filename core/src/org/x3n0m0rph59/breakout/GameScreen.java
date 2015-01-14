@@ -972,7 +972,7 @@ public class GameScreen implements Screen, Serializable {
 						ball.invertXVelocity();
 						
 						// avoid double collisions and tunneling
-						ball.setPosition(new Point(b.getX() - ball.getWidth(), ball.getY()));
+						ball.setPosition(new Point(b.getX() - (ball.getWidth() + 1.0f), ball.getY()));
 						break;
 						
 					case TOP_LEFT:
@@ -980,14 +980,14 @@ public class GameScreen implements Screen, Serializable {
 //						ball.invertYVelocity();
 						
 						// avoid double collisions and tunneling
-						ball.setPosition(new Point(b.getX() - ball.getWidth(), ball.getY()));
+						ball.setPosition(new Point(b.getX() - (ball.getWidth() + 1.0f), ball.getY()));
 						break;
 						
 					case TOP:
 						ball.invertYVelocity();
 						
 						// avoid double collisions and tunneling
-						ball.setPosition(new Point(ball.getX(), b.getY() - ball.getHeight()));
+						ball.setPosition(new Point(ball.getX(), b.getY() - (ball.getHeight() + 1.0f)));
 						break;
 						
 					case TOP_RIGHT:
@@ -995,14 +995,14 @@ public class GameScreen implements Screen, Serializable {
 //						ball.invertYVelocity();
 						
 						// avoid double collisions and tunneling
-						ball.setPosition(new Point(ball.getX(), b.getY() - ball.getHeight()));
+						ball.setPosition(new Point(ball.getX(), b.getY() - (ball.getHeight() + 1.0f)));
 						break;
 						
 					case RIGHT:
 						ball.invertXVelocity();
 						
 						// avoid double collisions and tunneling
-						ball.setPosition(new Point(b.getX() + b.getWidth(), ball.getY()));
+						ball.setPosition(new Point(b.getX() + b.getWidth() + 1.0f, ball.getY()));
 						break;									
 						
 					case BOTTOM_RIGHT:
@@ -1010,14 +1010,15 @@ public class GameScreen implements Screen, Serializable {
 //						ball.invertYVelocity();
 						
 						// avoid double collisions and tunneling
-						ball.setPosition(new Point(b.getX() + b.getWidth(), b.getY() + b.getHeight()));
+						ball.setPosition(new Point(b.getX() + b.getWidth() + 1.0f, 
+												   b.getY() + b.getHeight() + 1.0f));
 						break;
 						
 					case BOTTOM:
 						ball.invertYVelocity();
 						
 						// avoid double collisions and tunneling
-						ball.setPosition(new Point(ball.getX(), b.getY() + b.getHeight()));
+						ball.setPosition(new Point(ball.getX(), b.getY() + b.getHeight() + 1.0f));
 						break;
 						
 					case BOTTOM_LEFT:
@@ -1025,7 +1026,8 @@ public class GameScreen implements Screen, Serializable {
 //						ball.invertYVelocity();
 						
 						// avoid double collisions and tunneling
-						ball.setPosition(new Point(b.getX() - ball.getWidth(), b.getY() + b.getHeight()));
+						ball.setPosition(new Point(b.getX() - (ball.getWidth() + 1.0f), 
+												   b.getY() + b.getHeight() + 1.0f));
 						break;
 					
 					case CENTER:
@@ -1036,13 +1038,15 @@ public class GameScreen implements Screen, Serializable {
 							ball.invertYVelocity();
 							
 							// avoid double collisions and tunneling
-							ball.setPosition(new Point(b.getX() - ball.getWidth() / 2, b.getY() + b.getHeight()));
+							ball.setPosition(new Point(b.getX() - ball.getWidth() / 2, 
+													   b.getY() + b.getHeight() + 1.0f));
 						} else {
 //							ball.invertXVelocity();
 							ball.invertYVelocity();
 							
 							// avoid double collisions and tunneling
-							ball.setPosition(new Point(b.getX() - ball.getWidth() / 2, b.getY()));
+							ball.setPosition(new Point(b.getX() - ball.getWidth() / 2, 
+													   b.getY() - 1.0f));
 						}
 						break;												
 	
