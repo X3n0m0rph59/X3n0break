@@ -208,7 +208,9 @@ public class GameScreen implements Screen, Serializable {
 	public void resume() {
 		Logger.debug("GameScreen: resume()");
 		
-		if (balls.isEmpty())
+		if (GameState.getBallsLeft() <= 0)
+			setState(State.GAME_OVER);
+		else if (balls.size() <= 0)
 			setState(State.WAITING_FOR_BALL);
 		else			
 			setState(State.PAUSED);
@@ -975,7 +977,7 @@ public class GameScreen implements Screen, Serializable {
 						
 					case TOP_LEFT:
 						ball.invertXVelocity();
-						ball.invertYVelocity();
+//						ball.invertYVelocity();
 						
 						// avoid double collisions and tunneling
 						ball.setPosition(new Point(b.getX() - ball.getWidth(), ball.getY()));
@@ -990,7 +992,7 @@ public class GameScreen implements Screen, Serializable {
 						
 					case TOP_RIGHT:
 						ball.invertXVelocity();
-						ball.invertYVelocity();
+//						ball.invertYVelocity();
 						
 						// avoid double collisions and tunneling
 						ball.setPosition(new Point(ball.getX(), b.getY() - ball.getHeight()));
@@ -1005,7 +1007,7 @@ public class GameScreen implements Screen, Serializable {
 						
 					case BOTTOM_RIGHT:
 						ball.invertXVelocity();
-						ball.invertYVelocity();
+//						ball.invertYVelocity();
 						
 						// avoid double collisions and tunneling
 						ball.setPosition(new Point(b.getX() + b.getWidth(), b.getY() + b.getHeight()));
@@ -1020,11 +1022,29 @@ public class GameScreen implements Screen, Serializable {
 						
 					case BOTTOM_LEFT:
 						ball.invertXVelocity();
-						ball.invertYVelocity();
+//						ball.invertYVelocity();
 						
 						// avoid double collisions and tunneling
 						ball.setPosition(new Point(b.getX() - ball.getWidth(), b.getY() + b.getHeight()));
 						break;
+					
+					case CENTER:
+						final float angle = ball.getAngleInDegrees();
+						
+						if (angle >= -90.0f && angle <= +90.0f) {						
+//							ball.invertXVelocity();
+							ball.invertYVelocity();
+							
+							// avoid double collisions and tunneling
+							ball.setPosition(new Point(b.getX() - ball.getWidth() / 2, b.getY() + b.getHeight()));
+						} else {
+//							ball.invertXVelocity();
+							ball.invertYVelocity();
+							
+							// avoid double collisions and tunneling
+							ball.setPosition(new Point(b.getX() - ball.getWidth() / 2, b.getY()));
+						}
+						break;												
 	
 					default:
 						throw new RuntimeException("Invalid egde type");				

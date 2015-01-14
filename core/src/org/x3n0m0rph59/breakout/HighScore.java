@@ -1,6 +1,6 @@
 package org.x3n0m0rph59.breakout;
 
-public class HighScore {
+public final class HighScore {
 	private String name;
 	private String date;
 	private int score;

@@ -1,6 +1,6 @@
 package org.x3n0m0rph59.breakout;
 
-public class FontTuple {
+public final class FontTuple {
 	private String name;
 	private int size;
 	

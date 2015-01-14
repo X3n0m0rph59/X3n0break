@@ -1,7 +1,6 @@
 package org.x3n0m0rph59.breakout;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -37,9 +36,9 @@ public class HighScoreScreen implements Screen {
 		font = FontLoader.getInstance().getFont("font", Config.TOAST_FONT_SIZE);
 		normalFont = FontLoader.getInstance().getFont("normal_font", Config.TOAST_FONT_SIZE);
 		
-		final Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
-		
-		prefs.flush();
+//		final Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
+//		
+//		prefs.flush();
 	}
 
 	@Override
@@ -56,19 +55,20 @@ public class HighScoreScreen implements Screen {
 		normalFont.draw(batch, "Score", 1400, 150);
 		normalFont.draw(batch, "Level", 1750, 150);
 			
+		final int row_spacing = 50;
 		int row = 0;
 		for (final HighScore hs : HighScoreManager.getInstance().getTop15Scores()) {			
 			// Highlight "current" highscore
 			if (hs == HighScoreManager.getInstance().getCurrentHighScore()) {
-				normalFont.draw(batch, ">",    5, 220 + row * 50);
-				normalFont.draw(batch, "<", 1890, 220 + row * 50);
+				normalFont.draw(batch, ">",    5, 220 + row * row_spacing);
+				normalFont.draw(batch, "<", 1890, 220 + row * row_spacing);
 			}
 											
-			normalFont.draw(batch, String.format("%02d", row),			   120, 220 + row * 50);
-			normalFont.draw(batch, hs.getName(),   					       250, 220 + row * 50);			
-			normalFont.draw(batch, hs.getDate(),  						   700, 220 + row * 50);
-			normalFont.draw(batch, String.format("%08d", hs.getScore()),  1400, 220 + row * 50);
-			normalFont.draw(batch, String.format("%02d", hs.getLevel()),  1820, 220 + row * 50);
+			normalFont.draw(batch, String.format("%02d", row + 1),		   120, 220 + row * row_spacing);
+			normalFont.draw(batch, hs.getName(),   					       250, 220 + row * row_spacing);			
+			normalFont.draw(batch, hs.getDate(),  						   700, 220 + row * row_spacing);
+			normalFont.draw(batch, String.format("%08d", hs.getScore()),  1400, 220 + row * row_spacing);
+			normalFont.draw(batch, String.format("%02d", hs.getLevel()),  1820, 220 + row * row_spacing);
 			
 			row++;
 		}

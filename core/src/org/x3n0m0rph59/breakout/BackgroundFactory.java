@@ -1,7 +1,7 @@
 package org.x3n0m0rph59.breakout;
 
 
-public class BackgroundFactory {
+public final class BackgroundFactory {
 	
 	public static Background getRandomBackground() {
 		SpriteObject sprite;

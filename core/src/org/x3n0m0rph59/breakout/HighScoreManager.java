@@ -12,7 +12,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 
 
-public class HighScoreManager {
+public final class HighScoreManager {
 	private static final HighScoreManager instance = new HighScoreManager();
 	
 	private List<HighScore> highScores = new LinkedList<HighScore>();

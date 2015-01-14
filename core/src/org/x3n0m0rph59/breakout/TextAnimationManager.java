@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class TextAnimationManager implements Stepable, Renderable {
+public final class TextAnimationManager implements Stepable, Renderable {
 	private static final TextAnimationManager instance = new TextAnimationManager();
 	
 	private final List<TextAnimation> textAnimations = new ArrayList<TextAnimation>();

@@ -2,7 +2,7 @@ package org.x3n0m0rph59.breakout;
 
 import com.badlogic.gdx.Gdx;
 
-public class ForceFeedback {
+public final class ForceFeedback {
 	public static void ballLost() {
 		vibrate(Config.VIBRATION_DURATION_BALL_LOST);
 	}

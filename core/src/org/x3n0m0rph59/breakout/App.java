@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
-public class App extends ApplicationAdapter {
+public final class App extends ApplicationAdapter {
 	private SpriteBatch batch;
 	
 	protected Screen currentScreen;
@@ -21,7 +21,7 @@ public class App extends ApplicationAdapter {
 	public void create () {
 		Gdx.graphics.setTitle(Config.APP_NAME);
 //		Gdx.app.setLogLevel(Application.LOG_DEBUG);
-		Gdx.app.setLogLevel(Application.LOG_NONE);
+		Gdx.app.setLogLevel(Application.LOG_ERROR);
 		
 		Logger.debug("App: create()");
 		
@@ -54,6 +54,10 @@ public class App extends ApplicationAdapter {
 							
 				try {
 					gameScreen.loadGameState();
+					
+					if (lastExitWasUserInitiated) {
+						ScreenManager.getInstance().showScreen(ScreenType.MENU);
+					}
 				}
 				catch(IOException e) {
 					ScreenManager.getInstance().showScreen(ScreenType.MENU);

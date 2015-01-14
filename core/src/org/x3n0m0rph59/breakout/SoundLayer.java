@@ -42,7 +42,7 @@ enum MusicPitch {
 	HIGH
 }
 
-class SoundSprite {
+final class SoundSprite {
 	private final Sound sound;
 	
 	public SoundSprite(String filename) {		
@@ -62,7 +62,7 @@ class SoundSprite {
 	}
 }
 
-class MusicStream {
+final class MusicStream {
 	private final Music music;
 	
 	public MusicStream(String filename) {		

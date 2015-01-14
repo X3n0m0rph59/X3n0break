@@ -118,7 +118,7 @@ public class Ball extends GameObject {
 
 	@Override
 	public Rectangle getBoundingBox() {
-		return new Rectangle(position.getX(), position.getY(), Config.BALL_RADIUS, Config.BALL_RADIUS);
+		return new Rectangle(position.getX(), position.getY(), Config.BALL_RADIUS * 2.0f, Config.BALL_RADIUS * 2.0f);
 	}
 		
 	public void invertXVelocity() {

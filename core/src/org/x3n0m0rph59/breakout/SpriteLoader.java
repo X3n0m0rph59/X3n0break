@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
 
-public class SpriteLoader {
+public final class SpriteLoader {
 	private static final SpriteLoader instance = new SpriteLoader();
 	private final Map<String, Sprite> map = new HashMap<String, Sprite>();
 	

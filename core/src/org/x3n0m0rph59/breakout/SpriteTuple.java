@@ -1,6 +1,6 @@
 package org.x3n0m0rph59.breakout;
 
-public class SpriteTuple {
+public final class SpriteTuple {
 	private String fileName;
 	private float width, height;
 	private int tw, th;

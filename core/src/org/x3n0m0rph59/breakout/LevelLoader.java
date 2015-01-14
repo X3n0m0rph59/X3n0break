@@ -11,7 +11,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
 
-public class LevelLoader {
+public final class LevelLoader {
 	public static HashMap<String, String> getLevelSetMetaData() {
 		final HashMap<String, String> data = new HashMap<String, String>();
 		
