@@ -56,20 +56,21 @@ public class GameInputProcessor implements InputProcessor {
 		switch (pointer) {
 		case 0:
 			switch (button) {
-			case 2:
-				((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().getGrapplingHook().toggleSwitch();
+			case 2:			
+				final boolean detonated = ((App) Gdx.app.getApplicationListener()).getGameScreen().detonateSpaceBombs();
 				
-				return true;
-			
-			case 3:
-				((App) Gdx.app.getApplicationListener()).getGameScreen().detonateSpaceBombs();
+				if (!detonated)
+					((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().getGrapplingHook().toggleSwitch();				
 				
-				return true;
+				return true;						
 			}
 			break;
 			
 		case 1:
-			((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().getGrapplingHook().toggleSwitch();
+			final boolean detonated = ((App) Gdx.app.getApplicationListener()).getGameScreen().detonateSpaceBombs();
+			
+			if (!detonated)
+				((App) Gdx.app.getApplicationListener()).getGameScreen().getPaddle().getGrapplingHook().toggleSwitch();
 			
 			break;
 		}

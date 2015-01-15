@@ -1,7 +1,5 @@
 package org.x3n0m0rph59.breakout;
 
-import org.x3n0m0rph59.breakout.GameScreen.State;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;

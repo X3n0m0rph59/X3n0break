@@ -512,8 +512,8 @@ public class GameScreen implements Screen, Serializable {
 															  Config.SPACEBOMB_EXPLOSION_RADIUS);					
 									
 					for (final Brick brick : bricks) {
-						if (explosionCircle.contains(brick.getBoundingBox().getX(), 
-													 brick.getBoundingBox().getY())) {
+						if (explosionCircle.contains(brick.getBoundingBox().getX() + brick.getBoundingBox().getWidth() / 2, 
+													 brick.getBoundingBox().getY() + brick.getBoundingBox().getHeight() / 2)) {
 //							brickHit(brick, null, true);
 							
 							if (brick.getType() != Brick.Type.SOLID) {
@@ -523,9 +523,18 @@ public class GameScreen implements Screen, Serializable {
 							if (brick.getType() == Brick.Type.POWERUP) {
 								GameState.changeScore(1000);			
 								spawnPowerup(b.getPosition());
-							}
+							}							
 							
 							brick.setDestroyed(true);
+						}
+					}
+					
+					
+					// Detonate other space bombs that are inside the explosion circle
+					for (final SpaceBomb bomb : spaceBombs) {
+						if (explosionCircle.contains(bomb.getBoundingBox().getX() + bomb.getBoundingBox().getWidth() / 2, 
+													 bomb.getBoundingBox().getY() + bomb.getBoundingBox().getHeight() / 2)) {
+							bomb.detonate();
 						}
 					}
 				}
@@ -703,12 +712,16 @@ public class GameScreen implements Screen, Serializable {
 		}
 	}
 
-	public void detonateSpaceBombs() {
+	public boolean detonateSpaceBombs() {
+		boolean result = false;
 		for (final SpaceBomb b : spaceBombs) {
 			if (b.getType() == SpaceBomb.Type.USER_FIRED) {
 				b.detonate();
+				result = true;
 			}
 		}
+		
+		return result;
 	}
 	
 	public boolean isStageCleared() {
