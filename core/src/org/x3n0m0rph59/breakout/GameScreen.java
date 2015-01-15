@@ -3,6 +3,7 @@ package org.x3n0m0rph59.breakout;
 import org.x3n0m0rph59.breakout.SoundLayer;
 //import org.x3n0m0rph59.breakout.SpaceBomb.Type;
 
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -186,12 +187,21 @@ public class GameScreen implements Screen, Serializable {
 		}
 	}
 	
+	public void setStateAfterResume() {
+		if (GameState.getBallsLeft() <= 0)
+			setState(State.GAME_OVER);
+		else if (balls.size() <= 0)
+			setState(State.WAITING_FOR_BALL);
+		else			
+			setState(State.PAUSED);
+	}
+	
 	@Override
 	public void show() {
 		final GameInputProcessor inputProcessor = new GameInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
-		setState(State.RUNNING);
+		setStateAfterResume();
 	}
 
 	@Override
@@ -208,12 +218,7 @@ public class GameScreen implements Screen, Serializable {
 	public void resume() {
 		Logger.debug("GameScreen: resume()");
 		
-		if (GameState.getBallsLeft() <= 0)
-			setState(State.GAME_OVER);
-		else if (balls.size() <= 0)
-			setState(State.WAITING_FOR_BALL);
-		else			
-			setState(State.PAUSED);
+		setStateAfterResume();
 	}
 
 	@Override
@@ -1198,11 +1203,12 @@ public class GameScreen implements Screen, Serializable {
 			break;
 			
 		case PAUSED:
-			Config.getInstance().setGameResumeable(true);
+			Config.getInstance().setGameResumeable(true);			
 			break;
 			
 		case RUNNING:
 			Config.getInstance().setGameResumeable(true);
+			Config.getInstance().setGameStateBeforeQuit(state);
 			break;
 			
 		case STAGE_CLEARED:
@@ -1340,7 +1346,7 @@ public class GameScreen implements Screen, Serializable {
 			
 			ScreenManager.getInstance().overrideAndShowScreen(ScreenType.GAME, (GameScreen) o);
 			
-			((App) Gdx.app.getApplicationListener()).getGameScreen().setState(State.PAUSED);
+			((App) Gdx.app.getApplicationListener()).getGameScreen().setStateAfterResume();;
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

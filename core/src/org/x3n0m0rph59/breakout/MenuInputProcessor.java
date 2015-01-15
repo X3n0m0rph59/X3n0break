@@ -69,10 +69,15 @@ public class MenuInputProcessor implements InputProcessor {
 		}
 		
 		if (hotRectResumeGame.contains(new Vector2(mX, mY))) {
-			ScreenManager.getInstance().showScreen(ScreenType.GAME);			
-			((App) Gdx.app.getApplicationListener()).getGameScreen().setState(State.PAUSED);
-			
-			return true;
+			if (Config.getInstance().isGameResumeable() && 
+				Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.GAME_OVER)
+			{
+				ScreenManager.getInstance().showScreen(ScreenType.GAME);			
+				((App) Gdx.app.getApplicationListener()).getGameScreen().setStateAfterResume();
+				
+				return true;
+			} else
+				return false;
 		}
 		
 		if (hotRectHelp.contains(new Vector2(mX, mY))) {

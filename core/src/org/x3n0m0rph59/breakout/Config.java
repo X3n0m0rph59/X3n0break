@@ -1,5 +1,7 @@
 package org.x3n0m0rph59.breakout;
 
+import org.x3n0m0rph59.breakout.GameScreen.State;
+
 
 public final class Config {
 	// Global configuration parameters
@@ -204,6 +206,7 @@ public final class Config {
 	private boolean gameResumeable = false;
 
 	private boolean userTerminated = false;
+	private State gameStateBeforeQuit;
 	
 	
 	public Config() {
@@ -304,4 +307,12 @@ public final class Config {
 	public String getUserName() {
 		return "user";
 	}
+
+	public GameScreen.State getGameStateBeforeQuit() {
+		return this.gameStateBeforeQuit;
+	}
+	
+	public void setGameStateBeforeQuit(State stateBeforeQuit) {
+		this.gameStateBeforeQuit = stateBeforeQuit;
+	}	
 }

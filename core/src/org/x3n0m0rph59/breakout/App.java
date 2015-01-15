@@ -33,31 +33,32 @@ public final class App extends ApplicationAdapter {
 		
 		Config.getInstance().setSoundMuted(prefs.getBoolean("soundMuted"));
 		Config.getInstance().setMusicMuted(prefs.getBoolean("musicMuted"));
-		
+
+		final GameScreen.State stateBeforeQuit = GameScreen.State.values()[(int) prefs.getLong("gameStateBeforeQuit")];
+		Config.getInstance().setGameStateBeforeQuit(stateBeforeQuit);
+
 		if (!prefs.getBoolean("helpRead")) {
 			ScreenManager.getInstance().showScreen(ScreenType.HELP);
 		} else {
 			ScreenManager.getInstance().showScreen(ScreenType.MENU);
 		}
 		
-		
 		// restore saved state?
 		final boolean lastExitWasUserInitiated = prefs.getBoolean("userExitedApp");
 		
-		FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
-		if (Gdx.files.isLocalStorageAvailable() && handle.exists() /*&& 
-			!lastExitWasUserInitiated*/) {
-			ScreenManager.getInstance().showScreen(ScreenType.GAME);
-			
+		final FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
+		
+		if (Gdx.files.isLocalStorageAvailable() && handle.exists()) {
 			try {
-				GameScreen gameScreen = getGameScreen();
+				final GameScreen gameScreen = getGameScreen();
 							
 				try {
 					gameScreen.loadGameState();
 					
-					if (lastExitWasUserInitiated) {
+					if (lastExitWasUserInitiated)
 						ScreenManager.getInstance().showScreen(ScreenType.MENU);
-					}
+					else
+						ScreenManager.getInstance().showScreen(ScreenType.GAME);
 				}
 				catch(IOException e) {
 					ScreenManager.getInstance().showScreen(ScreenType.MENU);
@@ -66,7 +67,8 @@ public final class App extends ApplicationAdapter {
 			catch (RuntimeException e) {
 				// do nothing
 			}
-		} else if (lastExitWasUserInitiated) {
+				
+		} else {
 			ScreenManager.getInstance().showScreen(ScreenType.MENU);
 		}
 	}
@@ -123,32 +125,17 @@ public final class App extends ApplicationAdapter {
 		
 		// store saved state?
 		try {
+			final Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
+			
+			prefs.putLong("gameStateBeforeQuit", getGameScreen().getState().ordinal());
+			prefs.putBoolean("userExitedApp", Config.getInstance().isTerminationUserInitiated());
+			prefs.flush();
+			
 			final GameScreen gameScreen = getGameScreen();
 			
-//			if (!Config.getInstance().isTerminationUserInitiated()) {
-				if (gameScreen != null) {
-					gameScreen.saveGameState();
-					
-					final Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
-					
-					prefs.putBoolean("userExitedApp", false);
-					prefs.flush();
-				}
-//			}
-//			else {
-//				Logger.debug("Deleting saved state (user requested exit)");
-//				
-//				Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
-//				
-//				prefs.putBoolean("userExitedApp", true);
-//				prefs.flush();
-//				
-//				
-//				FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
-//				
-//				if (handle.exists())
-//					handle.delete();
-//			}
+			if (gameScreen != null) {
+				gameScreen.saveGameState();					
+			}
 		}
 		catch (RuntimeException e) {
 			final Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
@@ -157,7 +144,7 @@ public final class App extends ApplicationAdapter {
 			prefs.flush();
 		}
 		
-		currentScreen.dispose();				
+		ScreenManager.getInstance().dispose();				
 		
 		SpriteLoader.getInstance().dispose();
 		FontLoader.getInstance().dispose();
@@ -183,12 +170,14 @@ public final class App extends ApplicationAdapter {
 	}
 
 	public void setScreen(Screen screen) {
-//		if (currentScreen != null)
-//			currentScreen.dispose();
-		
-		currentScreen = screen;
-		currentScreen.show();
-		currentScreen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		if (currentScreen != screen) {
+//			if (currentScreen != null)
+//				currentScreen.dispose();
+			
+			currentScreen = screen;
+			currentScreen.show();
+			currentScreen.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		}
 	}
 
 	public Screen getCurrentScreen() {
