@@ -9,23 +9,23 @@ public final class BackgroundFactory {
 		switch (Util.random(0, 4))
 		{
 		case 0:
-			sprite = new SpriteObject("data/backgrounds/00.png", 256, 256, 256, 256);
+			sprite = new SpriteObject(ResourceMapper.getPath("00.png", ResourceType.BACKGROUND), 256, 256, 256, 256);
 			break;
 			
 		case 1:				
-			sprite = new SpriteObject("data/backgrounds/01.png", 256, 256, 256, 256);
+			sprite = new SpriteObject(ResourceMapper.getPath("01.png", ResourceType.BACKGROUND), 256, 256, 256, 256);
 			break;
 			
 		case 2:
-			sprite = new SpriteObject("data/backgrounds/02.png", 256, 256, 256, 256);
+			sprite = new SpriteObject(ResourceMapper.getPath("02.png", ResourceType.BACKGROUND), 256, 256, 256, 256);
 			break;
 			
 		case 3:
-			sprite = new SpriteObject("data/backgrounds/03.png", 256, 256, 256, 256);
+			sprite = new SpriteObject(ResourceMapper.getPath("03.png", ResourceType.BACKGROUND), 256, 256, 256, 256);
 			break;
 			
 		case 4:
-			sprite = new SpriteObject("data/backgrounds/04.png", 256, 256, 256, 256);
+			sprite = new SpriteObject(ResourceMapper.getPath("04.png", ResourceType.BACKGROUND), 256, 256, 256, 256);
 			break;
 			
 		default:

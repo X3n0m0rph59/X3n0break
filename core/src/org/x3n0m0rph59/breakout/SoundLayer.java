@@ -46,7 +46,7 @@ final class SoundSprite {
 	private final Sound sound;
 	
 	public SoundSprite(String filename) {		
-		sound = Gdx.audio.newSound(Gdx.files.internal("data/sounds/" + filename));
+		sound = Gdx.audio.newSound(Gdx.files.internal(ResourceMapper.getPath(filename, ResourceType.SOUND)));
 	}
 	
 	public void play(float pitch, float volume) {
@@ -66,7 +66,7 @@ final class MusicStream {
 	private final Music music;
 	
 	public MusicStream(String filename) {		
-		music = Gdx.audio.newMusic(Gdx.files.internal("data/music/" + filename));		
+		music = Gdx.audio.newMusic(Gdx.files.internal(ResourceMapper.getPath(filename, ResourceType.MUSIC)));		
 	}
 	
 	public void play() {

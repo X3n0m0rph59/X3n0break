@@ -19,18 +19,18 @@ public class Ball extends GameObject {
 	
 	private boolean multiball = false;
 		
-	private final SpriteObject spriteNormalBall = new SpriteObject("data/sprites/ball.png", Config.BALL_RADIUS * 2, 
-												Config.BALL_RADIUS * 2, 200, 200);
-	private final SpriteObject spriteFireBall = new SpriteObject("data/sprites/fireball.png", Config.BALL_RADIUS * 2, 
-												Config.BALL_RADIUS * 2, 200, 200);
+	private final SpriteObject spriteNormalBall = new SpriteObject(ResourceMapper.getPath("ball.png", ResourceType.SPRITE), 
+																   Config.BALL_RADIUS * 2, Config.BALL_RADIUS * 2, 200, 200);
+	private final SpriteObject spriteFireBall = new SpriteObject(ResourceMapper.getPath("fireball.png", ResourceType.SPRITE), 
+																 Config.BALL_RADIUS * 2, Config.BALL_RADIUS * 2, 200, 200);
 	
-	private final ParticleSystem trail = new ParticleSystem(new SpriteTuple[]{new SpriteTuple("data/sprites/Star1.png", 255.0f, 255.0f, 255, 255), 
-																	  new SpriteTuple("data/sprites/Star2.png", 345.0f, 342.0f, 345, 342), 
-																	  new SpriteTuple("data/sprites/Star3.png", 270.0f, 261.0f, 270, 261), 
-																	  new SpriteTuple("data/sprites/Star4.png", 264.0f, 285.0f, 264, 285)}, 
+	private final ParticleSystem trail = new ParticleSystem(new SpriteTuple[]{new SpriteTuple(ResourceMapper.getPath("star1.png", ResourceType.SPRITE), 255.0f, 255.0f, 255, 255), 
+																	  new SpriteTuple(ResourceMapper.getPath("star2.png", ResourceType.SPRITE), 345.0f, 342.0f, 345, 342), 
+																	  new SpriteTuple(ResourceMapper.getPath("star3.png", ResourceType.SPRITE), 270.0f, 261.0f, 270, 261), 
+																	  new SpriteTuple(ResourceMapper.getPath("star4.png", ResourceType.SPRITE), 264.0f, 285.0f, 264, 285)}, 
 															new Point(0.0f, 0.0f), -1.0f, 5.0f, 0.0f, 45.0f, 0.0f, 15.0f, 15.0f, 5.0f);
 	
-	private final ParticleSystem fireBallTrail = new ParticleSystem(new SpriteTuple[]{new SpriteTuple("data/sprites/fire.png", 198.0f, 197.0f, 198, 197)}, 
+	private final ParticleSystem fireBallTrail = new ParticleSystem(new SpriteTuple[]{new SpriteTuple(ResourceMapper.getPath("fire.png", ResourceType.SPRITE), 198.0f, 197.0f, 198, 197)}, 
 															new Point(0.0f, 0.0f), -1.0f, 25.0f, 10.0f, 45.0f, 0.0f, 15.0f, 150.f, 20.0f);
 
 		

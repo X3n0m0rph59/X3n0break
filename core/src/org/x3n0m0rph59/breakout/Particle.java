@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class Particle implements Renderable, Stepable, Destroyable, Serializable {
+public class Particle implements Renderable, Stepable, Destroyable, Serializable/*, Poolable*/ {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8999099247387857149L;
 
-	private final SpriteObject sprite;
+	private SpriteObject sprite;
 	
 	private Point position;
 	private int initialttl, ttl; 
@@ -19,7 +19,38 @@ public class Particle implements Renderable, Stepable, Destroyable, Serializable
 
 	private boolean destroyed = false;
 	
-	public Particle(SpriteObject sprite, Point position, float angleInDegrees, float angularDeviation, float speed, float angularVelocity, int ttl, float sizeIncrease) {
+	public Particle() {				
+	}
+			
+	public Particle(SpriteObject sprite, Point position, float angleInDegrees, 
+					float angularDeviation, float speed, float angularVelocity, 
+					int ttl, float sizeIncrease) {
+		
+		this.sprite = sprite;
+		this.position = position;
+		this.angle = angleInDegrees;
+		
+		this.angularDeviation = (float) Util.random((int) -angularDeviation, (int) +angularDeviation);
+		this.dx = (float) Math.cos(Math.toRadians(angleInDegrees + 90 + this.angularDeviation)) * speed;
+		this.dy = (float) Math.sin(Math.toRadians(angleInDegrees + 90 + this.angularDeviation)) * speed;
+		
+		this.angularVelocity = angularVelocity;
+		
+		this.initialttl = ttl;
+		this.ttl = ttl;
+		
+		this.size = 1.0f;
+		this.sizeIncrease = sizeIncrease;
+		
+		if (sprite != null)
+			sprite.setAlphaBlending(true);
+	}
+	
+	public void setState(SpriteObject sprite, Point position, float angleInDegrees, 
+						 float angularDeviation, float speed, float angularVelocity, 
+						 int ttl, float sizeIncrease) {
+		this.destroyed = false;
+		
 		this.sprite = sprite;
 		this.position = position;
 		this.angle = angleInDegrees;
@@ -68,6 +99,18 @@ public class Particle implements Renderable, Stepable, Destroyable, Serializable
 		
 		getSprite().step(delta);
 	}
+	
+	/*
+	@Override
+	public void resetState() {
+		
+	}	
+	
+	@Override
+	public void dispose() {
+		
+	}
+	*/
 	
 	public int getTtl() {
 		return ttl;

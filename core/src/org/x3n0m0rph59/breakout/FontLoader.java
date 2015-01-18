@@ -22,7 +22,7 @@ public class FontLoader {
 	public BitmapFont getFont(String name, int size) {
 		BitmapFont font;
 		if ((font = getFontFromCache(name, size)) == null) {
-			BitmapFont f = new BitmapFont(Gdx.files.internal("data/fonts/" + name + ".fnt"), true);
+			BitmapFont f = new BitmapFont(Gdx.files.internal(ResourceMapper.getPath(name + ".fnt", ResourceType.FONT)), true);
 			font = f;
 			
 			addFontToCache(name, size, font);

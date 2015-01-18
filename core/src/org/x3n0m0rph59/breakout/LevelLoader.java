@@ -12,13 +12,13 @@ import com.badlogic.gdx.files.FileHandle;
 
 
 public final class LevelLoader {
-	public static HashMap<String, String> getLevelSetMetaData() {
+	public static HashMap<String, String> getGlobalMetaData() {
 		final HashMap<String, String> data = new HashMap<String, String>();
 		
 		BufferedReader reader = null;
 		
 		try {			
-			final FileHandle in = Gdx.files.internal("data/levels/metadata.lvl");			
+			final FileHandle in = Gdx.files.internal("data/sets/metadata.set");			
 			reader = new BufferedReader(in.reader());			
 
 			String line;
@@ -48,7 +48,63 @@ public final class LevelLoader {
 					} else {
 						// skip, maybe it is a user comment?
 						
-						//throw new RuntimeException("Malformed level metadata: " + line);
+						//throw new RuntimeException("Malformed global metadata: " + line);
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}			
+		}		
+		
+		return data;
+	}
+	
+	public static HashMap<String, String> getLevelSetMetaData() {
+		final HashMap<String, String> data = new HashMap<String, String>();
+		
+		BufferedReader reader = null;
+		
+		try {			
+			final FileHandle in = Gdx.files.internal(ResourceMapper.getPath("metadata.lvl", ResourceType.LEVEL));			
+			reader = new BufferedReader(in.reader());			
+
+			String line;
+			
+			while ((line = reader.readLine()) != null) {
+				boolean commentLine = false;
+				int commentCharIndex = 0;
+				
+				charLoop:
+				for (int i = 0; i < line.length(); i++) {
+					char c = line.charAt(i);
+					
+					switch (c) {
+					case '#':
+						// '#' comment char
+						commentLine = true;
+						commentCharIndex = i;
+						break charLoop;
+					}
+				}
+				
+				if (commentLine) {					
+					final String[] pair = new String(line.substring(commentCharIndex + 1)).split(":");
+					
+					if (pair.length == 2) {
+						data.put(pair[0].trim(), pair[1].trim());
+					} else {
+						// skip, maybe it is a user comment?
+						
+						//throw new RuntimeException("Malformed level set metadata: " + line);
 					}
 				}
 			}
@@ -74,7 +130,7 @@ public final class LevelLoader {
 		BufferedReader reader = null;
 		
 		try {			
-			final FileHandle in = Gdx.files.internal("data/levels/level" + String.format("%02d", level + 1) + ".lvl");			
+			final FileHandle in = Gdx.files.internal(ResourceMapper.getPath("level" + String.format("%02d", level + 1) + ".lvl", ResourceType.LEVEL));			
 			reader = new BufferedReader(in.reader());			
 
 			String line;
@@ -130,7 +186,7 @@ public final class LevelLoader {
 		BufferedReader reader = null;
 		
 		try {			
-			final FileHandle in = Gdx.files.internal("data/levels/level" + String.format("%02d", level + 1) + ".lvl");			
+			final FileHandle in = Gdx.files.internal(ResourceMapper.getPath("level" + String.format("%02d", level + 1) + ".lvl", ResourceType.LEVEL));			
 			reader = new BufferedReader(in.reader());			
 
 			String line;

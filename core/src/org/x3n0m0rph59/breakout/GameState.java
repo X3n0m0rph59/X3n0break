@@ -2,8 +2,11 @@ package org.x3n0m0rph59.breakout;
 
 public final class GameState {
 	private static int level = 0;
+	private static int levelSet = 0;
+	
 	private static int ballsLeft = Config.INITIAL_BALLS_LEFT;
 	private static int spaceBombsLeft = Config.INITIAL_SPACEBOMBS_LEFT;
+	
 	private static int score = 0;
 	
 	public static int getLevel() {
@@ -14,6 +17,16 @@ public final class GameState {
 		GameState.level = level;
 	}
 	
+	public static int getLevelSet() {
+		return levelSet;
+	}
+
+	public static void setLevelSet(int levelSet) {
+		GameState.levelSet = levelSet;
+		
+		ResourceMapper.clearCache();
+	}
+
 	public static int getBallsLeft() {
 		return ballsLeft;
 	}

@@ -20,6 +20,14 @@ public enum ScreenType {
 		}
 	},
 	
+	LEVEL_SET_SELECTOR {
+		
+		@Override
+		protected Screen getScreenInstance() {
+			return new LevelSetSelectorScreen();
+		}
+	},
+	
 	GAME {
 
 		@Override

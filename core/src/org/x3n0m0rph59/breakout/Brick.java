@@ -35,11 +35,11 @@ public class Brick extends GameObject {
 		
 		this.speed = speed;
 		
-		sprites.put(Type.NORMAL, new SpriteObject("data/sprites/brick_normal.png", 255, 159, 255, 159));
-		sprites.put(Type.WEAK, new SpriteObject("data/sprites/brick_weak.png", 255, 159, 255, 159));
-		sprites.put(Type.HARD, new SpriteObject("data/sprites/brick_hard.png", 255, 159, 255, 159));
-		sprites.put(Type.SOLID, new SpriteObject("data/sprites/brick_solid.png", 255, 159, 255, 159));
-		sprites.put(Type.POWERUP, new SpriteObject("data/sprites/brick_powerup.png", 255, 159, 255, 159));
+		sprites.put(Type.NORMAL, new SpriteObject(ResourceMapper.getPath("brick_normal.png", ResourceType.SPRITE), 255, 159, 255, 159));
+		sprites.put(Type.WEAK, new SpriteObject(ResourceMapper.getPath("brick_weak.png", ResourceType.SPRITE), 255, 159, 255, 159));
+		sprites.put(Type.HARD, new SpriteObject(ResourceMapper.getPath("brick_hard.png", ResourceType.SPRITE), 255, 159, 255, 159));
+		sprites.put(Type.SOLID, new SpriteObject(ResourceMapper.getPath("brick_solid.png", ResourceType.SPRITE), 255, 159, 255, 159));
+		sprites.put(Type.POWERUP, new SpriteObject(ResourceMapper.getPath("brick_powerup.png", ResourceType.SPRITE), 255, 159, 255, 159));
 	}
 	
 	@Override

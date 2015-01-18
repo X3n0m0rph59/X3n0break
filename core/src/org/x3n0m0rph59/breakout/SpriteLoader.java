@@ -35,8 +35,8 @@ public final class SpriteLoader {
 			
 			param.minFilter = TextureFilter.Linear;
 			param.genMipMaps = true;
-			
-			assetManager.load(filename, Texture.class, param);			
+
+			assetManager.load(filename, Texture.class, param);
 			assetManager.finishLoading();
 			
 			final Texture t = assetManager.get(filename);

@@ -12,8 +12,8 @@ public class GrapplingHookSegment extends GameObject {
 	public enum Type {HOOK, SEGMENT};
 	Type type;
 	
-	private final SpriteObject hook    = new SpriteObject("data/sprites/hook.png", 60, 60, 60, 60);
-	private final SpriteObject segment = new SpriteObject("data/sprites/hook_segment.png", 60, 105, 60, 105);
+	private final SpriteObject hook    = new SpriteObject(ResourceMapper.getPath("hook.png", ResourceType.SPRITE), 60, 60, 60, 60);
+	private final SpriteObject segment = new SpriteObject(ResourceMapper.getPath("hook_segment.png", ResourceType.SPRITE), 60, 105, 60, 105);
 	
 	public GrapplingHookSegment(Type type, Point position) {
 		super(null, position, 60.0f, 105.0f, 0.0f, 0.0f, 0.0f, 0.0f);

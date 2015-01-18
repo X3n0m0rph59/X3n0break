@@ -51,7 +51,8 @@ public class MenuScreen implements Screen {
 		font.draw(batch, "NEW GAME", 150, 250);
 		
 		if (Config.getInstance().isGameResumeable() && 
-			Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.GAME_OVER)
+			Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.GAME_OVER && 
+			Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.STAGE_CLEARED)
 			font.draw(batch, "RESUME GAME", 1300, 250);
 			
 		font.draw(batch, "SETTINGS", 150, 550);

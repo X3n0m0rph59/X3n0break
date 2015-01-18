@@ -2,7 +2,6 @@ package org.x3n0m0rph59.breakout;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -17,7 +16,9 @@ public class ParticleSystem extends GameObject {
 	private float lifeTime, particleDensity, angularDeviation, 
 				  ttl, particleSpeed, sizeFactor;
 	
-	private final List<Particle> particles = new LinkedList<Particle>();	
+	private final ObjectPool<Particle> particlePool = new ObjectPool<Particle>(Particle.class);
+	private final List<Particle> particles = new ArrayList<Particle>();
+	
 	private final List<SpriteObject> spriteList = new ArrayList<SpriteObject>();
 
 	public ParticleSystem(final SpriteTuple[] sprites, Point position, float lifeTime, float particleDensity, 
@@ -72,8 +73,10 @@ public class ParticleSystem extends GameObject {
 				final Particle p = pi.next();
 				p.step(delta);
 				
-				if (p.isDestroyed())
+				if (p.isDestroyed()) {
+					particlePool.put(p);
 					pi.remove();
+				}
 			}
 		}
 	}
@@ -85,8 +88,18 @@ public class ParticleSystem extends GameObject {
 		final int 	ttl = Util.random(0, (int) this.ttl);
 		
 		final SpriteObject sprite = spriteList.get(Util.random(0, spriteList.size() - 1));
-															  
-		particles.add(new Particle(sprite, position, angleInDegrees, angularDeviation, speed, angularVelocity, ttl, this.sizeFactor));
+		
+		try {
+			final Particle p = particlePool.get();
+			
+			p.setState(sprite, position, angleInDegrees, angularDeviation, speed, 
+					   angularVelocity, ttl, this.sizeFactor);
+			
+			particles.add(p);
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public float getParticleDensity() {

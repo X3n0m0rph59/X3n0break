@@ -13,15 +13,21 @@ import java.util.List;
 public class ScoreBoard implements Renderable {
 	private final List<Brick> bricks = new ArrayList<Brick>();
 	
-	private final SpriteObject spaceBomb = new SpriteObject("data/sprites/spacebomb.png", 
+	private final SpriteObject spaceBomb = new SpriteObject(ResourceMapper.getPath("spacebomb.png", ResourceType.SPRITE), 
 													  Config.SPACEBOMB_WIDTH, 
 													  Config.SPACEBOMB_HEIGHT, 
 													  145, 130);
 	
 	public ScoreBoard() {
+		updateState();
+	}
+	
+	public void updateState() {
 		final float y_start = 285.0f;
 		final float line_height = 78.5f;
 		final EnumSet<Brick.Behavior> normalBehavior = EnumSet.noneOf(Brick.Behavior.class);
+		
+		bricks.clear();
 		
 		bricks.add(new Brick(Brick.Type.NORMAL, normalBehavior, 0.0f, 0.0f, 
 							 new Point(Config.getInstance().getScreenWidth() - Config.SCOREBOARD_WIDTH + 25, 

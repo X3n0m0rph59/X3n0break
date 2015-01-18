@@ -17,16 +17,17 @@ public class SpaceBomb extends GameObject {
 	
 	private int ttl = 3 * Gdx.graphics.getFramesPerSecond();
 	
-	private final ParticleSystem trail = new ParticleSystem(new SpriteTuple[]{new SpriteTuple("data/sprites/fire.png", 198.0f, 197.0f, 198, 197)}, 
+	private final ParticleSystem trail = new ParticleSystem(new SpriteTuple[]{new SpriteTuple(ResourceMapper.getPath("fire.png", ResourceType.SPRITE), 198.0f, 197.0f, 198, 197)}, 
 											  				new Point(0.0f, 0.0f), -1.0f, 10.0f, 180.0f, 45.0f, 0.0f, 15.0f, 55.0f, 2.0f);
 	
-	private final ParticleSystem explosion = new ParticleSystem(new SpriteTuple[]{new SpriteTuple("data/sprites/fire.png", 198.0f, 197.0f, 198, 197)},
+	private final ParticleSystem explosion = new ParticleSystem(new SpriteTuple[]{new SpriteTuple(ResourceMapper.getPath("fire.png", ResourceType.SPRITE), 198.0f, 197.0f, 198, 197)},
 											   					new Point(0.0f, 0.0f), -1.0f, 25.0f, 0.0f, 360.0f, 2.0f, 55.0f, 55.0f, 25.0f);
 	private int explosionframeCounter = 0; 
 	
 	public SpaceBomb(Point position, Type type) {
-		super(new SpriteObject("data/sprites/spacebomb.png", Config.SPACEBOMB_WIDTH, Config.SPACEBOMB_HEIGHT, 145, 130), position, 
-			  Config.SPACEBOMB_WIDTH, Config.SPACEBOMB_HEIGHT, 0.0f, -5.0f, 0.0f, 0.0f);
+		super(new SpriteObject(ResourceMapper.getPath("spacebomb.png", ResourceType.SPRITE), 
+							   Config.SPACEBOMB_WIDTH, Config.SPACEBOMB_HEIGHT, 145, 130), position, 
+							   Config.SPACEBOMB_WIDTH, Config.SPACEBOMB_HEIGHT, 0.0f, -5.0f, 0.0f, 0.0f);
 		
 		this.type = type;
 		

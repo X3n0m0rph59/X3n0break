@@ -92,9 +92,9 @@ public final class HighScoreManager {
 			return false;
 	}
 	
-	public void addHighScore(String name, int score, int level) {
+	public void addHighScore(String name, int score, int level, int levelSet) {
 		final String date = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(Calendar.getInstance().getTime());		
-		HighScore hs = new HighScore(name, date, score, level);
+		HighScore hs = new HighScore(name, date, score, level, levelSet);
 		
 		highScores.add(hs);
 		setCurrentHighScore(hs);

@@ -4,6 +4,9 @@ import org.x3n0m0rph59.breakout.SoundLayer;
 //import org.x3n0m0rph59.breakout.SpaceBomb.Type;
 
 
+
+
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,8 +60,13 @@ public class GameScreen implements Screen, Serializable {
 	private final List<Ball> balls = new ArrayList<Ball>();
 	private /*final*/ List<Brick> bricks = new ArrayList<Brick>();
 	private final List<Powerup> powerups = new ArrayList<Powerup>();
+	
+	private final ObjectPool<Star> starsPool = new ObjectPool<Star>(Star.class);	
 	private final List<Star> stars = new ArrayList<Star>();
-	private final List<Projectile> projectiles = new ArrayList<Projectile>();		
+	
+	private final ObjectPool<Projectile> projectilePool = new ObjectPool<Projectile>(Projectile.class);
+	private final List<Projectile> projectiles = new ArrayList<Projectile>();
+	
 	private final List<ParticleSystem> particleEffects = new ArrayList<ParticleSystem>();
 	private final List<Background> backgrounds = new ArrayList<Background>();
 	private final List<SpaceBomb> spaceBombs = new ArrayList<SpaceBomb>();
@@ -95,6 +103,7 @@ public class GameScreen implements Screen, Serializable {
 		font = FontLoader.getInstance().getFont("font", Config.TOAST_FONT_SIZE);
 		
 		scoreBoard = new ScoreBoard();
+		scoreBoard.updateState();
 	}
 	
 	public void initLevel(int level) {				
@@ -106,6 +115,8 @@ public class GameScreen implements Screen, Serializable {
 		} else {
 			
 			GameState.setLevel(level);
+			
+			scoreBoard.updateState();
 			
 	//		don't reset the frame counter for now (game balance)
 	//		it influences whether new space bombs are spawned etc. 
@@ -121,7 +132,7 @@ public class GameScreen implements Screen, Serializable {
 			paddle.setWidth(Config.PADDLE_DEFAULT_WIDTH);
 			
 			
-			// Carry over Multiballs to the new level
+			// Carry over "Multiballs" to the new level
 			GameState.setBallsLeft(GameState.getBallsLeft() + (balls.size() - 1));			
 			balls.clear();
 			spawnBall(false);
@@ -132,11 +143,21 @@ public class GameScreen implements Screen, Serializable {
 					
 			// Spawn initial set of particles
 			stars.clear();
-			for (int i = 0; i < Config.SYNC_FPS * Config.STAR_DENSITY; i++) {
-				stars.add(new Star(new Point(Util.random(0, (int) Config.getInstance().getClientWidth()), 
-										   	 Util.random(0, (int) Config.getInstance().getScreenHeight())), 
-										   	 Util.random((int) Config.STAR_MIN_SPEED, 
-												   	   	 (int) Config.STAR_MAX_SPEED)));
+			starsPool.clear();
+			for (int i = 0; i < Config.SYNC_FPS * Config.STAR_DENSITY; i++) {				
+				
+				try {
+					final Star s = starsPool.get();
+					
+					s.setState(new Point(Util.random(0, (int) Config.getInstance().getClientWidth()), 
+						   	   Util.random(0, (int) Config.getInstance().getScreenHeight())), 
+						   	   Util.random((int) Config.STAR_MIN_SPEED, (int) Config.STAR_MAX_SPEED));
+				
+					stars.add(s);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}				
 			}
 			
 			backgrounds.clear();
@@ -201,7 +222,7 @@ public class GameScreen implements Screen, Serializable {
 		final GameInputProcessor inputProcessor = new GameInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
-		setStateAfterResume();
+		setStateAfterResume();		
 	}
 
 	@Override
@@ -541,10 +562,19 @@ public class GameScreen implements Screen, Serializable {
 			}
 			
 			// Spawn new stars
-			for (int i = 0; i < Config.STAR_DENSITY; i++) {
-				stars.add(new Star(new Point(Util.random(0, (int) Config.getInstance().getClientWidth()), 0.0f), 
-								   Util.random((int) Config.STAR_MIN_SPEED, 
-										       (int) Config.STAR_MAX_SPEED)));
+			for (int i = 0; i < Config.STAR_DENSITY; i++) {				
+				try {
+					final Star s = starsPool.get();
+					
+					s.setState(new Point(Util.random(0, (int) Config.getInstance().getClientWidth()), 0.0f), 
+						   	   Util.random((int) Config.STAR_MIN_SPEED,
+						   			   	   (int) Config.STAR_MAX_SPEED));
+				
+					stars.add(s);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}				
 			}
 			
 			// Spawn a new background?
@@ -560,7 +590,16 @@ public class GameScreen implements Screen, Serializable {
 						final float x = (frameCounter % (Config.PROJECTILE_FIRE_RATE * 2) == 0) ? 
 								paddle.getX() : paddle.getX() + paddle.getWidth() - Config.PROJECTILE_WIDTH; 
 						
-						projectiles.add(new Projectile(new Point(x, paddle.getY())));
+						try {
+							final Projectile p = projectilePool.get();
+							
+							p.setState(new Point(x, paddle.getY()));
+						
+							projectiles.add(p);
+							
+						} catch (Exception e) {
+							e.printStackTrace();
+						}				
 						
 						SoundLayer.playSound(Sounds.BULLET_FIRED);
 					}
@@ -663,7 +702,8 @@ public class GameScreen implements Screen, Serializable {
 				if (HighScoreManager.getInstance().isNewHighScore(GameState.getScore())) {
 					
 					HighScoreManager.getInstance().addHighScore(Config.getInstance().getUserName(), 
-																GameState.getScore(), GameState.getLevel() + 1);
+																GameState.getScore(), GameState.getLevel() + 1, 
+																GameState.getLevelSet() + 1);
 					ScreenManager.getInstance().showScreen(ScreenType.HIGHSCORE);
 					
 				} else				
@@ -676,7 +716,8 @@ public class GameScreen implements Screen, Serializable {
 			if (Gdx.input.justTouched()) {
 				if (HighScoreManager.getInstance().isNewHighScore(GameState.getScore()))					
 					HighScoreManager.getInstance().addHighScore(Config.getInstance().getUserName(), 
-																GameState.getScore(), GameState.getLevel() + 1);									
+																GameState.getScore(), GameState.getLevel() + 1, 
+																GameState.getLevelSet() + 1);									
 				
 				ScreenManager.getInstance().showScreen(ScreenType.HIGHSCORE);
 			}
@@ -1136,16 +1177,28 @@ public class GameScreen implements Screen, Serializable {
 		}
 	}
 	
+	private <T extends Destroyable> void cleanupListPooled(List<T> list, ObjectPool<T> pool) {
+		final Iterator<T> i = list.iterator();		
+		while (i.hasNext()) {
+			T t = i.next();
+			
+			if (t.isDestroyed()) {
+				pool.put(t);
+				i.remove();
+			}
+		}
+	}
+	
 	public void doCleanup() {
 		cleanupList(balls);
-		cleanupList(bricks);
-		cleanupList(stars);
+		cleanupList(bricks);		
 		cleanupList(backgrounds);
-		cleanupList(powerups);
-		cleanupList(projectiles);
+		cleanupList(powerups);		
 		cleanupList(spaceBombs);
-		cleanupList(stars);
 		cleanupList(particleEffects);
+		
+		cleanupListPooled(stars, starsPool);
+		cleanupListPooled(projectiles, projectilePool);
 	}
 	
 	public void spawnPowerup(Point position) {		
@@ -1253,17 +1306,16 @@ public class GameScreen implements Screen, Serializable {
 	private void addParticleEffect(Point position, ParticleEffect effect) {		
 		switch (effect) {
 		case BRICK_EXPLOSION:		
-			particleEffects.add(new ParticleSystem(new SpriteTuple[]{new SpriteTuple("data/sprites/fire.png", 198.0f, 197.0f, 198, 197)}, 
+			particleEffects.add(new ParticleSystem(new SpriteTuple[]{new SpriteTuple(ResourceMapper.getPath("fire.png", ResourceType.SPRITE), 198.0f, 197.0f, 198, 197)}, 
 					position, 10.0f, 15.0f, 0.0f, 360.0f, 0.0f, 15.0f, 155.0f, 4.5f));
 			break;
-			
-		case BALL_LOST:		
-//			particleEffects.add(new ParticleSystem(new SpriteTuple[]{new SpriteTuple("sprites/Star1.png", 255.0f, 255.0f, 255, 255), 
-//					  new SpriteTuple("sprites/Star2.png", 345.0f, 342.0f, 345, 342), 
-//					  new SpriteTuple("sprites/Star3.png", 270.0f, 261.0f, 270, 261), 
-//					  new SpriteTuple("sprites/Star4.png", 264.0f, 285.0f, 264, 285)}, 
-//			x, y, 150.0f, 5.0f, 0.0f, 180.0f, 0.0f, 15.0f, 15.0f, 5.0f));
+		
+		case BALL_LOST:
+			// Do nothing
 			break;
+			
+		default:
+			throw new RuntimeException("Invalid ParticleEffect type!");
 		}
 	}
 	
@@ -1301,6 +1353,7 @@ public class GameScreen implements Screen, Serializable {
 			out = new ObjectOutputStream(bos);			
 			
 			out.writeInt(GameState.getLevel());
+			out.writeInt(GameState.getLevelSet());
 			out.writeInt(GameState.getBallsLeft());
 			out.writeInt(GameState.getSpaceBombsLeft());
 			out.writeInt(GameState.getScore());
@@ -1347,6 +1400,7 @@ public class GameScreen implements Screen, Serializable {
 			in = new ObjectInputStream(bis);
 			
 			GameState.setLevel(in.readInt());
+			GameState.setLevelSet(in.readInt());
 			GameState.setBallsLeft(in.readInt());
 			GameState.setSpaceBombsLeft(in.readInt());
 			GameState.setScore(in.readInt());
@@ -1355,14 +1409,13 @@ public class GameScreen implements Screen, Serializable {
 			final EffectManager e = (EffectManager) in.readObject();
 			EffectManager.setInstance(e);
 			
-			((GameScreen) o).initializeTransients();			
+			((GameScreen) o).initializeTransients();
 			
 			ScreenManager.getInstance().overrideAndShowScreen(ScreenType.GAME, (GameScreen) o);
 			
 			((App) Gdx.app.getApplicationListener()).getGameScreen().setStateAfterResume();;
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 						
 			Logger.error("Deleting saved state due to invalid format!");

@@ -2,13 +2,14 @@ package org.x3n0m0rph59.breakout;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 
-public class HighScoreScreen implements Screen {
+public class LevelSetSelectorScreen implements Screen {
 	
 	private final OrthographicCamera camera;
 	private final StretchViewport viewport;
@@ -16,7 +17,11 @@ public class HighScoreScreen implements Screen {
 	BitmapFont font;
 	BitmapFont normalFont;
 	
-	public HighScoreScreen() {
+	private int levelSet;
+	private int totalLevelSets;
+	private String description;
+	
+	public LevelSetSelectorScreen() {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(true, Config.WORLD_WIDTH, Config.WORLD_HEIGHT);
 		camera.update();
@@ -30,15 +35,13 @@ public class HighScoreScreen implements Screen {
 
 	@Override
 	public void show() {
-		final HighscoreInputProcessor inputProcessor = new HighscoreInputProcessor();
+		final LevelSetSelectorInputProcessor inputProcessor = new LevelSetSelectorInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
 		
 		font = FontLoader.getInstance().getFont("font", Config.TOAST_FONT_SIZE);
-		normalFont = FontLoader.getInstance().getFont("normal_font", Config.TOAST_FONT_SIZE);
+		normalFont = FontLoader.getInstance().getFont("normal_font", Config.TOAST_FONT_SIZE);				
 		
-//		final Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);
-//		
-//		prefs.flush();
+		updateState();
 	}
 
 	@Override
@@ -47,32 +50,14 @@ public class HighScoreScreen implements Screen {
 			
 		batch.setProjectionMatrix(camera.combined);
 		
-		font.draw(batch, "Highscores", 50, 50);
+		font.draw(batch, "Select Level Set", 50, 50);
+						
+		font.drawMultiLine(batch, "Selected: " + (levelSet + 1) + "/" + totalLevelSets , 50, 250);						
+		normalFont.drawMultiLine(batch, "Description: " + description, 50, 350);
 		
-		normalFont.draw(batch, "Rank",    	50, 150);
-		normalFont.draw(batch, "User",   	250, 150);
-		normalFont.draw(batch, "Date",   	650, 150);
-		normalFont.draw(batch, "Score", 	1300, 150);
-		normalFont.draw(batch, "Level/Set", 1600, 150);		
-			
-		final int row_spacing = 50;
-		int row = 0;
-		for (final HighScore hs : HighScoreManager.getInstance().getTop15Scores()) {			
-			// Highlight "current" highscore
-			if (hs == HighScoreManager.getInstance().getCurrentHighScore()) {
-				normalFont.draw(batch, ">",    5, 220 + row * row_spacing);
-				normalFont.draw(batch, "<", 1890, 220 + row * row_spacing);
-			}
-											
-			normalFont.draw(batch, String.format("%02d", row + 1),		   120, 220 + row * row_spacing);
-			normalFont.draw(batch, hs.getName(),   					       250, 220 + row * row_spacing);			
-			normalFont.draw(batch, hs.getDate(),  						   650, 220 + row * row_spacing);
-			normalFont.draw(batch, String.format("%08d", hs.getScore()),  1300, 220 + row * row_spacing);
-			normalFont.draw(batch, String.format("%02d/#%02d", hs.getLevel(), hs.getLevelSet()),  
-																		  1670, 220 + row * row_spacing);
-			
-			row++;
-		}
+		font.drawMultiLine(batch, "Start Game!", 800, 650);
+		
+		normalFont.drawMultiLine(batch, "Back", 1740, 990);
 	}
 
 	@Override
@@ -102,6 +87,16 @@ public class HighScoreScreen implements Screen {
 	public void dispose() {
 //		font.dispose();
 //		smallFont.dispose();
+	}
+
+	public Camera getCamera() {
+		return camera;
+	}
+	
+	public void updateState() {
+		levelSet = GameState.getLevelSet();
+		totalLevelSets = Integer.parseInt(LevelLoader.getGlobalMetaData().get("Total Level Sets"));
+		description = LevelLoader.getLevelSetMetaData().get("Description");
 	}
 
 }

@@ -21,10 +21,10 @@ public class Powerup extends GameObject {
 	private final Map<Effect.Type, SpriteObject> sprites = new EnumMap<Type, SpriteObject>(Effect.Type.class);
 	
 	private final ParticleSystem trail = new ParticleSystem(new SpriteTuple[]{
-										 new SpriteTuple("data/sprites/Star1.png", 255.0f, 255.0f, 255, 255), 
-										 new SpriteTuple("data/sprites/Star2.png", 345.0f, 342.0f, 345, 342), 
-										 new SpriteTuple("data/sprites/Star3.png", 270.0f, 261.0f, 270, 261), 
-										 new SpriteTuple("data/sprites/Star4.png", 264.0f, 285.0f, 264, 285)}, 
+										 new SpriteTuple(ResourceMapper.getPath("star1.png", ResourceType.SPRITE), 255.0f, 255.0f, 255, 255), 
+										 new SpriteTuple(ResourceMapper.getPath("star2.png", ResourceType.SPRITE), 345.0f, 342.0f, 345, 342), 
+										 new SpriteTuple(ResourceMapper.getPath("star3.png", ResourceType.SPRITE), 270.0f, 261.0f, 270, 261), 
+										 new SpriteTuple(ResourceMapper.getPath("star4.png", ResourceType.SPRITE), 264.0f, 285.0f, 264, 285)}, 
 										 position, -1.0f, 1.75f, 0.0f, 360.0f, 10.0f,  95.0f, 150.0f, 3.5f);
 	
 	public Powerup(Point position, Effect.Type type) {
@@ -34,35 +34,39 @@ public class Powerup extends GameObject {
 		
 		
 		sprites.put(Effect.Type.BOTTOM_WALL, new SpriteObject(
-				"data/sprites/powerup_bottom_wall.png", Config.POWERUP_WIDTH,
+				ResourceMapper.getPath("powerup_bottom_wall.png", ResourceType.SPRITE), Config.POWERUP_WIDTH,
 				Config.POWERUP_HEIGHT, 100, 100));
+		
 		sprites.put(Effect.Type.PADDLE_GUN, new SpriteObject(
-				"data/sprites/powerup_paddle_gun.png", Config.POWERUP_WIDTH,
+				ResourceMapper.getPath("powerup_paddle_gun.png", ResourceType.SPRITE), Config.POWERUP_WIDTH,
 				Config.POWERUP_HEIGHT, 100, 100));
 
 		sprites.put(Effect.Type.SHRINK_PADDLE, new SpriteObject(
-				"data/sprites/powerup_shrink.png", Config.POWERUP_WIDTH,
+				ResourceMapper.getPath("powerup_shrink.png", ResourceType.SPRITE), Config.POWERUP_WIDTH,
 				Config.POWERUP_HEIGHT, 100, 100));
+		
 		sprites.put(Effect.Type.EXPAND_PADDLE, new SpriteObject(
-				"data/sprites/powerup_expand.png", Config.POWERUP_WIDTH,
+				ResourceMapper.getPath("powerup_expand.png", ResourceType.SPRITE), Config.POWERUP_WIDTH,
 				Config.POWERUP_HEIGHT, 100, 100));
 
 		sprites.put(Effect.Type.FIREBALL, new SpriteObject(
-				"data/sprites/powerup_fireball.png", Config.POWERUP_WIDTH,
+				ResourceMapper.getPath("powerup_fireball.png", ResourceType.SPRITE), Config.POWERUP_WIDTH,
 				Config.POWERUP_HEIGHT, 100, 100));
+		
 		sprites.put(Effect.Type.MULTIBALL, new SpriteObject(
-				"data/sprites/powerup_multiball.png", Config.POWERUP_WIDTH,
+				ResourceMapper.getPath("powerup_multiball.png", ResourceType.SPRITE), Config.POWERUP_WIDTH,
 				Config.POWERUP_HEIGHT, 100, 100));
 
 		sprites.put(Effect.Type.SLOW_DOWN, new SpriteObject(
-				"data/sprites/powerup_slow_down.png", Config.POWERUP_WIDTH,
+				ResourceMapper.getPath("powerup_slow_down.png", ResourceType.SPRITE), Config.POWERUP_WIDTH,
 				Config.POWERUP_HEIGHT, 100, 100));
+		
 		sprites.put(Effect.Type.SPEED_UP, new SpriteObject(
-				"data/sprites/powerup_speed_up.png", Config.POWERUP_WIDTH,
+				ResourceMapper.getPath("powerup_speed_up.png", ResourceType.SPRITE), Config.POWERUP_WIDTH,
 				Config.POWERUP_HEIGHT, 100, 100));
 
 		sprites.put(Effect.Type.STICKY_BALL, new SpriteObject(
-				"data/sprites/powerup_sticky_ball.png", Config.POWERUP_WIDTH,
+				ResourceMapper.getPath("powerup_sticky_ball.png", ResourceType.SPRITE), Config.POWERUP_WIDTH,
 				Config.POWERUP_HEIGHT, 100, 100));
 	}
 	

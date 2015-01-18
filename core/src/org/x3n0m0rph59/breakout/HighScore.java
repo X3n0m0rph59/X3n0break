@@ -5,16 +5,18 @@ public final class HighScore {
 	private String date;
 	private int score;
 	private int level;
+	private int levelSet;
 		
 	public HighScore() {
 		
 	}
 	
-	public HighScore(String name, String date, int score, int level) {
+	public HighScore(String name, String date, int score, int level, int levelSet) {
 		this.name = name;
 		this.date = date;
 		this.score = score;
 		this.level = level;
+		this.levelSet = levelSet;
 	}
 
 	public String getName() {
@@ -47,5 +49,14 @@ public final class HighScore {
 
 	public void setLevel(int level) {
 		this.level = level;
-	}	
+	}
+
+	public int getLevelSet() {
+		return levelSet;
+	}
+	
+	public void setLevelSet(int levelSet) {
+		this.levelSet = levelSet;
+	}
+
 }

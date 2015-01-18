@@ -49,10 +49,8 @@ public class MenuInputProcessor implements InputProcessor {
 		final Rectangle hotRectHelp = new Rectangle((float) Gdx.graphics.getWidth() / 2, 500, (float) Gdx.graphics.getWidth(), 200);
 		final Rectangle hotRectExit = new Rectangle((float) Gdx.graphics.getWidth() / 2, 700, (float) Gdx.graphics.getWidth(), 200);
 		
-		if (hotRectNewGame.contains(new Vector2(mX, mY))) {
-			ScreenManager.getInstance().showScreen(ScreenType.GAME);
-			((App) Gdx.app.getApplicationListener()).getGameScreen().newGame();
-			
+		if (hotRectNewGame.contains(new Vector2(mX, mY))) {			
+			ScreenManager.getInstance().showScreen(ScreenType.LEVEL_SET_SELECTOR);
 			return true;
 		}
 		
@@ -68,7 +66,8 @@ public class MenuInputProcessor implements InputProcessor {
 		
 		if (hotRectResumeGame.contains(new Vector2(mX, mY))) {
 			if (Config.getInstance().isGameResumeable() && 
-				Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.GAME_OVER)
+				Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.GAME_OVER &&
+				Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.STAGE_CLEARED)
 			{
 				ScreenManager.getInstance().showScreen(ScreenType.GAME);			
 				((App) Gdx.app.getApplicationListener()).getGameScreen().setStateAfterResume();
