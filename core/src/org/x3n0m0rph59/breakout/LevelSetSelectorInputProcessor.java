@@ -68,6 +68,8 @@ public class LevelSetSelectorInputProcessor implements InputProcessor {
 		}
 		
 		if (hotRectBack.contains(new Vector2(mX, mY))) {
+			((LevelSetSelectorScreen) ((App) Gdx.app.getApplicationListener()).getCurrentScreen()).restoreOriginalGameState();
+			
 			ScreenManager.getInstance().showScreen(ScreenType.MENU);
 			return true;
 		}		

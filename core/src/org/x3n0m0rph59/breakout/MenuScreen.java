@@ -38,6 +38,9 @@ public class MenuScreen implements Screen {
 		font = FontLoader.getInstance().getFont("font", Config.TOAST_FONT_SIZE);
 		smallFont = FontLoader.getInstance().getFont("small_font",
 				Config.TOAST_FONT_SIZE);
+		
+		if (!SoundLayer.isMusicPlaying())
+			SoundLayer.playMusic(Musics.BACKGROUND);
 	}
 
 	@Override

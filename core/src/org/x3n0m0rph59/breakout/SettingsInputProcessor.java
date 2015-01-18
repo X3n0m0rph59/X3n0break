@@ -61,6 +61,8 @@ public class SettingsInputProcessor implements InputProcessor {
 			final Preferences prefs = Gdx.app.getPreferences(Config.APP_NAME);			
 			prefs.putBoolean("musicMuted", Config.getInstance().isMusicMuted());
 			
+			SoundLayer.playMusic(Musics.BACKGROUND);
+			
 			return true;
 		}
 		

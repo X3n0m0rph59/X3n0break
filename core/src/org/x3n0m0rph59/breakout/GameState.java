@@ -25,6 +25,7 @@ public final class GameState {
 		GameState.levelSet = levelSet;
 		
 		ResourceMapper.clearCache();
+		SoundLayer.getInstance().reloadSoundsAndMusics();
 	}
 
 	public static int getBallsLeft() {

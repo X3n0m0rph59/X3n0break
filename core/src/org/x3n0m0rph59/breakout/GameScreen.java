@@ -7,6 +7,7 @@ import org.x3n0m0rph59.breakout.SoundLayer;
 
 
 
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -171,7 +172,7 @@ public class GameScreen implements Screen, Serializable {
 	}
 	
 	public void newGame() {
-		SoundLayer.getInstance().stopAllMusic();
+//		SoundLayer.getInstance().stopAllMusic();
 		
 		GameState.setLevel(0);
 		GameState.setScore(0);
@@ -215,6 +216,9 @@ public class GameScreen implements Screen, Serializable {
 			setState(State.WAITING_FOR_BALL);
 		else			
 			setState(State.PAUSED);
+		
+		if (!SoundLayer.isMusicPlaying())
+			SoundLayer.playMusic(Musics.BACKGROUND);
 	}
 	
 	@Override
@@ -1248,8 +1252,10 @@ public class GameScreen implements Screen, Serializable {
 		case NEW_STAGE:
 			Config.getInstance().setGameResumeable(true);
 			
-			SoundLayer.getInstance().stopAllMusic();
-			SoundLayer.playMusic(Musics.BACKGROUND);
+//			SoundLayer.getInstance().stopAllMusic();
+			
+			if (!SoundLayer.isMusicPlaying())
+				SoundLayer.playMusic(Musics.BACKGROUND);
 			break;
 			
 		case RESTART:

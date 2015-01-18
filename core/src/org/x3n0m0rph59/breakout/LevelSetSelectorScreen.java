@@ -17,6 +17,8 @@ public class LevelSetSelectorScreen implements Screen {
 	BitmapFont font;
 	BitmapFont normalFont;
 	
+	private int previousLevelSet;
+	
 	private int levelSet;
 	private int totalLevelSets;
 	private String description;
@@ -40,6 +42,8 @@ public class LevelSetSelectorScreen implements Screen {
 		
 		font = FontLoader.getInstance().getFont("font", Config.TOAST_FONT_SIZE);
 		normalFont = FontLoader.getInstance().getFont("normal_font", Config.TOAST_FONT_SIZE);				
+		
+		previousLevelSet = GameState.getLevelSet();
 		
 		updateState();
 	}
@@ -97,6 +101,10 @@ public class LevelSetSelectorScreen implements Screen {
 		levelSet = GameState.getLevelSet();
 		totalLevelSets = Integer.parseInt(LevelLoader.getGlobalMetaData().get("Total Level Sets"));
 		description = LevelLoader.getLevelSetMetaData().get("Description");
+	}
+	
+	public void restoreOriginalGameState() {
+		GameState.setLevelSet(previousLevelSet);
 	}
 
 }

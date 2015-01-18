@@ -3,10 +3,6 @@ package org.x3n0m0rph59.breakout;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
-
 
 enum Sounds { 
 	WELCOME,
@@ -42,69 +38,6 @@ enum MusicPitch {
 	HIGH
 }
 
-final class SoundSprite {
-	private final Sound sound;
-	
-	public SoundSprite(String filename) {		
-		sound = Gdx.audio.newSound(Gdx.files.internal(ResourceMapper.getPath(filename, ResourceType.SOUND)));
-	}
-	
-	public void play(float pitch, float volume) {
-		sound.play(volume, pitch, 0);
-	}
-	
-	public void stop() {		
-		sound.stop();
-	}
-
-	public void dispose() {
-		sound.dispose();
-	}
-}
-
-final class MusicStream {
-	private final Music music;
-	
-	public MusicStream(String filename) {		
-		music = Gdx.audio.newMusic(Gdx.files.internal(ResourceMapper.getPath(filename, ResourceType.MUSIC)));		
-	}
-	
-	public void play() {
-		music.play();
-		music.setLooping(true);
-	}
-	
-	public void playAt(float pos) {				
-		this.play();
-		
-		// TODO: Bug in libGDX, why is this needed ??
-//		while (!music.isPlaying())
-//			;
-		
-		music.setPosition(pos);
-		
-		Logger.debug("Music pos: " + pos);
-	}
-	
-	public void stop() {
-		if (music.isPlaying())
-			music.stop();
-	}
-	
-	public boolean isPlaying() {
-		return music.isPlaying();
-	}
-	
-	public float getPosition() {
-		final float pos = music.getPosition();
-		return pos;
-	}
-
-	public void dispose() {
-		music.dispose();
-	}	
-}
-
 public final class SoundLayer {
 	private static final SoundLayer instance = new SoundLayer();
 	
@@ -115,10 +48,11 @@ public final class SoundLayer {
 	
 	private static MusicStream currentMusic;
 	
+	private static boolean musicPlaying = false;
+	
 	
 	public SoundLayer() {
-		loadSounds();
-		loadMusics();
+		
 	}
 	
 	public static SoundLayer getInstance() {
@@ -126,27 +60,39 @@ public final class SoundLayer {
 	}
 
 	private void loadSounds() {
-		soundMap.put(Sounds.WELCOME, new SoundSprite("welcome.ogg"));
-		soundMap.put(Sounds.BRICK_HIT, new SoundSprite("brick_hit.ogg"));
-		soundMap.put(Sounds.SOLID_BRICK_HIT, new SoundSprite("solid_brick_hit.ogg"));
-		soundMap.put(Sounds.PADDLE_HIT, new SoundSprite("paddle_hit.ogg"));
-		soundMap.put(Sounds.WALL_HIT, new SoundSprite("wall_hit.ogg"));
-		soundMap.put(Sounds.BALL_LOST, new SoundSprite("ball_lost.ogg"));
-		soundMap.put(Sounds.BONUS_BALL, new SoundSprite("bonus_ball.ogg"));
-		soundMap.put(Sounds.POWERUP_SPAWNED, new SoundSprite("powerup_spawned.ogg"));
-		soundMap.put(Sounds.BRICK_DESTROYED, new SoundSprite("brick_destroyed.ogg"));
-		soundMap.put(Sounds.BULLET_FIRED, new SoundSprite("bullet_fired.ogg"));
-		soundMap.put(Sounds.GRAPPLING_HOOK_LOOP, new SoundSprite("grappling_hook.ogg"));
-		soundMap.put(Sounds.SPACEBOMB_LAUNCH, new SoundSprite("spacebomb_launch.ogg"));
-		soundMap.put(Sounds.SPACEBOMB_EXPLOSION, new SoundSprite("spacebomb_explosion.ogg"));
-		soundMap.put(Sounds.ACTION_DENIED, new SoundSprite("denied.ogg"));
-		soundMap.put(Sounds.QUIT, new SoundSprite("quit.ogg"));
+		soundMap.put(Sounds.WELCOME, SoundLoader.getInstance().getSound(ResourceMapper.getPath("welcome.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.BRICK_HIT, SoundLoader.getInstance().getSound(ResourceMapper.getPath("brick_hit.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.SOLID_BRICK_HIT, SoundLoader.getInstance().getSound(ResourceMapper.getPath("solid_brick_hit.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.PADDLE_HIT, SoundLoader.getInstance().getSound(ResourceMapper.getPath("paddle_hit.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.WALL_HIT, SoundLoader.getInstance().getSound(ResourceMapper.getPath("wall_hit.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.BALL_LOST, SoundLoader.getInstance().getSound(ResourceMapper.getPath("ball_lost.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.BONUS_BALL, SoundLoader.getInstance().getSound(ResourceMapper.getPath("bonus_ball.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.POWERUP_SPAWNED, SoundLoader.getInstance().getSound(ResourceMapper.getPath("powerup_spawned.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.BRICK_DESTROYED, SoundLoader.getInstance().getSound(ResourceMapper.getPath("brick_destroyed.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.BULLET_FIRED, SoundLoader.getInstance().getSound(ResourceMapper.getPath("bullet_fired.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.GRAPPLING_HOOK_LOOP, SoundLoader.getInstance().getSound(ResourceMapper.getPath("grappling_hook.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.SPACEBOMB_LAUNCH, SoundLoader.getInstance().getSound(ResourceMapper.getPath("spacebomb_launch.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.SPACEBOMB_EXPLOSION, SoundLoader.getInstance().getSound(ResourceMapper.getPath("spacebomb_explosion.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.ACTION_DENIED, SoundLoader.getInstance().getSound(ResourceMapper.getPath("denied.ogg", ResourceType.SOUND)));
+		soundMap.put(Sounds.QUIT, SoundLoader.getInstance().getSound(ResourceMapper.getPath("quit.ogg", ResourceType.SOUND)));
 	}
 	
 	private void loadMusics() {
-		musicMap.put(Musics.BACKGROUND, new MusicStream("music.ogg"));
-		musicMap.put(Musics.BACKGROUND_LO, new MusicStream("music_lo_pitch.ogg"));
-		musicMap.put(Musics.BACKGROUND_HI, new MusicStream("music_hi_pitch.ogg"));
+		musicMap.put(Musics.BACKGROUND, MusicLoader.getInstance().getMusic(ResourceMapper.getPath("music.ogg", ResourceType.MUSIC)));
+		musicMap.put(Musics.BACKGROUND_LO, MusicLoader.getInstance().getMusic(ResourceMapper.getPath("music_lo_pitch.ogg", ResourceType.MUSIC)));
+		musicMap.put(Musics.BACKGROUND_HI, MusicLoader.getInstance().getMusic(ResourceMapper.getPath("music_hi_pitch.ogg", ResourceType.MUSIC)));
+	}
+	
+	public void reloadSoundsAndMusics() {
+		stopAllMusic();
+		
+//		dispose();
+		
+		soundMap.clear();
+		musicMap.clear();
+		
+		loadSounds();
+		loadMusics();
 	}
 
 	public static void playSound(Sounds sound) {
@@ -197,8 +143,14 @@ public final class SoundLayer {
 				m.play();
 				
 				currentMusic = m;
+				
+				musicPlaying = true;
 			}
 		}
+	}
+	
+	public static boolean isMusicPlaying() {
+		return musicPlaying;
 	}
 	
 	public void stopMusic(Musics music) {
@@ -207,6 +159,8 @@ public final class SoundLayer {
 			m.stop();
 			
 			currentMusic = null;
+			
+			musicPlaying = false;
 		}
 	}
 	
@@ -217,10 +171,12 @@ public final class SoundLayer {
 		}
 		
 		currentMusic = null;
+		
+		musicPlaying = false;
 	}
 
 	public void changeMusicPitch(MusicPitch toPitch) {
-		if (!Config.getInstance().isMusicMuted()) {
+		if (!Config.getInstance().isMusicMuted() && isMusicPlaying()) {
 			float pos = 0.0f; 		
 			if (currentMusic != null) {
 				
@@ -252,16 +208,22 @@ public final class SoundLayer {
 			case NORMAL:
 				m = SoundLayer.getInstance().musicMap.get(Musics.BACKGROUND);
 				m.playAt(pos);
+				
+				musicPlaying = true;
 				break;
 				
 			case LOW:
 				m = SoundLayer.getInstance().musicMap.get(Musics.BACKGROUND_LO);
 				m.playAt(pos);
+				
+				musicPlaying = true;
 				break;
 				
 			case HIGH:
 				m = SoundLayer.getInstance().musicMap.get(Musics.BACKGROUND_HI);
 				m.playAt(pos);
+				
+				musicPlaying = true;
 				break;
 				
 			default:
@@ -283,5 +245,5 @@ public final class SoundLayer {
 			ms.dispose();
 //			musicMap.remove(ms);
 		}
-	}
+	}	
 }
