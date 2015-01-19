@@ -40,7 +40,7 @@ public class MenuScreen implements Screen {
 				Config.TOAST_FONT_SIZE);
 		
 		if (!SoundLayer.isMusicPlaying())
-			SoundLayer.playMusic(Musics.BACKGROUND);
+			SoundLayer.playMusic(Musics.BACKGROUND);		
 	}
 
 	@Override
@@ -55,7 +55,8 @@ public class MenuScreen implements Screen {
 		
 		if (Config.getInstance().isGameResumeable() && 
 			Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.GAME_OVER && 
-			Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.STAGE_CLEARED)
+			Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.LEVEL_SET_COMPLETED &&
+			(Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.NEW_STAGE && GameState.getLevel() == 0))
 			font.draw(batch, "RESUME GAME", 1300, 250);
 			
 		font.draw(batch, "SETTINGS", 150, 550);

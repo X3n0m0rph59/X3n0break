@@ -44,4 +44,12 @@ public final class BackgroundFactory {
 		return new Background(sprite, new Point((float) Util.random(0, (int) Config.getInstance().getClientWidth() - (int) width), -height * 1.5f), 
 							  width, height, angle, speed);
 	}
+
+	public static void primeCache() {
+		new SpriteObject(ResourceMapper.getPath("00.png", ResourceType.BACKGROUND), 256, 256, 256, 256);
+		new SpriteObject(ResourceMapper.getPath("01.png", ResourceType.BACKGROUND), 256, 256, 256, 256);
+		new SpriteObject(ResourceMapper.getPath("02.png", ResourceType.BACKGROUND), 256, 256, 256, 256);
+		new SpriteObject(ResourceMapper.getPath("03.png", ResourceType.BACKGROUND), 256, 256, 256, 256);		
+		new SpriteObject(ResourceMapper.getPath("04.png", ResourceType.BACKGROUND), 256, 256, 256, 256);		
+	}
 }

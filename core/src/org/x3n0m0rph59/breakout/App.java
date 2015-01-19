@@ -19,9 +19,9 @@ public final class App extends ApplicationAdapter {
 	
 	@Override
 	public void create () {
-		Gdx.graphics.setTitle(Config.APP_NAME);
-//		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+		Gdx.graphics.setTitle(Config.APP_NAME);		
 		Gdx.app.setLogLevel(Application.LOG_ERROR);
+//		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		
 		Logger.debug("App: create()");
 		
@@ -36,12 +36,6 @@ public final class App extends ApplicationAdapter {
 
 		final GameScreen.State stateBeforeQuit = GameScreen.State.values()[(int) prefs.getLong("gameStateBeforeQuit")];
 		Config.getInstance().setGameStateBeforeQuit(stateBeforeQuit);
-
-		if (!prefs.getBoolean("helpRead")) {
-			ScreenManager.getInstance().showScreen(ScreenType.HELP);
-		} else {
-			ScreenManager.getInstance().showScreen(ScreenType.MENU);
-		}
 		
 		// restore saved state?
 		final boolean lastExitWasUserInitiated = prefs.getBoolean("userExitedApp");
@@ -49,27 +43,34 @@ public final class App extends ApplicationAdapter {
 		final FileHandle handle = Gdx.files.local(Config.APP_NAME + ".sav");
 		
 		if (Gdx.files.isLocalStorageAvailable() && handle.exists()) {
+			final GameScreen gameScreen = getGameScreen();
+						
 			try {
-				final GameScreen gameScreen = getGameScreen();
-							
-				try {
-					gameScreen.loadGameState();
-					
-					if (lastExitWasUserInitiated)
-						ScreenManager.getInstance().showScreen(ScreenType.MENU);
-					else
-						ScreenManager.getInstance().showScreen(ScreenType.GAME);
-				}
-				catch(IOException e) {
+				gameScreen.loadGameState();
+				
+				if (lastExitWasUserInitiated)
 					ScreenManager.getInstance().showScreen(ScreenType.MENU);
-				}
+				else
+					ScreenManager.getInstance().showScreen(ScreenType.GAME);
 			}
-			catch (RuntimeException e) {
-				// do nothing
+			catch(IOException e) {
+				GameState.initialize();
+				
+				if (!prefs.getBoolean("helpRead")) {
+					ScreenManager.getInstance().showScreen(ScreenType.HELP);
+				} else {
+					ScreenManager.getInstance().showScreen(ScreenType.MENU);
+				}				
 			}
 				
 		} else {
-			ScreenManager.getInstance().showScreen(ScreenType.MENU);
+			GameState.initialize();
+			
+			if (!prefs.getBoolean("helpRead")) {
+				ScreenManager.getInstance().showScreen(ScreenType.HELP);
+			} else {
+				ScreenManager.getInstance().showScreen(ScreenType.MENU);
+			}
 		}
 	}
 	

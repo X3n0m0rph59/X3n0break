@@ -84,4 +84,8 @@ public final class GameState {
 			SoundLayer.playSound(Sounds.BONUS_BALL);
 		}		
 	}
+
+	public static void initialize() {
+		setLevelSet(0);		
+	}
 }

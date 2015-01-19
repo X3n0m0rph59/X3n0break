@@ -1,7 +1,9 @@
 package org.x3n0m0rph59.breakout;
 
+import org.x3n0m0rph59.breakout.Effect.Type;
 import org.x3n0m0rph59.breakout.SoundLayer;
 //import org.x3n0m0rph59.breakout.SpaceBomb.Type;
+
 
 
 
@@ -144,7 +146,6 @@ public class GameScreen implements Screen, Serializable {
 					
 			// Spawn initial set of particles
 			stars.clear();
-			starsPool.clear();
 			for (int i = 0; i < Config.SYNC_FPS * Config.STAR_DENSITY; i++) {				
 				
 				try {
@@ -180,6 +181,8 @@ public class GameScreen implements Screen, Serializable {
 		GameState.setSpaceBombsLeft(Config.INITIAL_SPACEBOMBS_LEFT);
 		
 		initLevel(0);
+		
+		Config.getInstance().setSpeedFactor(1.0f);
 		
 		setState(State.NEW_STAGE);
 	}
@@ -221,10 +224,19 @@ public class GameScreen implements Screen, Serializable {
 			SoundLayer.playMusic(Musics.BACKGROUND);
 	}
 	
+	public void primeCache() {
+		new Powerup(new Point(0.0f, 0.0f), Type.values()[0]);
+		new Projectile();
+		
+		BackgroundFactory.primeCache();
+	}
+	
 	@Override
 	public void show() {
 		final GameInputProcessor inputProcessor = new GameInputProcessor();
 		Gdx.input.setInputProcessor(inputProcessor);
+		
+		primeCache();
 		
 		setStateAfterResume();		
 	}

@@ -67,7 +67,8 @@ public class MenuInputProcessor implements InputProcessor {
 		if (hotRectResumeGame.contains(new Vector2(mX, mY))) {
 			if (Config.getInstance().isGameResumeable() && 
 				Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.GAME_OVER &&
-				Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.STAGE_CLEARED)
+				Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.LEVEL_SET_COMPLETED &&
+				(Config.getInstance().getGameStateBeforeQuit() != GameScreen.State.NEW_STAGE && GameState.getLevel() == 0))
 			{
 				ScreenManager.getInstance().showScreen(ScreenType.GAME);			
 				((App) Gdx.app.getApplicationListener()).getGameScreen().setStateAfterResume();
